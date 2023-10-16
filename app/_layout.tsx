@@ -4,6 +4,12 @@ import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
+import client from "../graphql/apollo-client";
+// import {ApolloWrapper} from "../graphql/apollo-client";
+import {AuthProvider} from "../context/auth";
+import { ApolloProvider } from "@apollo/client";
+
+import SampleScreen from './sample';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -39,18 +45,26 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return (
+    // <ApolloProvider client={client}>
+      <RootLayoutNav />
+    // </ApolloProvider>
+  );
 }
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
-
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
-    </ThemeProvider>
+  return(
+    <ApolloProvider client={client}>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="sample" />
+          </Stack>
+        </ThemeProvider>
+    </ApolloProvider>
+    
+  
   );
 }
