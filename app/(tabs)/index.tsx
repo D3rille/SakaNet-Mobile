@@ -10,6 +10,10 @@ export default function TabOneScreen() {
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       <EditScreenInfo path="app/(tabs)/index.tsx" />
       <Link href="/sample">To Sample Page</Link>
+      <Link href="/login">Login</Link>
+      <Link href="/paper">Paper Test</Link>
+      
+
       
     </View>
   );

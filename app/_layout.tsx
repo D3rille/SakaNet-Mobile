@@ -8,6 +8,7 @@ import client from "../graphql/apollo-client";
 // import {ApolloWrapper} from "../graphql/apollo-client";
 import {AuthProvider} from "../context/auth";
 import { ApolloProvider } from "@apollo/client";
+import Toast from 'react-native-toast-message';
 
 import SampleScreen from './sample';
 
@@ -56,13 +57,18 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
   return(
     <ApolloProvider client={client}>
+      <AuthProvider>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
             <Stack.Screen name="sample" />
+            <Stack.Screen name="login" />
+            <Stack.Screen name="paper" />
           </Stack>
         </ThemeProvider>
+        <Toast/>
+        </AuthProvider>
     </ApolloProvider>
     
   

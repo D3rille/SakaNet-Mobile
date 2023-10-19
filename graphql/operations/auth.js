@@ -12,6 +12,7 @@ export const LOGIN_USER = gql`
     role
   }
 }
+
  `;
 // Testing server
 export const HELLO = gql`

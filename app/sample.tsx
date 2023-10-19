@@ -14,7 +14,7 @@ export default function SampleScreen() {
     const [cred, setCred] = useState("");
     const [password, setpassword] = useState("");
     
-    const {data, loading, error} = useQuery(HELLO);
+    const {data, loading, error} = useQuery(HELLO); 
 
     if(loading){
       return(
