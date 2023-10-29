@@ -40,13 +40,13 @@ export default function Signup() {
     >
       <SafeAreaView style={styles.container}>
         <Image
-          source={require("./assets/wave-bg.png")}
+          source={require("../assets/images/wave-bg.png")}
           style={styles.backgroundImage}
         />
         <ScrollView contentContainerStyle={styles.contentContainer}>
           <View style={styles.header}>
             <Image
-              source={require("./assets/LOGO-ONLY-FINAL.png")}
+              source={require("../assets/images/LOGO-ONLY-FINAL.png")}
               style={styles.logo}
             />
             <Title style={styles.title}>Welcome to SakaNet!</Title>
