@@ -17,13 +17,13 @@ const AddressInputs = () => {
     >
       <SafeAreaView style={styles.container}>
         <Image
-          source={require("./assets/wave-bg.png")}
+          source={require("../assets/images/wave-bg.png")}
           style={styles.backgroundImage}
         />
         <ScrollView contentContainerStyle={styles.contentContainer}>
           <View style={styles.header}>
             <Image
-              source={require("./assets/LOGO-FINAL.png")}
+              source={require("../assets/images/LOGO-FINAL.png")}
               style={styles.logo}
             />
           </View>

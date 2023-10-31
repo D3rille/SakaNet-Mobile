@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   StyleSheet,
   View,
@@ -13,10 +13,51 @@ import {
 } from "react-native";
 import { Title, Caption, Checkbox, Button } from "react-native-paper";
 import Icon from "react-native-vector-icons/Ionicons";
+import { LOGIN_USER } from "../graphql/operations/auth";
+import { useMutation } from "@apollo/client";
+import { AuthContext } from "../context/auth";
+import Toast from 'react-native-toast-message'; // Import the toast library'
+import { router } from "expo-router";
+
 
 export default function Login() {
   const [isPasswordVisible, setPasswordVisible] = useState(false);
   const [password, setPassword] = useState("");
+  const [loginCred, setLoginCred] = useState('');
+  const context = useContext(AuthContext);
+
+
+  const [logUser, { loading }] = useMutation(LOGIN_USER, {
+    onCompleted: (data) => {
+      context.login(data.login)
+      Toast.show({
+        type: 'success',
+        position: 'top',
+        text1: 'Success',
+        text2: 'Login successful!',
+      });
+      router.replace("/tabs/")
+
+
+    },
+    onError: (error) => {
+      Toast.show({
+        type: 'error',
+        position: 'top',
+        text1: 'Error',
+        text2: 'Login failed. Check your credentials.',
+      });
+    },
+  });
+
+  const handleLogin = () => {
+    logUser({
+      variables: {
+        loginCred,
+        password,
+      },
+    });
+  };
 
   return (
     <KeyboardAvoidingView
@@ -52,6 +93,8 @@ export default function Login() {
               <TextInput
                 style={styles.input}
                 placeholder="Enter Username"
+                onChangeText={setLoginCred}
+                value={loginCred}
               />
             </View>
 
@@ -85,7 +128,7 @@ export default function Login() {
 
             <View style={styles.buttonContainer}>
               <TouchableOpacity style={styles.loginButton}>
-                <Text style={styles.loginButtonText}>Login</Text>
+                <Text style={styles.loginButtonText}  onPress={handleLogin}>Login</Text>
               </TouchableOpacity>
               <View style={styles.loginContainer}>
                 <Text>Don't have an account yet?</Text>
