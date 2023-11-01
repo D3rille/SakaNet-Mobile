@@ -1,4 +1,4 @@
-import React, { useReducer, createContext, useEffect } from 'react';
+import React, { useReducer, createContext, useEffect, useState, useContext } from 'react';
 import jwtDecode from 'jwt-decode';
 import * as SecureStore from 'expo-secure-store';
 import { Slot } from 'expo-router';
@@ -48,7 +48,6 @@ const AuthContext = createContext({
   user: null,
   login: (userData) => {},
   logout: () => {},
-  test:"this is context"
 });
 
 function authReducer(state, action) {
@@ -70,6 +69,7 @@ function authReducer(state, action) {
 
 function AuthProvider(props) {
   const [state, dispatch] = useReducer(authReducer, initialState);
+  const [auth, setAuth] = useState("this is auth");
 
   useEffect(() => {
     // Update token and user in state whenever they change
@@ -101,11 +101,17 @@ function AuthProvider(props) {
 
   return (
     <AuthContext.Provider
-      value={{ user: state.user, login, logout, test:state.test }}
+      value={{ user: state.user, login, logout, auth }}
       {...props}
-    />
+    >
+      {props.children}
+    </AuthContext.Provider>
 
   );
 }
 
-export { AuthContext, AuthProvider };
+const useAuth = () =>{
+  return useContext(AuthContext);
+}
+
+export { AuthContext, AuthProvider, useAuth };

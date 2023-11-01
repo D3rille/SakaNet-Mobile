@@ -40,7 +40,7 @@ export default function Login() {
         text1: 'Success',
         text2: 'Login successful!',
       });
-      router.push("/sample");
+      router.push("/");
       // return(
       //   <Redirect href = "/sample" />
       // );

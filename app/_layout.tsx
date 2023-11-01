@@ -2,13 +2,14 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
-import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 import client from "../graphql/apollo-client";
 // import {ApolloWrapper} from "../graphql/apollo-client";
 import {AuthProvider} from "../context/auth";
 import { ApolloProvider } from "@apollo/client";
 import Toast from 'react-native-toast-message';
+import { useContext, useState, useEffect } from 'react';
+import { AuthContext, useAuth } from '../context/auth';
 
 import Sample from './sample';
 
@@ -19,13 +20,14 @@ export {
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
+  initialRouteName: 'index',
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const colorScheme = useColorScheme();
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     ...FontAwesome.font,
@@ -47,18 +49,30 @@ export default function RootLayout() {
   }
 
   return (
-    // <ApolloProvider client={client}>
-      <RootLayoutNav />
-    // </ApolloProvider>
+    <ApolloProvider client={client}>
+      <AuthProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <RootLayoutNav />
+        </ThemeProvider>
+        <Toast/>
+      </AuthProvider>
+    </ApolloProvider>
+    
   );
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
+  const {user} = useAuth();
+  const [userInfo, setUserInfo] = useState(null);
+  useEffect(()=>{
+    if(user){
+      setUserInfo(user);
+    }
+  }, [user]);
+  console.log("root");
+  console.log(userInfo);
+  console.log("rootend");
   return(
-    <ApolloProvider client={client}>
-      <AuthProvider>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <Stack>
             <Stack.Screen name="index" options={{ headerShown: false }}/>
             <Stack.Screen name="sample" options={{ headerShown: false }}/>
@@ -67,11 +81,5 @@ function RootLayoutNav() {
             <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
             <Stack.Screen name="paper" />
           </Stack>
-        </ThemeProvider>
-        <Toast/>
-        </AuthProvider>
-    </ApolloProvider>
-    
-  
   );
 }
