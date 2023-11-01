@@ -1,6 +1,7 @@
 import React, { useReducer, createContext, useEffect } from 'react';
 import jwtDecode from 'jwt-decode';
 import * as SecureStore from 'expo-secure-store';
+import { Slot } from 'expo-router';
 
 const initialState = {
   user: null
@@ -46,7 +47,8 @@ checkToken();
 const AuthContext = createContext({
   user: null,
   login: (userData) => {},
-  logout: () => {}
+  logout: () => {},
+  test:"this is context"
 });
 
 function authReducer(state, action) {
@@ -99,9 +101,10 @@ function AuthProvider(props) {
 
   return (
     <AuthContext.Provider
-      value={{ user: state.user, login, logout }}
+      value={{ user: state.user, login, logout, test:state.test }}
       {...props}
     />
+
   );
 }
 

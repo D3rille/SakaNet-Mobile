@@ -10,7 +10,7 @@ import {AuthProvider} from "../context/auth";
 import { ApolloProvider } from "@apollo/client";
 import Toast from 'react-native-toast-message';
 
-import SampleScreen from './sample';
+import Sample from './sample';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -19,7 +19,7 @@ export {
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: 'login',
+  initialRouteName: '(tabs)',
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -60,10 +60,11 @@ function RootLayoutNav() {
       <AuthProvider>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <Stack>
-            <Stack.Screen name="login" />
+            <Stack.Screen name="index" options={{ headerShown: false }}/>
+            <Stack.Screen name="sample" options={{ headerShown: false }}/>
+            <Stack.Screen name="login" options={{ headerShown: false }}/>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-            <Stack.Screen name="sample" />
             <Stack.Screen name="paper" />
           </Stack>
         </ThemeProvider>

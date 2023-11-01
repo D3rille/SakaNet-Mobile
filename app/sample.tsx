@@ -1,5 +1,7 @@
+//@ts-nocheck
+import {useContext, useEffect} from "react";
 import { StatusBar } from 'expo-status-bar';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, Button } from 'react-native';
 import {useQuery} from "@apollo/client";
 
 import EditScreenInfo from '../components/EditScreenInfo';
@@ -9,12 +11,37 @@ import {useState} from "react";
 import {HELLO} from "../graphql/operations/auth";
 // import client from '../graphql/apollo-client';
 import { ApolloProvider } from '@apollo/client';
+import { AuthContext } from "../context/auth";
+import { useRouter, Link, router } from "expo-router";
+
+// export default function Sample(){
+//   const router = useRouter();
+//   const {user} = useContext(AuthContext);
+//   if(!user){
+//     router.push("/login");
+//   } 
+//   return(
+//     <SampleScreen/>
+//   );
+  
+// }
 
 export default function SampleScreen() {
+    // const router = useRouter();
+    const {user, logout} = useContext(AuthContext);
+    const [userInfo, setUserInfo] = useState(null);
     const [cred, setCred] = useState("");
     const [password, setpassword] = useState("");
     
+    useEffect(()=>{
+      if(user){
+        setUserInfo(user);
+      }
+    },[user])
+
     const {data, loading, error} = useQuery(HELLO); 
+
+    console.log(`user: ${userInfo?.id}`);
 
     if(loading){
       return(
@@ -41,6 +68,9 @@ export default function SampleScreen() {
           <Text style={styles.title}>Sample</Text>
           <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
           <Text>This is the Sample page.</Text>
+          <Button title="Logout" onPress={()=>{
+            router.push("/Products")
+          }}/>
           <Text>{data?.hello}</Text>
           <View>
     
