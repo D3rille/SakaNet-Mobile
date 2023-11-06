@@ -17,19 +17,23 @@ import { LOGIN_USER } from "../graphql/operations/auth";
 import { useMutation } from "@apollo/client";
 import { AuthContext } from "../context/auth";
 import Toast from 'react-native-toast-message'; // Import the toast library'
-import { router } from "expo-router";
+import { router, useRouter, Redirect } from "expo-router";
 
 
 export default function Login() {
+  // const router = useRouter();
   const [isPasswordVisible, setPasswordVisible] = useState(false);
   const [password, setPassword] = useState("");
   const [loginCred, setLoginCred] = useState('');
   const context = useContext(AuthContext);
 
-
   const [logUser, { loading }] = useMutation(LOGIN_USER, {
+    update(proxy, {data:{login:userData}}){
+        //console.log(result);
+        context.login(userData);
+    },
     onCompleted: (data) => {
-      context.login(data.login)
+      // context.login(data.login)
       Toast.show({
         type: 'success',
         position: 'top',
@@ -42,6 +46,7 @@ export default function Login() {
 
     },
     onError: (error) => {
+      console.log(error);
       Toast.show({
         type: 'error',
         position: 'top',

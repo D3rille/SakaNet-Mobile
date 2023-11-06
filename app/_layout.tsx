@@ -10,7 +10,7 @@ import {AuthProvider} from "../context/auth";
 import { ApolloProvider } from "@apollo/client";
 import Toast from 'react-native-toast-message';
 
-import SampleScreen from './sample';
+import Sample from './sample';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -63,7 +63,6 @@ function RootLayoutNav() {
             <Stack.Screen name="index" />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-            <Stack.Screen name="sample" />
             <Stack.Screen name="paper" />
             <Stack.Screen name="Signup" />
           </Stack>
