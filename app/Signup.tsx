@@ -14,6 +14,8 @@ import {
 import { Title, Caption, Checkbox, Button } from "react-native-paper";
 import Icon from "react-native-vector-icons/Ionicons";
 import AddressInput from "../components/AddressInput";
+import { router } from "expo-router";
+
 
 export default function Signup() {
   const [isPasswordVisible, setPasswordVisible] = useState(false);
@@ -23,6 +25,7 @@ export default function Signup() {
   const [isMatched, setIsMatched] = useState<boolean | null>(null);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [showAddressInput, setShowAddressInput] = useState(false);
+  
 
   useEffect(() => {
     if (password && confirmPassword) {

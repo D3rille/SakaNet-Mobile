@@ -9,6 +9,12 @@ const StackLayout = () => {
                     headerTitle: 'Products'
                 }}
             />
+             <Stack.Screen
+                name="[productid]"
+                options={{
+                    headerTitle: 'Products'
+                }}
+            />
         </Stack>
     );
 };

@@ -18,10 +18,10 @@ export {
   ErrorBoundary,
 } from 'expo-router';
 
-export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: 'index',
-};
+// export const unstable_settings = {
+//   // Ensure that reloading on `/modal` keeps a back button present.
+//   initialRouteName: 'login',
+// };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -74,12 +74,11 @@ function RootLayoutNav() {
   console.log("rootend");
   return(
           <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }}/>
-            <Stack.Screen name="sample" options={{ headerShown: false }}/>
-            <Stack.Screen name="login" options={{ headerShown: false }}/>
+            <Stack.Screen name="index" />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
             <Stack.Screen name="paper" />
+            <Stack.Screen name="Signup" />
           </Stack>
   );
 }
