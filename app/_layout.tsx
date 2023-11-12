@@ -9,6 +9,8 @@ import client from "../graphql/apollo-client";
 import {AuthProvider} from "../context/auth";
 import { ApolloProvider } from "@apollo/client";
 import Toast from 'react-native-toast-message';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
 
 import Sample from './sample';
 
@@ -56,20 +58,23 @@ export default function RootLayout() {
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
   return(
-    <ApolloProvider client={client}>
-      <AuthProvider>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Stack>
-            <Stack.Screen name="index" />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-            <Stack.Screen name="paper" />
-            <Stack.Screen name="Signup" />
-          </Stack>
-        </ThemeProvider>
-        <Toast/>
-        </AuthProvider>
-    </ApolloProvider>
+      <ApolloProvider client={client}>
+        <AuthProvider>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+              <Stack>
+                <Stack.Screen name="index" />
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+                <Stack.Screen name="paper" />
+                <Stack.Screen name="Signup" />
+              </Stack>
+            </ThemeProvider>
+            </GestureHandlerRootView>
+            <Toast/>
+          </AuthProvider>
+      </ApolloProvider>
+
     
   
   );

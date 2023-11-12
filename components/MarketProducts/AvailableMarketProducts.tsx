@@ -2,6 +2,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, Button } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
+import { router } from 'expo-router';
+
 
 export default function AvailableMarketProducts({ products }) {
   return (
@@ -16,7 +18,12 @@ export default function AvailableMarketProducts({ products }) {
             title=" View Available Market Products"
             color="#2F603B"
             onPress={() => {
-              // Add your code to handle the button click, e.g., navigate to available market products page.
+              router.push({
+                pathname: '/Products/[productid]',
+                params: {
+                  id: product._id,
+                },
+              });  
             }}
           />
         </View>

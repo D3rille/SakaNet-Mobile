@@ -7,7 +7,7 @@ import { setContext } from '@apollo/client/link/context';
 import * as SecureStore from 'expo-secure-store';
 
 const httpLink = createHttpLink({
-  uri: 'http://192.168.1.228:4000/graphql',
+  uri: 'http://192.168.1.23:4000/graphql',
 });
 
 const authLink = setContext(async (_, { headers }) => {
@@ -28,7 +28,7 @@ const authLink = setContext(async (_, { headers }) => {
 });
 
 const wsLink =  new GraphQLWsLink(createClient({
-  url: 'ws://192.168.1.228:4000/graphql/subscriptions',
+  url: 'ws://192.168.1.23:4000/graphql/subscriptions',
 }));
 
 // The split function takes three parameters:
