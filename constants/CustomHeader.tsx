@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { View, Image, TextInput, StyleSheet } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
+
 function CustomHeader() {
   const [searchQuery, setSearchQuery] = useState<string>('');
+
   return (
     <View style={styles.headerContainer}>
       <Image
@@ -25,12 +27,13 @@ function CustomHeader() {
             style={styles.clearIcon}
             onPress={() => setSearchQuery('')}
           />
-                 ) : null}
+        ) : null}
       </View>
       <Ionicons name="cart" size={24} color="#2E603A" style={styles.notificationIcon} />
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
@@ -46,7 +49,7 @@ const styles = StyleSheet.create({
     height: 100,
     paddingHorizontal: 10,
   },
-    logo: {
+  logo: {
     width: 30, 
     height: 30,
     resizeMode: 'contain',
@@ -66,7 +69,7 @@ const styles = StyleSheet.create({
   searchIcon: {
     padding: 5,
   },
-   input: {
+  input: {
     flex: 1,
     paddingTop: 10,
     paddingRight: 10,
@@ -85,4 +88,5 @@ const styles = StyleSheet.create({
     marginTop:25,
   },
 });
+
 export default CustomHeader;

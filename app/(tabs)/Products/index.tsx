@@ -13,7 +13,7 @@ import { AuthContext } from '../../../context/auth';
 import {Picker} from '@react-native-picker/picker';
 
 
-export default function App() {
+const Products = () => {
   const [activeComponent, setActiveComponent] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setCategory] = useState('');
@@ -173,3 +173,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+export default Products;

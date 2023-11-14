@@ -37,12 +37,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#F6F6F6',
   },
   contentContainer: {
-    paddingTop: 30, 
+  
   },
   manageCard: {
     alignSelf: 'stretch',
     marginHorizontal: 20,
-    marginTop: 40,
+    marginTop: 20,
     height: 50,
     backgroundColor: '#FDFDFF',
     borderRadius: 10,

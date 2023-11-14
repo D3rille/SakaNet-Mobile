@@ -1,68 +1,8 @@
-//@ts-nocheck
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, Button } from 'react-native';
-import { router } from 'expo-router';
-export default function AllMarketProducts({ products }) {
-  return (
-    <ScrollView contentContainerStyle={styles.cardContainer}>
-      {products.map((product) => (
-        <View key={product._id} style={styles.card}>
-          <Image source={{ uri: product.photo }} style={styles.image} />
-          <Text style={styles.title}>
-            {product.name.tagalog && `${product.name.tagalog} | `}{product.name.english}
-          </Text>
-         
-          <Button
-            title=" View Available Market Products"
-            color="#2F603B"
-            onPress={() => {
-              router.push({
-                pathname: '/Products/[productid]',
-                params: {
-                  id: product._id,
-                },
-              });
-            }}
-          />
-        </View>
-      ))}
-    </ScrollView>
-  );
-}
-
-const styles = StyleSheet.create({
-  cardContainer: {
-    padding: 16,
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 12,
-  },
-  image: {
-    width: '100%',
-    height: 200,
-    borderRadius: 10,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    margin: 10
-  },
-  description: {
-    marginTop: 8,
-  },
-  
-});
-
-{/*
-        UI
-
-import React from 'react';
+import React, { useRef } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { COLORS } from '../../constants/index';
+//import AddProductSellModal from './Modals/AddProductSell';
 
 type ProductItem = {
   id: string;
@@ -71,13 +11,13 @@ type ProductItem = {
 };
 
 const products: ProductItem[] = [
-  { id: '1', name: 'Very Long Product Name That Exceeds the Limit', image: 'path_to_image' },
+  { id: '1', name: 'Very Long Product Name mahaba mahaba mahaba', image: 'path_to_image' },
   { id: '2', name: 'Product 2', image: 'path_to_image' },
   { id: '3', name: 'Product 3', image: 'path_to_image' },
   { id: '4', name: 'Product 4', image: 'path_to_image' },
   { id: '5', name: 'Product 5', image: 'path_to_image' },
   { id: '6', name: 'Product 6', image: 'path_to_image' },
-    { id: '1', name: 'Very Long Product Name That Exceeds the Limit', image: 'path_to_image' },
+  { id: '1', name: 'Very Long Product Name mahaba mahaba mahaba', image: 'path_to_image' },
   { id: '2', name: 'Product 2', image: 'path_to_image' },
   { id: '3', name: 'Product 3', image: 'path_to_image' },
   { id: '4', name: 'Product 4', image: 'path_to_image' },
@@ -85,7 +25,14 @@ const products: ProductItem[] = [
   { id: '6', name: 'Product 6', image: 'path_to_image' },
 ];
 
-const AllMarketProducts = () => {
+const Sell = () => {
+  const modalRef = useRef(null);
+
+  const handleAddPress = () => {
+    if (modalRef.current) {
+      modalRef.current.open();
+    }
+  };
 
   const renderItem = ({ item }: { item: ProductItem }) => (
     <TouchableOpacity key={item.id} style={styles.card}>
@@ -103,13 +50,21 @@ const AllMarketProducts = () => {
   );
 
   return (
-    <FlatList
-      data={products}
-      renderItem={renderItem}
-      keyExtractor={item => item.id}
-      numColumns={2}
-      columnWrapperStyle={styles.cardContainer}
-    />
+    <View style={{ flex: 1 }}>
+      <FlatList
+        data={products}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+        numColumns={2}
+        columnWrapperStyle={styles.cardContainer}
+      />
+
+      <TouchableOpacity style={styles.addIconContainer} onPress={handleAddPress}>
+        <Icon name="add-outline" size={50} color='white' />
+      </TouchableOpacity>
+
+      {/*<AddProductSellModal ref={modalRef} /> */}
+    </View>
   );
 };
 
@@ -122,7 +77,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: '#FFFFFF',
-    width: '47%', 
+    width: '47%',
     marginVertical: 8,
     borderRadius: 15,
     shadowColor: '#000',
@@ -133,7 +88,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 3,
-    overflow: 'hidden', 
+    overflow: 'hidden',
   },
   productImage: {
     height: 120,
@@ -153,9 +108,22 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     overflow: 'hidden',
   },
+  addIconContainer: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: COLORS.orange,
+    borderRadius: 30,
+    width: 60,
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 1, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
 });
 
-export default AllMarketProducts;
-
-
-*/}
+export default Sell;

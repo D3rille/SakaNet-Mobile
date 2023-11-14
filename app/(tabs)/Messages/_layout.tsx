@@ -1,13 +1,16 @@
 import { Stack } from 'expo-router';
+import CustomHeader from '../../../constants/CustomHeader'; 
+
 
 const StackLayout = () => {
     return (
         <Stack>
-            <Stack.Screen
-                name="index"
-                options={{
-                    headerTitle: 'Messages'
-                }}
+            <Stack.Screen 
+              name="index" 
+              options={{
+                headerShown: true,
+                header: () => <CustomHeader />
+              }}
             />
         </Stack>
     );

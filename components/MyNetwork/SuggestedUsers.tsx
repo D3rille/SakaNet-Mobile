@@ -163,7 +163,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginHorizontal: 15,
     marginBottom: 10,
-    flex: 1,
     justifyContent: 'center',
   },
   connectedButton: {

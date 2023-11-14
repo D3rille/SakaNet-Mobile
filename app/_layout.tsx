@@ -10,8 +10,6 @@ import client from "../graphql/apollo-client";
 import {AuthProvider} from "../context/auth";
 import { ApolloProvider } from "@apollo/client";
 import Toast from 'react-native-toast-message';
-import { Searchbar } from 'react-native-paper';
-import { Ionicons } from '@expo/vector-icons';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import CustomHeader from '../constants/CustomHeader'; 
 
