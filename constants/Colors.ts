@@ -1,5 +1,7 @@
 const tintColorLight = '#2f95dc';
 const tintColorDark = '#fff';
+export const sakanetGreen = '#2F603B';
+export const sakanetOrange = "#FE8C47";
 
 export default {
   light: {

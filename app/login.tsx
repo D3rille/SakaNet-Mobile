@@ -40,7 +40,7 @@ export default function Login() {
         text1: 'Success',
         text2: 'Login successful!',
       });
-      router.replace("/Products")
+      router.replace("/Products/")
     
 
 
@@ -138,7 +138,7 @@ export default function Login() {
               </TouchableOpacity>
               <View style={styles.loginContainer}>
                 <Text>Don't have an account yet?</Text>
-                <TouchableOpacity onPress={() => router.push("/Signup")}>
+                <TouchableOpacity onPress={() => router.push("./Signup/")}>
                   <Text style={styles.loginText}> Sign Up</Text>
                 </TouchableOpacity>
               </View>

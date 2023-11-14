@@ -11,7 +11,6 @@ import Toast from 'react-native-toast-message';
 import { useContext, useState, useEffect } from 'react';
 import { AuthContext, useAuth } from '../context/auth';
 
-import Sample from './sample';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -62,22 +61,13 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const {user} = useAuth();
-  const [userInfo, setUserInfo] = useState(null);
-  useEffect(()=>{
-    if(user){
-      setUserInfo(user);
-    }
-  }, [user]);
-  console.log("root");
-  console.log(userInfo);
-  console.log("rootend");
   return(
           <Stack>
             <Stack.Screen name="index" />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
             <Stack.Screen name="paper" />
+            <Stack.Screen name="login" />
             <Stack.Screen name="Signup" />
           </Stack>
   );

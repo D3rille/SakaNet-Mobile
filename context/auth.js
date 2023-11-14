@@ -48,6 +48,7 @@ const AuthContext = createContext({
   user: null,
   login: (userData) => {},
   logout: () => {},
+  isLoaded:false
 });
 
 function authReducer(state, action) {
@@ -70,10 +71,11 @@ function authReducer(state, action) {
 function AuthProvider(props) {
   const [state, dispatch] = useReducer(authReducer, initialState);
   const [auth, setAuth] = useState("this is auth");
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     // Update token and user in state whenever they change
-    getToken();
+    getToken().then(()=>setIsLoaded(true));
     checkToken();
   }, [state.user]);
 
@@ -101,7 +103,7 @@ function AuthProvider(props) {
 
   return (
     <AuthContext.Provider
-      value={{ user: state.user, login, logout, auth }}
+      value={{ user: state.user, login, logout, isLoaded:isLoaded }}
       {...props}
     >
       {props.children}
