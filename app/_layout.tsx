@@ -2,14 +2,17 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { View, TextInput, Text, StyleSheet, Image } from 'react-native';
 import { useColorScheme } from 'react-native';
 import client from "../graphql/apollo-client";
 // import {ApolloWrapper} from "../graphql/apollo-client";
 import {AuthProvider} from "../context/auth";
 import { ApolloProvider } from "@apollo/client";
 import Toast from 'react-native-toast-message';
-import { useContext, useState, useEffect } from 'react';
-import { AuthContext, useAuth } from '../context/auth';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import CustomHeader from '../constants/CustomHeader'; 
+
 
 
 export {
@@ -28,7 +31,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    SpaceMono: require('../assets/fonts/Poppins-Regular.ttf'),
     ...FontAwesome.font,
   });
 
@@ -51,7 +54,9 @@ export default function RootLayout() {
     <ApolloProvider client={client}>
       <AuthProvider>
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <RootLayoutNav />
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <RootLayoutNav />
+          </GestureHandlerRootView>
         </ThemeProvider>
         <Toast/>
       </AuthProvider>
@@ -60,15 +65,17 @@ export default function RootLayout() {
   );
 }
 
+
 function RootLayoutNav() {
   return(
-          <Stack>
-            <Stack.Screen name="index" />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-            <Stack.Screen name="paper" />
-            <Stack.Screen name="login" />
-            <Stack.Screen name="Signup" />
-          </Stack>
+    <Stack>
+      <Stack.Screen name="index" />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="paper" />
+      <Stack.Screen name="login" />
+      <Stack.Screen name="Signup" />
+    </Stack>
   );
 }
+

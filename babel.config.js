@@ -7,6 +7,8 @@ module.exports = function (api) {
       'expo-router/babel',
       //React native paper
       'react-native-paper/babel',
+      //React native reanimated
+      'react-native-reanimated/plugin',
     ],
     
   };
