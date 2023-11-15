@@ -11,7 +11,9 @@ import {AuthProvider} from "../context/auth";
 import { ApolloProvider } from "@apollo/client";
 import Toast from 'react-native-toast-message';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import CustomHeader from '../constants/CustomHeader'; 
+import CustomHeader from '../constants/CustomHeader';
+import { PaperProvider } from 'react-native-paper';
+import {SubscriptionProvider} from "../context/subscriptionProvider"; 
 
 
 
@@ -51,31 +53,35 @@ export default function RootLayout() {
   }
 
   return (
-    <ApolloProvider client={client}>
-      <AuthProvider>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <RootLayoutNav />
-          </GestureHandlerRootView>
-        </ThemeProvider>
-        <Toast/>
-      </AuthProvider>
-    </ApolloProvider>
-    
+    <RootLayoutNav />
   );
 }
 
 
 function RootLayoutNav() {
+  const colorScheme = useColorScheme();
   return(
-    <Stack>
-      <Stack.Screen name="index" />
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      <Stack.Screen name="paper" />
-      <Stack.Screen name="login" />
-      <Stack.Screen name="Signup" />
-    </Stack>
+    <ApolloProvider client={client}>
+      <AuthProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          {/* <PaperProvider> */}
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <SubscriptionProvider>
+                <Stack>
+                  <Stack.Screen name="index" />
+                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                  <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+                  <Stack.Screen name="paper" />
+                  <Stack.Screen name="login" />
+                  <Stack.Screen name="Signup" />
+                </Stack>
+              </SubscriptionProvider>
+            </GestureHandlerRootView>
+          {/* </PaperProvider> */}
+        </ThemeProvider>
+        <Toast/>
+      </AuthProvider>
+    </ApolloProvider>
   );
 }
 

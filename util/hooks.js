@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext, use } from 'react';
-import {useRouter} from "next/router";
+// import {useRouter} from "next/router";
 import {AuthContext} from "../context/auth";
-import { CircularProgress, dividerClasses } from '@mui/material';
+// import { CircularProgress, dividerClasses } from '@mui/material';
 
 
 // reuseable Hook for events in form (login & signup)

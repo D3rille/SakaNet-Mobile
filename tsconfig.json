@@ -8,5 +8,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-, "app/sample.jsx"  ]
+, "app/sample.jsx", "app/(tabs)/Notifications/index.jsx", "app/(tabs)/Notifications/index.jsx"  ]
 }

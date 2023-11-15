@@ -3,11 +3,21 @@ import { Dimensions, TouchableOpacity, View, Animated, StyleSheet, Platform } fr
 import { Tabs } from "expo-router";
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../../constants/index';
+import {Badge} from "react-native-paper";
+import { useMutation } from '@apollo/client';
+
+import { useSubs } from '../../context/subscriptionProvider';
+import { READ_ALL_NOTIF, GET_NOTIFICATIONS } from '../../graphql/operations/notification';
 
 type IconName = string;
 
 const TabLayout = () => {
   const tabOffsetValue = useRef(new Animated.Value(0)).current;
+  const {newNotifCount} = useSubs();
+
+  const [readAllNotif] = useMutation(READ_ALL_NOTIF, {
+    refetchQueries:[GET_NOTIFICATIONS]
+  });
 
 
   return (
@@ -44,11 +54,25 @@ const TabLayout = () => {
                 borderRadius: 30,
                 justifyContent: 'center',
                 alignItems: 'center',
-                marginBottom: Platform.OS === "android" ? 50 : 30,
+                marginBottom: Platform.OS === "android" ? 30 : 10,
               }}>
                 <FontAwesome5 name={iconName} size={22} color='white' />
               </View>
             </TouchableOpacity>
+          );
+        }
+
+        if(route.name == "Notifications"){
+          return(
+            <>
+            <TouchableOpacity onPress={() => {
+              navigation.navigate('Notifications');
+              readAllNotif();
+            }}>
+              {newNotifCount > 0 && (<Badge style={{position:"absolute", bottom:30, right:9, zIndex:1}}>{newNotifCount}</Badge>)}
+              <Ionicons name={iconName as any} size={size} color={color} />
+            </TouchableOpacity>
+            </>
           );
         }
 
@@ -58,9 +82,9 @@ const TabLayout = () => {
       tabBarShowLabel: false,
       tabBarStyle: {
         backgroundColor: 'white',
-        position: 'absolute',
-        bottom: 40,
-        marginHorizontal: 20,
+        // position: 'absolute',
+        // bottom: 40,
+        // marginHorizontal: 20,
         height: 60,
         borderRadius: 10,
         shadowColor: '#000',
@@ -77,7 +101,7 @@ const TabLayout = () => {
       <Tabs.Screen name="MyNetwork"
       options={{
           headerShown: false }} />
-      <Tabs.Screen name="Messages"
+      <Tabs.Screen name="Messages" 
       options={{
           headerShown: false }} />
       <Tabs.Screen name="Products"

@@ -9,7 +9,7 @@ import React from 'react'
 export default function Index(){
     const {user, isLoaded} = useAuth();
     const rootNavigationState = useRootNavigationState();
-
+    <Stack.Screen options={{headerShown:false}}/>
     if (!rootNavigationState?.key) return null;
 
     if(isLoaded && user){
