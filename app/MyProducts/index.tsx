@@ -2,18 +2,15 @@ import React, { useState, useRef } from 'react';
 import { View, StyleSheet, TextInput, TouchableOpacity, Text } from 'react-native';
 import { Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
-import SellProducts from '../../../components/FarmerSide (MyProducts)/SellProduct';
-import PreSellProducts from '../../../components/FarmerSide (MyProducts)/PreSellProduct';
-import OpenClosedBottomSheet from '../../../components/FarmerSide (MyProducts)/OpenClosedBottomSheet'; 
-import { COLORS, SIZES } from '../../../constants/index';
+import SellProducts from '../../components/FarmerSide (MyProducts)/SellProduct';
+import PreSellProducts from '../../components/FarmerSide (MyProducts)/PreSellProduct';
+import OpenClosedBottomSheet from '../../components/FarmerSide (MyProducts)/OpenClosedBottomSheet'; 
+import { COLORS, SIZES } from '../../constants/index';
 
-// If status can only be 'sell' or 'presell'
 type StatusType = 'sell' | 'presell';
 
 const Product = () => {
   const [status, setStatus] = useState<StatusType>('sell');
-  
-  // Define the type for the ref
   const bottomSheetRef = useRef<{ open: () => void }>(null);
 
   const getButtonStyle = (buttonStatus: StatusType) => ({
@@ -127,7 +124,6 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 0,
   },
-  // ... other styles you might have
 });
 
 export default Product;

@@ -1,13 +1,32 @@
-import React, { useRef } from 'react';
-import { Dimensions, TouchableOpacity, View, Animated, StyleSheet, Platform } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, TouchableOpacity, View, Animated, StyleSheet, Platform, Keyboard } from 'react-native';
 import { Tabs } from "expo-router";
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../../constants/index';
 
-type IconName = string;
-
 const TabLayout = () => {
-  const tabOffsetValue = useRef(new Animated.Value(0)).current;
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => setKeyboardVisible(true)
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => setKeyboardVisible(false)
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  const tabBarStyle = {
+    ...styles.tabBar,
+    bottom: keyboardVisible ? -90 : 0,
+  };
 
   return (
     <Tabs screenOptions={({ route, navigation }) => ({
@@ -37,13 +56,15 @@ const TabLayout = () => {
           return (
             <TouchableOpacity onPress={() => navigation.navigate('Products')}>
               <View style={{
-                width: 55,
-                height: 55,
+                width: 70,
+                height: 70,
                 backgroundColor: focused ? COLORS.green : 'gray',
-                borderRadius: 30,
+                borderRadius: 50,
                 justifyContent: 'center',
                 alignItems: 'center',
-                marginBottom: Platform.OS === "android" ? 50 : 30,
+                marginBottom: Platform.OS === "android" ? 30 : 20,
+                borderWidth:5,
+                borderColor: 'white',
               }}>
                 <FontAwesome5 name={iconName} size={22} color='white' />
               </View>
@@ -55,21 +76,7 @@ const TabLayout = () => {
 
       },
       tabBarShowLabel: false,
-      tabBarStyle: {
-        backgroundColor: 'white',
-        position: 'absolute',
-        bottom: 40,
-        marginHorizontal: 20,
-        height: 60,
-        borderRadius: 10,
-        shadowColor: '#000',
-        shadowOpacity: 0.06,
-        shadowOffset: {
-          width: 10,
-          height: 10
-        },
-        paddingHorizontal: 20,
-      },
+      tabBarStyle: tabBarStyle,
     })}>
 
       {/* Tab Screens */}
@@ -93,14 +100,24 @@ const TabLayout = () => {
   );
 }
 
-function getWidth() {
-  let width = Dimensions.get("window").width;
-  width = width - 80;
-  return width / 5; 
-}
-
 const styles = StyleSheet.create({
-  // Add your custom styles here if needed
+  tabBar: {
+    backgroundColor: 'white',
+    position: 'absolute',
+    height: 60,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    shadowColor: '#000',
+    shadowOpacity: 1,
+    shadowOffset: {
+      width: 0,
+      height: -5
+    },
+    shadowRadius: 5,
+    elevation: 20,
+    paddingHorizontal: 20,
+  },
+
 });
 
 export default TabLayout;
