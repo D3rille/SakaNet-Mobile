@@ -13,21 +13,6 @@ type ProductItem = {
   image: string;
 };
 
-// const products: ProductItem[] = [
-//   { id: '1', name: 'Very Long Product Name mahaba mahaba mahaba', image: 'path_to_image' },
-//   { id: '2', name: 'Product 2', image: 'path_to_image' },
-//   { id: '3', name: 'Product 3', image: 'path_to_image' },
-//   { id: '4', name: 'Product 4', image: 'path_to_image' },
-//   { id: '5', name: 'Product 5', image: 'path_to_image' },
-//   { id: '6', name: 'Product 6', image: 'path_to_image' },
-//   { id: '1', name: 'Very Long Product Name mahaba mahaba mahaba', image: 'path_to_image' },
-//   { id: '2', name: 'Product 2', image: 'path_to_image' },
-//   { id: '3', name: 'Product 3', image: 'path_to_image' },
-//   { id: '4', name: 'Product 4', image: 'path_to_image' },
-//   { id: '5', name: 'Product 5', image: 'path_to_image' },
-//   { id: '6', name: 'Product 6', image: 'path_to_image' },
-// ];
-
 const Sell = ({product}) => {
   const modalRef = useRef(null);
   const [openDialog, setOpenDialog] = useState("");
@@ -56,7 +41,7 @@ const Sell = ({product}) => {
             {product.item.tagalogName ? `${product.item.tagalogName} | `:""}{product.item.englishName} 
             </Text>
             <Text variant="labelSmall" style={{paddingBottom:5}}>
-              {formatToCurrency(product.price)}
+              {formatToCurrency(product.price)}/{product.unit}
             </Text>
           </View>
         </TouchableOpacity>
