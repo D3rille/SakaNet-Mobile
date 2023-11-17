@@ -12,19 +12,19 @@ export default function Notification ({notif, deleteNotif}){
       <IconButton
         icon="close"
         style={styles.closeIcon}
-        size={20}
+        size={25}
         onPress={() =>{
           deleteNotif({variables:{notificationId:notif._id}});
         }}
       />
       
-      <View style={{flex:1, padding:"auto"}}>
+      <View style={{flex:2.5, padding:"auto"}}>
         <Avatar.Image size={70} source={
-          notif?.profile_pic ? {uri:notif.profile_pic}: DefaultProfile
+          notif?.profile_pic ? {uri:notif.photo}: DefaultProfile
           } />
       </View>
 
-      <View style={{flex:3}}>
+      <View style={{flex:6}}>
         <Text style={styles.username}>
           {notif?.from ?? "username"}
         </Text>
@@ -34,6 +34,9 @@ export default function Notification ({notif, deleteNotif}){
         <Text style={styles.notifTimeStamp}>
           {timePassed(notif?.createdAt)}
         </Text>
+      </View>
+      <View style={{flex:1, backgroundColor:"grey"}}>
+      
       </View>
     </View>
   );

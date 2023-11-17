@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
 import { StyleSheet, Pressable, View, Text, Modal } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -13,6 +14,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const OpenClosedBottomSheet = forwardRef((props, ref) => {
+  const {status, setStatus} = props;
   const [isVisible, setIsVisible] = useState(false);
   const offset = useSharedValue(0);
 
@@ -46,8 +48,8 @@ const OpenClosedBottomSheet = forwardRef((props, ref) => {
     transform: [{ translateY: offset.value }],
   }));
 
-  const handlePress = (status: 'Open' | 'Closed') => {
-    console.log(status + ' pressed');
+  const handlePress = (status: 'open' | 'closed') => {
+    setStatus(status);
   };
 
   return (
@@ -65,11 +67,17 @@ const OpenClosedBottomSheet = forwardRef((props, ref) => {
         <Animated.View style={[styles.sheet, translateY]}>
           <View style={styles.draggableIndicator}></View>
           <Text style={styles.headerText}>Sort by</Text>
-          <Pressable onPress={() => handlePress('Open')} style={styles.option}>
+          <Pressable onPress={() => {
+            handlePress('open');
+            setIsVisible(false);
+            }} style={styles.option}>
             <Text style={styles.optionText}>Open</Text>
           </Pressable>
           <View style={styles.divider}></View>
-          <Pressable onPress={() => handlePress('Closed')} style={styles.option}>
+          <Pressable onPress={() => {
+            handlePress('closed');
+            setIsVisible(false);
+            }} style={styles.option}>
             <Text style={styles.optionText}>Closed</Text>
           </Pressable>
         </Animated.View>

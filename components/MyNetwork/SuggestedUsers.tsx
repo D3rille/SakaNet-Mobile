@@ -1,76 +1,128 @@
+//@ts-nocheck
 import React, { useState } from 'react';
-import { ScrollView, View, StyleSheet, Image, Text } from 'react-native';
-import { Card, Button, Avatar } from 'react-native-paper';
+import { ScrollView, View, StyleSheet, Image, Text, TouchableOpacity } from 'react-native';
+import { Card, Button, Avatar, IconButton, ActivityIndicator } from 'react-native-paper';
+import { FontAwesome } from '@expo/vector-icons';
 
-interface User {
-  id: string;
-  name: string;
-  location: string;
-  userAvatar: string;
-  headerImg: string;
-}
+import DefaultProfile from "../../assets/images/default_profile.jpg";
+import { formatShortAddress } from '../../util/addresssUtils';
 
-const initialSuggestionsData: User[] = [
-  {
-    id: '1',
-    name: 'Abelardo Jacobi',
-    location: 'Pagbilao, Quezon',
-    userAvatar: 'avatar-image-uri',
-    headerImg: 'header-image-uri'
-  },
-  {
-    id: '2',
-    name: 'Abelardo Jacobi',
-    location: 'Pagbilao, Quezon',
-    userAvatar: 'avatar-image-uri',
-    headerImg: 'header-image-uri'
-  },
-  {
-    id: '3',
-    name: 'Abelardo Jacobi',
-    location: 'Pagbilao, Quezon',
-    userAvatar: 'avatar-image-uri',
-    headerImg: 'header-image-uri'
-  },
-];
-
-const Suggestions = () => {
+const Suggestions = ({requestConnection, suggestedUsersResults}) => {
   const [connectedUsers, setConnectedUsers] = useState<{ [key: string]: boolean }>({});
-  const [suggestionsData, setSuggestionsData] = useState<User[]>(initialSuggestionsData);
 
-  const handleConnect = (userId: string) => {
-    setConnectedUsers(prevState => ({
-      ...prevState,
-      [userId]: true
-    }));
+  const {data, error, loading} = suggestedUsersResults;
 
-    // Remove from the list after a delay
-    setTimeout(() => {
-      setSuggestionsData(suggestionsData.filter(user => user.id !== userId));
-    }, 1500);
-  };
+  if(loading){
+    return(
+      <>
+        <View style={{flex:1, flexDirection:"row", alignItems:"center", marginTop:20, marginBottom:10}}>
+          <View>
+            <Text style={styles.headerText}>Suggested Users</Text>
+          </View>
+          <View style={{ alignItems:"flex-start", paddingHorizontal:10}}>
+            <TouchableOpacity
+              onPress={()=>{
+                suggestedUsersResults.refetch();
+              }}
+            >
+              <FontAwesome name="refresh" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
+
+        </View>
+        <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+          <ActivityIndicator size="large"/>
+        </View>
+      </>
+    );
+  } else if(error){
+    return(
+      <>
+        <View style={{flex:1, flexDirection:"row", alignItems:"center", marginTop:20, marginBottom:10}}>
+          <View>
+            <Text style={styles.headerText}>Suggested Users</Text>
+          </View>
+          <View style={{ alignItems:"flex-start", paddingHorizontal:10}}>
+            <TouchableOpacity
+              onPress={()=>{
+                suggestedUsersResults.refetch();
+              }}
+            >
+              <FontAwesome name="refresh" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
+
+        </View>
+        <View style={{flex:1, justifyContent:"center", alignItems:"center", padding:20}}>
+          <Text>Error Loading Suggested Users</Text>
+        </View>
+      </>
+    )
+  }
+
+  if(data?.getSuggestedUsers?.length==0){
+    return(
+      <>
+        <View style={{flex:1, flexDirection:"row", alignItems:"center", marginTop:20, marginBottom:10}}>
+          <View>
+            <Text style={styles.headerText}>Suggested Users</Text>
+          </View>
+          <View style={{ alignItems:"flex-start", paddingHorizontal:10}}>
+            <TouchableOpacity
+              onPress={()=>{
+                suggestedUsersResults.refetch();
+              }}
+            >
+              <FontAwesome name="refresh" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
+
+        </View>
+        <View style={{flex:1, justifyContent:"center", alignItems:"center", padding:20}}>
+          <Text>No Suggested Users</Text>
+        </View>
+      </>
+    )
+  }
+
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>Suggested Users</Text>
-      {suggestionsData.length > 0 ? (
+      <View style={{flex:1, flexDirection:"row", alignItems:"center", marginTop:20, marginBottom:10}}>
+        <View>
+          <Text style={styles.headerText}>Suggested Users</Text>
+        </View>
+        <View style={{ alignItems:"flex-start", paddingHorizontal:10}}>
+          <TouchableOpacity
+            onPress={()=>{
+              suggestedUsersResults.refetch();
+            }}
+          >
+            <FontAwesome name="refresh" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
+
+      </View>
+      {data && data?.getSuggestedUsers?.length > 0 ? (
         <ScrollView style={styles.scrollView} horizontal={true}>
-          {suggestionsData.map(user => (
-            <Card key={user.id} style={styles.card}>
-              <Image source={{ uri: user.headerImg }} style={styles.headerImage} />
+          {data?.getSuggestedUsers.map((user:any, index:number) => (
+            <Card key={user._id} style={styles.card}>
+              <Image source={{ uri: user?.headerImg ?? ""}} style={styles.headerImage} />
               <View style={styles.avatarContainer}>
-                <Avatar.Image size={64} source={{ uri: user.userAvatar }} style={styles.avatar} />
+                <Avatar.Image size={64} source={
+                  user?.profile_pic ? {uri:user?.profile_pic}: DefaultProfile
+                } style={styles.avatar} />
               </View>
               <View style={styles.userInfo}>
-                <Text style={styles.userName} numberOfLines={1} ellipsizeMode='tail'>{user.name}</Text>
-                <Text style={styles.userLocation} numberOfLines={1} ellipsizeMode='tail'>{user.location}</Text>
+                <Text style={styles.userName} numberOfLines={1} ellipsizeMode='tail'>{user.username}</Text>
+                <Text style={styles.userLocation} numberOfLines={1} ellipsizeMode='tail'>{formatShortAddress(user?.address)}</Text>
               </View>
               <Button
                 mode="outlined"
-                style={[styles.connectButton, connectedUsers[user.id] ? styles.connectedButton : null]}
+                style={[styles.connectButton]}
                 labelStyle={styles.connectButtonText}
-                onPress={() => handleConnect(user.id)}
-                disabled={connectedUsers[user.id]}
+                onPress={() => {requestConnection({variables:{"connectTo":user._id}})}}
+                // disabled={connectedUsers[user.id]}
               >
                 {connectedUsers[user.id] ? 'Request Sent' : 'Connect'}
               </Button>
@@ -93,8 +145,8 @@ const styles = StyleSheet.create({
   headerText: {
     fontWeight: 'bold',
     fontSize: 15,
-    marginHorizontal: 20,
-    marginTop: 20,
+    marginLeft: 20,
+    // marginTop: 20,
     color: '#404140'
   },
   scrollView: {

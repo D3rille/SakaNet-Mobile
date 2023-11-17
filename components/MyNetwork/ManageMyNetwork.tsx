@@ -30,6 +30,30 @@ const MyConnections: React.FC = () => {
       name: "Juan Cruz",
       location: "Quezon",
     },
+    {
+      id: 3,
+      userAvatar: "https://via.placeholder.com/150",
+      name: "Juan Cruz",
+      location: "Quezon",
+    },
+    {
+      id: 4,
+      userAvatar: "https://via.placeholder.com/150",
+      name: "Juan Cruz",
+      location: "Quezon",
+    },
+    {
+      id: 5,
+      userAvatar: "https://via.placeholder.com/150",
+      name: "Juan Cruz",
+      location: "Quezon",
+    },
+    {
+      id: 6,
+      userAvatar: "https://via.placeholder.com/150",
+      name: "Juan Cruz",
+      location: "Quezon",
+    },
   ]);
 
   const [groupsYouManage, setGroupsYouManage] = useState([

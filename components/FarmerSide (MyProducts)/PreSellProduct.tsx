@@ -59,9 +59,9 @@ const PreSell = () => {
         columnWrapperStyle={styles.cardContainer}
       />
 
-      <TouchableOpacity style={styles.addIconContainer} onPress={handleAddPress}>
+      {/* <TouchableOpacity style={styles.addIconContainer} onPress={handleAddPress}>
         <Icon name="add-outline" size={50} color='white' />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
      {/* <AddProductPreSellModal ref={modalRef} /> */}
     </View>

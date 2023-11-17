@@ -1,69 +1,145 @@
+//@ts-nocheck
 import React, { useState } from 'react';
 import { ScrollView, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { Card, Text, Button } from 'react-native-paper';
+import { Card, Text, Button, ActivityIndicator } from 'react-native-paper';
 import { Avatar } from 'react-native-paper';
+import { FontAwesome } from '@expo/vector-icons';
+import Toast from 'react-native-toast-message';
+import { useMutation } from '@apollo/client';
 
-const initialData = [
-  {
-    id: '1',
-    name: 'Lucena Farmers',
-    userAvatar: 'avatar-image-uri',
-    headerImg: 'header-image-uri',
-    joined: false
-  },
-    {
-    id: '2',
-    name: 'Mauban Farmer',
-    userAvatar: 'avatar-image-uri',
-    headerImg: 'header-image-uri',
-    joined: false
-  },
-    {
-    id: '3',
-    name: 'Farmers Group',
-    userAvatar: 'avatar-image-uri',
-    headerImg: 'header-image-uri',
-    joined: false
-  },
-];
+import DefaultProfile from "../../assets/images/default_profile.jpg";
+import { JOIN_POOL_GROUP, GET_SUGGESTED_GROUPS } from '../../graphql/operations/poolGroup';
 
-const SuggestedGroups = () => {
-  const [suggestionsData, setSuggestionsData] = useState(initialData);
+const SuggestedGroups = ({suggestedGroupsResults}) => {
+  const [joinPoolGroup] = useMutation(JOIN_POOL_GROUP);
+  const handleJoinPoolGroup = (poolGroupId) =>{
+    joinPoolGroup({
+        variables:{
+            poolGroupId
+        },
+        refetchQueries:[GET_SUGGESTED_GROUPS], 
+        onCompleted:()=>{
+          Toast.show({
+            type: 'success',
+            position: 'top',
+            text1: 'Success',
+            text2: "Membership application sent.",
+          });
+        },
+        onError:(error)=>{
+          Toast.show({
+            type: 'error',
+            position: 'top',
+            text1: 'Success',
+            text2: "Membership application sent.",
+          });
+        }
+    })
+}
 
- const handleJoin = (id: string) => {
-    const newData = suggestionsData.map(item => 
-      item.id === id ? { ...item, joined: true } : item
+  const {data, error, loading} = suggestedGroupsResults;
+
+  if(loading){
+    return(
+      <>
+        <View style={{flex:1, flexDirection:"row", alignItems:"center", marginTop:20, marginBottom:10}}>
+          <View>
+            <Text style={styles.headerText}>Suggested Groups</Text>
+          </View>
+          <View style={{ alignItems:"flex-start", paddingHorizontal:10}}>
+            <TouchableOpacity
+              onPress={()=>{suggestedGroupsResults.refetch();}}
+            >
+              <FontAwesome name="refresh" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+          <ActivityIndicator size="large"/>
+        </View>
+      </>
     );
-    setSuggestionsData(newData);
+  } else if(error){
+    return(
+      <>
+        <View style={{flex:1, flexDirection:"row", alignItems:"center", marginTop:20, marginBottom:10}}>
+          <View>
+            <Text style={styles.headerText}>Suggested Groups</Text>
+          </View>
+          <View style={{ alignItems:"flex-start", paddingHorizontal:10}}>
+            <TouchableOpacity
+              onPress={()=>{suggestedGroupsResults.refetch();}}
+            >
+              <FontAwesome name="refresh" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={{flex:1, justifyContent:"center", alignItems:"center", padding:20}}>
+          <Text>Error Loading Suggested Groups</Text>
+        </View>
+      </>
+    )
+  }
 
-    // Remove the item from the list after a delay
-    setTimeout(() => {
-      setSuggestionsData(suggestionsData.filter(item => item.id !== id));
-    }, 1500);
-  };
+  if(!data && data?.getSuggestedGroups?.length==0){
+    return(
+      <>
+        <View style={{flex:1, flexDirection:"row", alignItems:"center", marginTop:20, marginBottom:10}}>
+          <View>
+            <Text style={styles.headerText}>Suggested Groups</Text>
+          </View>
+          <View style={{ alignItems:"flex-start", paddingHorizontal:10}}>
+            <TouchableOpacity
+              onPress={()=>{suggestedGroupsResults.refetch();}}
+            >
+              <FontAwesome name="refresh" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={{flex:1, justifyContent:"center", alignItems:"center", padding:20}}>
+          <Text>No Suggested Groups</Text>
+        </View>
+      </>
+    )
+  }
+
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>Suggested Groups</Text>
-      {suggestionsData.length > 0 ? (
+      <View style={{flex:1, flexDirection:"row", alignItems:"center", marginTop:20, marginBottom:10}}>
+        <View>
+          <Text style={styles.headerText}>Suggested Groups</Text>
+        </View>
+        <View style={{ alignItems:"flex-start", paddingHorizontal:10}}>
+          <TouchableOpacity
+            onPress={()=>{}}
+          >
+            <FontAwesome name="refresh" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
+      </View>
+      {data && data?.getSuggestedGroups?.length > 0 ? (
         <ScrollView style={styles.scrollView} horizontal={true}>
-          {suggestionsData.map(user => (
-            <Card key={user.id} style={styles.card}>
-              <Image source={{ uri: user.headerImg }} style={styles.headerImage} />
+          {data?.getSuggestedGroups.map(group => (
+            <Card key={group.id} style={styles.card}>
+              <Image source={{ uri: group?.cover_photo ?? "" }} style={styles.headerImage} />
               <View style={styles.avatarContainer}>
-                <Avatar.Image size={64} source={{ uri: user.userAvatar }} style={styles.avatar} />
+                <Avatar.Image size={64} source={
+                   group?.profile_pic ? {uri:group?.profile_pic}: DefaultProfile
+                  } style={styles.avatar} />
               </View>
               <View style={styles.userInfo}>
-                <Text style={styles.userName} numberOfLines={1} ellipsizeMode='tail'>{user.name}</Text>
+                <Text style={styles.userName} numberOfLines={1} ellipsizeMode='tail'>{group.groupName}</Text>
               </View>
               <Button
                 mode="outlined"
-                style={[styles.joinButton, user.joined && styles.joinedButton]}
+                style={[styles.joinButton]}
                 labelStyle={styles.joinButtonText}
-                onPress={() => handleJoin(user.id)}
-                disabled={user.joined}
+                onPress={() =>{
+                  handleJoinPoolGroup(group._id);
+                }}
               >
-                {user.joined ? 'Joined' : 'Join'}
+                Join
               </Button>
             </Card>
           ))}
@@ -84,7 +160,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontWeight: 'bold',
     fontSize: 15, 
-    marginHorizontal: 20,
+    marginLeft: 20,
     color: '#404140'
   },
   scrollView: {

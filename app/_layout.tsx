@@ -63,10 +63,10 @@ function RootLayoutNav() {
   return(
     <ApolloProvider client={client}>
       <AuthProvider>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          {/* <PaperProvider> */}
+        <SubscriptionProvider>
+        <PaperProvider>
             <GestureHandlerRootView style={{ flex: 1 }}>
-              <SubscriptionProvider>
+              <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
                 <Stack>
                   <Stack.Screen name="index" />
                   <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -75,11 +75,11 @@ function RootLayoutNav() {
                   <Stack.Screen name="login" />
                   <Stack.Screen name="Signup" />
                 </Stack>
-              </SubscriptionProvider>
+              </ThemeProvider>
             </GestureHandlerRootView>
-          {/* </PaperProvider> */}
-        </ThemeProvider>
-        <Toast/>
+            <Toast/>
+          </PaperProvider>
+        </SubscriptionProvider>
       </AuthProvider>
     </ApolloProvider>
   );

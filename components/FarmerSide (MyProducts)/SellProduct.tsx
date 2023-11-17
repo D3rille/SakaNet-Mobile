@@ -1,8 +1,11 @@
-import React, { useRef } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native';
+//@ts-nocheck
+import React, { useRef, useState } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS } from '../../constants/index';
-//import AddProductSellModal from './Modals/AddProductSell';
+
+import DetailsDialog from "./DetailsDialog";
+import { formatToCurrency } from '../../util/currencyFormatter';
 
 type ProductItem = {
   id: string;
@@ -10,62 +13,57 @@ type ProductItem = {
   image: string;
 };
 
-const products: ProductItem[] = [
-  { id: '1', name: 'Very Long Product Name mahaba mahaba mahaba', image: 'path_to_image' },
-  { id: '2', name: 'Product 2', image: 'path_to_image' },
-  { id: '3', name: 'Product 3', image: 'path_to_image' },
-  { id: '4', name: 'Product 4', image: 'path_to_image' },
-  { id: '5', name: 'Product 5', image: 'path_to_image' },
-  { id: '6', name: 'Product 6', image: 'path_to_image' },
-  { id: '1', name: 'Very Long Product Name mahaba mahaba mahaba', image: 'path_to_image' },
-  { id: '2', name: 'Product 2', image: 'path_to_image' },
-  { id: '3', name: 'Product 3', image: 'path_to_image' },
-  { id: '4', name: 'Product 4', image: 'path_to_image' },
-  { id: '5', name: 'Product 5', image: 'path_to_image' },
-  { id: '6', name: 'Product 6', image: 'path_to_image' },
-];
+// const products: ProductItem[] = [
+//   { id: '1', name: 'Very Long Product Name mahaba mahaba mahaba', image: 'path_to_image' },
+//   { id: '2', name: 'Product 2', image: 'path_to_image' },
+//   { id: '3', name: 'Product 3', image: 'path_to_image' },
+//   { id: '4', name: 'Product 4', image: 'path_to_image' },
+//   { id: '5', name: 'Product 5', image: 'path_to_image' },
+//   { id: '6', name: 'Product 6', image: 'path_to_image' },
+//   { id: '1', name: 'Very Long Product Name mahaba mahaba mahaba', image: 'path_to_image' },
+//   { id: '2', name: 'Product 2', image: 'path_to_image' },
+//   { id: '3', name: 'Product 3', image: 'path_to_image' },
+//   { id: '4', name: 'Product 4', image: 'path_to_image' },
+//   { id: '5', name: 'Product 5', image: 'path_to_image' },
+//   { id: '6', name: 'Product 6', image: 'path_to_image' },
+// ];
 
-const Sell = () => {
+const Sell = ({product}) => {
   const modalRef = useRef(null);
+  const [openDialog, setOpenDialog] = useState("");
 
-  const handleAddPress = () => {
-    if (modalRef.current) {
-      modalRef.current.open();
-    }
-  };
+  const handleOpenDetails = () =>{
+    setOpenDialog("details");
+  }
+ 
 
-  const renderItem = ({ item }: { item: ProductItem }) => (
-    <TouchableOpacity key={item.id} style={styles.card}>
-      <Image
-        source={{ uri: item.image }}
-        style={styles.productImage}
-        resizeMode="cover"
-      />
-      <View style={styles.productNameContainer}>
-        <Text style={styles.productName} numberOfLines={2}>
-          {item.name}
-        </Text>
+  if(product){
+    return (
+      <View style={{marginHorizontal:10}}>
+        {openDialog == "details" && (<DetailsDialog product={product} visible={Boolean(openDialog)} setVisibility={setOpenDialog}/>)}
+        <TouchableOpacity 
+        key={product?._id} 
+        style={styles.card}
+        onPress={()=>{handleOpenDetails()}}
+        >
+          <Image
+            source={{ uri: product?.photo ? product.photo : product.item.photo }}
+            style={styles.productImage}
+            resizeMode="cover"
+          />
+          <View style={styles.productNameContainer}>
+            <Text style={styles.productName} numberOfLines={2}>
+            {product.item.tagalogName ? `${product.item.tagalogName} | `:""}{product.item.englishName} 
+            </Text>
+            <Text variant="labelSmall" style={{paddingBottom:5}}>
+              {formatToCurrency(product.price)}
+            </Text>
+          </View>
+        </TouchableOpacity>
       </View>
-    </TouchableOpacity>
-  );
+    );
+  }
 
-  return (
-    <View style={{ flex: 1 }}>
-      <FlatList
-        data={products}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        numColumns={2}
-        columnWrapperStyle={styles.cardContainer}
-      />
-
-      <TouchableOpacity style={styles.addIconContainer} onPress={handleAddPress}>
-        <Icon name="add-outline" size={50} color='white' />
-      </TouchableOpacity>
-
-      {/*<AddProductSellModal ref={modalRef} /> */}
-    </View>
-  );
 };
 
 const styles = StyleSheet.create({
@@ -77,7 +75,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: '#FFFFFF',
-    width: '47%',
+    width: 160,
     marginVertical: 8,
     borderRadius: 15,
     shadowColor: '#000',

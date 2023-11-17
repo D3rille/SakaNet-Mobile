@@ -1,4 +1,5 @@
-import React, { useRef } from 'react';
+//@ts-nocheck
+import React, { useRef, useState, useEffect } from 'react';
 import { Dimensions, TouchableOpacity, View, Animated, StyleSheet, Platform } from 'react-native';
 import { Tabs } from "expo-router";
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
@@ -7,13 +8,21 @@ import {Badge} from "react-native-paper";
 import { useMutation } from '@apollo/client';
 
 import { useSubs } from '../../context/subscriptionProvider';
+import { useAuth } from '../../context/auth';
 import { READ_ALL_NOTIF, GET_NOTIFICATIONS } from '../../graphql/operations/notification';
+import { SubscriptionProvider } from '../../context/subscriptionProvider';
 
 type IconName = string;
 
 const TabLayout = () => {
   const tabOffsetValue = useRef(new Animated.Value(0)).current;
-  const {newNotifCount} = useSubs();
+  const {newNotifCount:notifCount} = useSubs();
+  const {user} = useAuth();
+  const [newNotifCount, setNewNotifCount] = useState(0);
+
+  useEffect(()=>{
+    setNewNotifCount(notifCount);
+  },[notifCount]);
 
   const [readAllNotif] = useMutation(READ_ALL_NOTIF, {
     refetchQueries:[GET_NOTIFICATIONS]
@@ -42,11 +51,46 @@ const TabLayout = () => {
           case 'Menu':
             iconName = 'grid';
             break;
+          case 'MyProducts':
+            iconName = "store"
+            break;
         }
 
         if (route.name === 'Products') {
           return (
-            <TouchableOpacity onPress={() => navigation.navigate('Products')}>
+            <TouchableOpacity onPress={() => {
+              if(user?.role == "FARMER"){
+                navigation.navigate('MyProducts');
+              } else if(user?.role == "BUYER"){
+                navigation.navigate('Products');
+              }
+            }
+            }>
+              <View style={{
+                width: 55,
+                height: 55,
+                backgroundColor: focused ? COLORS.green : 'gray',
+                borderRadius: 30,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: Platform.OS === "android" ? 30 : 10,
+              }}>
+                <FontAwesome5 name={iconName} size={22} color='white' />
+              </View>
+            </TouchableOpacity>
+          );
+        }
+
+        if (route.name === 'MyProducts') {
+          return (
+            <TouchableOpacity onPress={() => {
+              if(user?.role == "FARMER"){
+                navigation.navigate('MyProducts');
+              } else if(user?.role == "BUYER"){
+                navigation.navigate('Products');
+              }
+            }
+            }>
               <View style={{
                 width: 55,
                 height: 55,
@@ -113,6 +157,11 @@ const TabLayout = () => {
       <Tabs.Screen name="Menu"
       options={{
           headerShown: false }} />
+          
+      <Tabs.Screen name="MyProducts"
+      options={{
+          headerShown:false,
+          href: null }} />
 
     </Tabs>
   );
@@ -127,5 +176,8 @@ function getWidth() {
 const styles = StyleSheet.create({
   // Add your custom styles here if needed
 });
+
+
+
 
 export default TabLayout;

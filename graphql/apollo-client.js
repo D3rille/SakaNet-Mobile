@@ -29,6 +29,7 @@ const authLink = setContext(async (_, { headers }) => {
 
 const wsLink =  new GraphQLWsLink(createClient({
   url: 'ws://192.168.1.228:4000/graphql/subscriptions',
+  reconnect:true
 }));
 
 // The split function takes three parameters:
