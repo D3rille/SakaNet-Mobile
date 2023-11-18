@@ -10,6 +10,7 @@ import { COLORS, SIZES } from '../../../constants/index';
 import { Stack, useRouter, Link } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons'; 
 import { useQuery, useLazyQuery } from '@apollo/client';
+import Toast from 'react-native-toast-message';
 
 import MyProductsHeader from '../../../components/FarmerSide (MyProducts)/MyProductsHeader';
 import { GET_MY_PRODUCTS, SEARCH_MY_PRODUCTS } from '../../../graphql/operations/product';
@@ -192,6 +193,11 @@ const Product = () => {
             onPress={()=>{
               if(currentPage != totalPages){
                 setCurrentPage(currentPage + 1);
+              }else if(currentPage == totalPages){
+                Toast.show({
+                  type: 'info',
+                  text1: 'You have reached the end.'
+                });
               }
             }}
           >
@@ -201,14 +207,14 @@ const Product = () => {
       </View>)}
 
       {/* Add Product Floating Button */}
-      <Link href={"/addProduct/"} asChild>
-        <FAB
-          icon="plus"
-          style={styles.fab}
-          color="white"
-          // onPress={() => {}}
-        />
-      </Link>
+      
+      <FAB
+        icon="plus"
+        style={styles.fab}
+        color="white"
+        onPress={() => {router.push("(tabs)/MyProducts/addProduct/")}}
+      />
+    
 
       {/* Bottom Sheet */}
       <OpenClosedBottomSheet ref={bottomSheetRef} status={status} setStatus={setStatus}/>

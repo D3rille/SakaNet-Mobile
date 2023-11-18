@@ -68,11 +68,11 @@ function RootLayoutNav() {
             <GestureHandlerRootView style={{ flex: 1 }}>
               <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
                 <Stack>
-                  <Stack.Screen name="index" />
+                  <Stack.Screen name="index" options={{headerShown:false}}/>
                   <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                   <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
                   <Stack.Screen name="paper" />
-                  <Stack.Screen name="login" />
+                  <Stack.Screen name="login" options={{headerShown:false}}/>
                   <Stack.Screen name="Signup" />
                 </Stack>
               </ThemeProvider>

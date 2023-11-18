@@ -1,7 +1,7 @@
 //@ts-nocheck
 import React, { useRef, useState, useEffect } from 'react';
 import { Dimensions, TouchableOpacity, View, Animated, StyleSheet, Platform } from 'react-native';
-import { Tabs } from "expo-router";
+import { Tabs, router } from "expo-router";
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../../constants/index';
 import {Badge} from "react-native-paper";
@@ -17,8 +17,9 @@ type IconName = string;
 const TabLayout = () => {
   const tabOffsetValue = useRef(new Animated.Value(0)).current;
   const {newNotifCount:notifCount} = useSubs();
-  const {user} = useAuth();
+  const {user, isLoaded} = useAuth();
   const [newNotifCount, setNewNotifCount] = useState(0);
+  const [prodRoute, setProdRoute] = useState("Products");
 
   useEffect(()=>{
     setNewNotifCount(notifCount);
@@ -27,6 +28,12 @@ const TabLayout = () => {
   const [readAllNotif] = useMutation(READ_ALL_NOTIF, {
     refetchQueries:[GET_NOTIFICATIONS]
   });
+
+  useEffect(()=>{
+    if(isLoaded && user?.role == "FARMER"){
+      setProdRoute("MyProducts")
+    }
+  },[user, prodRoute, isLoaded]);
 
 
   return (
@@ -56,14 +63,15 @@ const TabLayout = () => {
             break;
         }
 
-        if (route.name === 'Products') {
+        if (route.name === "Products") {
           return (
             <TouchableOpacity onPress={() => {
-              if(user?.role == "FARMER"){
-                navigation.navigate('MyProducts');
-              } else if(user?.role == "BUYER"){
-                navigation.navigate('Products');
-              }
+              router.push("/(tabs)/Products/");
+              // if(user?.role == "FARMER"){
+              //   navigation.navigate('MyProducts');
+              // } else if(user?.role == "BUYER"){
+              //   navigation.navigate('Products');
+              // }
             }
             }>
               <View style={{
@@ -81,14 +89,15 @@ const TabLayout = () => {
           );
         }
 
-        if (route.name === 'MyProducts') {
+        if (route.name === "MyProducts") {
           return (
             <TouchableOpacity onPress={() => {
-              if(user?.role == "FARMER"){
-                navigation.navigate('MyProducts');
-              } else if(user?.role == "BUYER"){
-                navigation.navigate('Products');
-              }
+              router.push("/(tabs)/MyProducts/");
+              // if(user?.role == "FARMER"){
+              //   navigation.navigate('MyProducts');
+              // } else if(user?.role == "BUYER"){
+              //   navigation.navigate('Products');
+              // }
             }
             }>
               <View style={{
@@ -148,9 +157,11 @@ const TabLayout = () => {
       <Tabs.Screen name="Messages" 
       options={{
           headerShown: false }} />
-      <Tabs.Screen name="Products"
-      options={{
-          headerShown: false }} />
+
+      <Tabs.Screen name={prodRoute == "Products" ? "Products" : "MyProducts"}
+          options={{
+              headerShown: false }} />
+
       <Tabs.Screen name="Notifications"
       options={{
           headerShown: false }} />
@@ -158,7 +169,7 @@ const TabLayout = () => {
       options={{
           headerShown: false }} />
           
-      <Tabs.Screen name="MyProducts"
+      <Tabs.Screen name={prodRoute == "Products" ? "MyProducts":"Products"}
       options={{
           headerShown:false,
           href: null }} />

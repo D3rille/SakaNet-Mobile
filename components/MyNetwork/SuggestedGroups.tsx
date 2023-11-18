@@ -8,6 +8,7 @@ import Toast from 'react-native-toast-message';
 import { useMutation } from '@apollo/client';
 
 import DefaultProfile from "../../assets/images/default_profile.jpg";
+import DefaultCover from "../../assets/images/default_cover.png";
 import { JOIN_POOL_GROUP, GET_SUGGESTED_GROUPS } from '../../graphql/operations/poolGroup';
 
 const SuggestedGroups = ({suggestedGroupsResults}) => {
@@ -121,8 +122,10 @@ const SuggestedGroups = ({suggestedGroupsResults}) => {
       {data && data?.getSuggestedGroups?.length > 0 ? (
         <ScrollView style={styles.scrollView} horizontal={true}>
           {data?.getSuggestedGroups.map(group => (
-            <Card key={group.id} style={styles.card}>
-              <Image source={{ uri: group?.cover_photo ?? "" }} style={styles.headerImage} />
+            <Card key={group._id} style={styles.card}>
+              <Image source={
+                group?.cover_photo ? {uri:group?.cover_photo}: DefaultCover
+                } style={styles.headerImage} />
               <View style={styles.avatarContainer}>
                 <Avatar.Image size={64} source={
                    group?.profile_pic ? {uri:group?.profile_pic}: DefaultProfile

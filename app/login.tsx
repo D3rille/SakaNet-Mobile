@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useState, useEffect, useContext } from "react";
 import {
   StyleSheet,
@@ -15,17 +16,30 @@ import { Title, Caption, Checkbox, Button } from "react-native-paper";
 import Icon from "react-native-vector-icons/Ionicons";
 import { LOGIN_USER } from "../graphql/operations/auth";
 import { useMutation } from "@apollo/client";
-import { AuthContext } from "../context/auth";
+import { AuthContext, useAuth } from "../context/auth";
 import Toast from 'react-native-toast-message'; // Import the toast library'
 import { router, useRouter, Redirect } from "expo-router";
 
 
 export default function Login() {
   // const router = useRouter();
+  const {user, isLoaded} = useAuth();
   const [isPasswordVisible, setPasswordVisible] = useState(false);
   const [password, setPassword] = useState("");
   const [loginCred, setLoginCred] = useState('');
   const context = useContext(AuthContext);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(()=>{
+    if(isLoggedIn && isLoaded && user){
+      if(user?.role == "FARMER"){
+        router.replace("(tabs)/MyProducts/");
+      } else if(user?.role == "BUYER"){
+        router.replace("(tabs)/Products/");
+      }
+    }
+
+  },[isLoggedIn, user, isLoaded])
 
   const [logUser, { loading }] = useMutation(LOGIN_USER, {
     update(proxy, {data:{login:userData}}){
@@ -40,7 +54,13 @@ export default function Login() {
         text1: 'Success',
         text2: 'Login successful!',
       });
-      router.replace("/Products/")
+
+      setIsLoggedIn(true);
+      // if(user?.role == "FARMER"){
+      //   router.replace("(tabs)/MyProducts/")
+      // } else if(user?.role == "BUYER"){
+      //   router.replace("(tabs)/Products/")
+      // }
     
 
 

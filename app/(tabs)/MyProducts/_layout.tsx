@@ -13,6 +13,14 @@ const StackLayout = () => {
                 // header: () => <MyProductsHeader />
               }}
             />
+            <Stack.Screen 
+              name="addProduct" 
+              options={{
+                headerShown: true,
+                headerTitle: "Select a Product"
+                // header: () => <MyProductsHeader />
+              }}
+            />
         </Stack>
     );
 };

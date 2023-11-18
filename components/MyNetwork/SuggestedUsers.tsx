@@ -5,6 +5,7 @@ import { Card, Button, Avatar, IconButton, ActivityIndicator } from 'react-nativ
 import { FontAwesome } from '@expo/vector-icons';
 
 import DefaultProfile from "../../assets/images/default_profile.jpg";
+import DefaultCover from "../../assets/images/default_cover.png";
 import { formatShortAddress } from '../../util/addresssUtils';
 
 const Suggestions = ({requestConnection, suggestedUsersResults}) => {
@@ -107,7 +108,9 @@ const Suggestions = ({requestConnection, suggestedUsersResults}) => {
         <ScrollView style={styles.scrollView} horizontal={true}>
           {data?.getSuggestedUsers.map((user:any, index:number) => (
             <Card key={user._id} style={styles.card}>
-              <Image source={{ uri: user?.headerImg ?? ""}} style={styles.headerImage} />
+              <Image source={
+                user?.cover_photo ? {uri:user?.cover_photo}: DefaultCover
+                } style={styles.headerImage} />
               <View style={styles.avatarContainer}>
                 <Avatar.Image size={64} source={
                   user?.profile_pic ? {uri:user?.profile_pic}: DefaultProfile
