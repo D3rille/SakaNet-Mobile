@@ -21,7 +21,7 @@ const MessagesLayout = () => {
                     }}
                 />
                 <Stack.Screen name="ChatConversation" component={ChatConversation}      
-                options={{headerShown: false }} />
+                options={{headerShown: false, }} />
                 <Stack.Screen name="ChatDetails" component={ChatDetails} />
             </Stack.Navigator>
         </NavigationContainer>

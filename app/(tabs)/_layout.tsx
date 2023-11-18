@@ -3,9 +3,12 @@ import { Dimensions, TouchableOpacity, View, Animated, StyleSheet, Platform, Key
 import { Tabs } from "expo-router";
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../../constants/index';
+import { useTabBarVisibility } from '../TabBarContext';
 
 const TabLayout = () => {
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  const { isTabBarVisible } = useTabBarVisibility();
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -25,7 +28,7 @@ const TabLayout = () => {
 
   const tabBarStyle = {
     ...styles.tabBar,
-    bottom: keyboardVisible ? -90 : 0,
+    bottom: isTabBarVisible && !keyboardVisible ? 0 : -90,
   };
 
   return (

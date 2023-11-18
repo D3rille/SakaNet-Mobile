@@ -1,23 +1,22 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { View, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { COLORS } from '../../../constants/index';
+import NewMessageModal from '../../../components/Messages/NewMessageModal'; 
 import ChatsListHeader from '../../../components/Messages/ChatsListHeader';
 import ChatItems from '../../../components/Messages/ChatItems';
-import Icon from 'react-native-vector-icons/Ionicons'; 
-import { COLORS } from '../../../constants/index'; 
-import { useNavigation } from 'expo-router';
+import { BottomSheetMethods } from '../../../components/Messages/BottomSheetScrollView'; 
 
 const Messages = () => {
-    const navigation = useNavigation();
+    const newMessageModalRef = useRef<BottomSheetMethods>(null);
 
     const handleAddPress = () => {
-        console.log('Add new message');
- 
+        newMessageModalRef.current?.expand();
     };
 
     return (
         <View style={styles.container}> 
-            <ChatsListHeader /> 
-
+            <ChatsListHeader />
             <View style={styles.cardContainer}>
                 <ChatItems />
             </View>
@@ -27,10 +26,11 @@ const Messages = () => {
                 onPress={handleAddPress}>
                 <Icon name="add-outline" size={50} color='white' />
             </TouchableOpacity>
+
+            <NewMessageModal ref={newMessageModalRef} />
         </View>
     );
 }
-
 const screenHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({

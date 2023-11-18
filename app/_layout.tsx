@@ -12,6 +12,7 @@ import { ApolloProvider } from "@apollo/client";
 import Toast from 'react-native-toast-message';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import CustomHeader from '../constants/CustomHeader'; 
+import { TabBarProvider } from './TabBarContext';
 
 
 import Sample from './sample';
@@ -52,7 +53,9 @@ export default function RootLayout() {
 
   return (
     // <ApolloProvider client={client}>
+    <TabBarProvider>
       <RootLayoutNav />
+      </TabBarProvider>
     // </ApolloProvider>
   );
 }
