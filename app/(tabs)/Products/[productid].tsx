@@ -1,9 +1,9 @@
  // @ts-nocheck
 import React, { useContext, useState, useRef, useMemo, useCallback } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, Button, TextInput, ScrollView} from 'react-native';
+import { View, Text, SafeAreaView, StyleSheet, TextInput, ScrollView, TouchableOpacity} from 'react-native';
 import {GET_AVAILABLE_PRODUCTS, GET_SUGGESTED_PRODUCT} from '../../../graphql/operations/product';
 import { useQuery, useLazyQuery} from '@apollo/client';
-import { ActivityIndicator, MD2Colors } from 'react-native-paper';
+import { ActivityIndicator, MD2Colors, Button } from 'react-native-paper';
 import { AuthContext } from '../../../context/auth';
 import {Picker} from '@react-native-picker/picker';
 import { useLocalSearchParams } from 'expo-router';
@@ -11,6 +11,8 @@ import SuggestedProducts from '../../../components/MarketProducts/SuggestedProdu
 import AvailableProducts from '../../../components/MarketProducts/AvailableProducts';
 import FilterBottomSheet from '../../../components/MarketProducts/FilterBottomSheet';
 import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { COLORS, SIZES } from '../../../constants/index';
+import Icon from 'react-native-vector-icons/Ionicons';
 
  
  export default function App() {
@@ -65,7 +67,6 @@ import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
           productData = data.getAvailableProducts.product;
         } else if (productsSortBy === "suggested" && data.getSuggestedProducts) {
           productData = data.getSuggestedProducts.product;
-          console.log(productData)
         } 
       }
   
@@ -78,13 +79,23 @@ import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
     console.log(newFilters)
   };
     
+  const getButtonStyle = (buttonStatus: StatusType) => ({
+    ...styles.toggleButton,
+    backgroundColor: productsType === buttonStatus ? COLORS.orange : 'transparent',
+  });
+
+  const getTextStyle = (buttonStatus: StatusType) => ({
+    color: productsType === buttonStatus ? 'white' : COLORS.orange,
+    fontSize: SIZES.small,
+  });
 
 
    return (
      <SafeAreaView style={styles.container}> 
-     <View>
+     <View  style={styles.headerContainer}>
          <Picker
              selectedValue={productsSortBy}
+             style={styles.picker}
              onValueChange={(itemValue, itemIndex) => {
                  setProductsSortBy(itemValue);
              }}
@@ -92,27 +103,30 @@ import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
              <Picker.Item label="Available Seller" value="available" />
              <Picker.Item label="Suggested Seller" value="suggested" />
          </Picker>
-         <Button
-          title="Filter"
-          onPress={handleSnapPress}
-          />
+      
+          <TouchableOpacity style={styles.sortBtn} onPress={handleSnapPress}>
+            <Icon name="filter" size={30} color={'white'} />
+          </TouchableOpacity>
           </View>
-     <View style={styles.buttonContainer}>
-         <View style={{ flex: 1 }}>
-             <Button
-             title="Order"
-             onPress={() => setProductsType("Sell")}
-             color={productsType === "Sell" ? '#007BFF' : '#333'}
-             />
-         </View>
-         <View style={{ flex: 1 }}>
-             <Button
-             title="Pre-Order"
-             onPress={() => setProductsType('Pre-Sell')}
-             color={productsType === 'Pre-Sell' ? '#007BFF' : '#333'}
-             />
-         </View>
-         </View>
+  
+          <View style={styles.toggleContainer}>
+            <Button
+              compact
+              onPress={() => setProductsType('Sell')}
+              style={getButtonStyle('Sell')}
+              labelStyle={getTextStyle('Sell')}
+            >
+              Order
+            </Button>
+            <Button
+              compact
+              onPress={() => setProductsType('Pre-Sell')}
+              style={getButtonStyle('Pre-Sell')}
+              labelStyle={getTextStyle('Pre-Sell')}
+            >
+              Pre-Order
+            </Button>
+          </View>
          
          {productsSortBy === 'suggested' && productData ? (
           <SuggestedProducts product={productData} productId={productId} />
@@ -138,21 +152,39 @@ import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
      paddingBottom: 100,
    },
  
-   header: {
-     fontSize: 20,
-     fontWeight: 'bold',
-     textAlign: 'center',
-     margin: 5,
-   },
-   userInfoContainer: {
-    flexDirection: 'row', // This places the avatar and user info side by side
-    alignItems: 'center', // This centers them vertically
+   headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
   },
-
-
-   buttonContainer: {
-     flexDirection: 'row',
-     justifyContent: 'center',
-   },
+  picker: {
+    flex: 1,
+    height: 40, // Adjust the height as needed
+  },
+  toggleContainer: {
+    marginHorizontal: 25,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginVertical: 20,
+    borderWidth: 1,
+    borderColor: COLORS.orange,
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  toggleButton: {
+    borderRadius: 20,
+    flex: 1,
+    margin: 0,
+  },
+  sortBtn: {
+    width: 45,
+    height: 45,
+    backgroundColor: COLORS.orange,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    marginLeft: 10,
+  },
  });
  

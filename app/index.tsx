@@ -134,7 +134,7 @@ export default function Login() {
 
             <View style={styles.buttonContainer}>
               <TouchableOpacity style={styles.loginButton}>
-                <Text style={styles.loginButtonText}  onPress={handleLogin}>Login</Text>
+                <Text style={styles.loginButtonText}  onPress={()=> handleLogin()}>Login</Text>
               </TouchableOpacity>
               <View style={styles.loginContainer}>
                 <Text>Don't have an account yet?</Text>

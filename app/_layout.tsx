@@ -1,3 +1,4 @@
+//@ts-nocheck
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
@@ -9,7 +10,7 @@ import client from "../graphql/apollo-client";
 // import {ApolloWrapper} from "../graphql/apollo-client";
 import {AuthProvider} from "../context/auth";
 import { ApolloProvider } from "@apollo/client";
-import Toast from 'react-native-toast-message';
+import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import CustomHeader from '../constants/CustomHeader'; 
 
@@ -57,6 +58,44 @@ export default function RootLayout() {
   );
 }
 
+const toastConfig = {
+  /*
+    Overwrite 'success' type,
+    by modifying the existing `BaseToast` component
+  */
+  success: (props) => (
+    <BaseToast
+      {...props}
+      style={{ borderLeftColor: 'green', height: "100%", padding: 10}}
+      contentContainerStyle={{ paddingHorizontal: 5,}}
+      text1Style={{
+        fontSize: 12,
+        fontWeight: '400'
+      }}
+
+    />
+  ),
+
+  error: (props) => (
+    <ErrorToast
+      {...props}
+      style={{ borderLeftColor: 'red', height: "100%", padding: 10}}
+
+      text1Style={{
+        fontSize: 12
+      }}
+      contentContainerStyle={{ paddingHorizontal: 15}}
+      
+
+      text1NumberOfLines={10}
+
+      text2Style={{
+        fontSize: 10
+      }}
+    />
+  ),
+ 
+};
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
@@ -80,7 +119,7 @@ function RootLayoutNav() {
               </Stack>
             </ThemeProvider>
             </GestureHandlerRootView>
-            <Toast/>
+            <Toast  config={toastConfig}/>
           </AuthProvider>
       </ApolloProvider>
 

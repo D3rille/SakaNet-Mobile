@@ -7,7 +7,7 @@ import { useQuery, useLazyQuery, useMutation } from '@apollo/client';
 import { GET_PRODUCT } from '../../graphql/operations/product';
 import { PLACE_ORDER} from '../../graphql/operations/product'
 import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev";
-
+import Toast from 'react-native-toast-message';
 
 
 const PurchaseDialog = ({ modalVisible, hide, selectedProduct, placeOrder, placeOrderLoading, placeOrderError}) => {
@@ -72,7 +72,6 @@ const PurchaseDialog = ({ modalVisible, hide, selectedProduct, placeOrder, place
       onRequestClose={hide}
       propagateSwipe={true}
     >
-
       <Button title="Cancel" onPress={hide} />
 
       <ScrollView>
@@ -208,8 +207,8 @@ const PurchaseDialog = ({ modalVisible, hide, selectedProduct, placeOrder, place
 
           </Card>
         </View>
-
       </ScrollView>
+      <Toast/>
 
     </Modal>
       ):null

@@ -1,16 +1,17 @@
-
- // @ts-nocheck
+// @ts-nocheck
 import React, { useContext, useState } from 'react';
-import { View, Text, SafeAreaView, StyleSheet, Button, TextInput } from 'react-native';
+import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { Card } from 'react-native-paper';
 import {GET_ALL_MARKET_PRODUCTS, GET_AVAILABLE_MARKET_PRODUCTS, SEARCH_ALL_PRODUCT, SEARCH_AVAILABLE_PRODUCT } from '../../../graphql/operations/product';
-import { Searchbar } from 'react-native-paper';
-import AvailableMarketProducts from '../../../components/MarketProducts/AvailableMarketProducts';
-import AllMarketProducts from '../../../components/MarketProducts/AllMarketProducts';
+import { Searchbar, Button } from 'react-native-paper';
+// import AvailableMarketProducts from '../../../components/MarketProducts/AvailableMarketProducts';
+import MarketProducts from '../../../components/MarketProducts/MarketProducts';
 import { useQuery, useLazyQuery } from '@apollo/client';
 import { ActivityIndicator, MD2Colors } from 'react-native-paper';
 import { AuthContext } from '../../../context/auth';
 import {Picker} from '@react-native-picker/picker';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { COLORS, SIZES } from '../../../constants/index';
 
 
 const Products = () => {
@@ -18,7 +19,7 @@ const Products = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setCategory] = useState('');
   const { user } = useContext(AuthContext);
-
+  console.log(searchQuery)
   const { loading, error, data } = useQuery(
     activeComponent === "available"
       ? GET_AVAILABLE_MARKET_PRODUCTS
@@ -27,7 +28,7 @@ const Products = () => {
       variables: {
         type: selectedCategory,
         // limit:(searchFocus && searchQuery)?136:10,
-        limit: 5,
+        limit: 6,
         page: 1,
       },
     }
@@ -37,7 +38,6 @@ const Products = () => {
   {
     setSearchQuery(query);
     searchProduct();
-
   };
 
   
@@ -64,6 +64,8 @@ const Products = () => {
           if (searchQuery && searchData) {
             productData = searchData.searchAvailableMarketProduct;
             totalProduct = productData.length;
+            console.log("Searched", productData)
+
           } else {
             productData = data.getAvailableMarketProducts.product;
             totalProduct = data?.getAvailableMarketProducts.totalProduct;
@@ -72,6 +74,7 @@ const Products = () => {
           if (searchQuery && searchData) {
             productData = searchData.searchAllMarketProduct;
             totalProduct = productData.length;
+            console.log("Searched", productData)
           } else {
             productData = data.getAllMarketProducts.product;
             totalProduct = data?.getAllMarketProducts.totalProduct;
@@ -83,24 +86,36 @@ const Products = () => {
         }
       }
      
-      
+      const getButtonStyle = (buttonStatus) => ({
+        ...styles.toggleButton,
+        backgroundColor: activeComponent === buttonStatus ? COLORS.orange : 'transparent',
+      });
+    
+      const getTextStyle = (buttonStatus) => ({
+        color: activeComponent === buttonStatus ? 'white' : COLORS.orange,
+        fontSize: SIZES.small,
+      });
+    
 
   return (
     <SafeAreaView style={styles.container}>
-        <Text style={styles.header}>Market Products</Text>
-
-        <View style={styles.searchAndSelect}>
-            <Searchbar
-                placeholder="Search"
-                onChangeText={onChangeSearch}
-                value={searchQuery}
-                />
+        <View style={styles.searchAndSortSection}>
+          <View style={styles.searchContainer}>
+          <Icon name="search" size={25} style={{ marginLeft: 20 }} />
+          <TextInput placeholder="Search" style={styles.input} 
+             onChangeText={onChangeSearch}
+          />
         </View>
-        <Picker
+        
+      </View>
+      {/* Picker  */}
+      <View>
+      <Picker
             selectedValue={selectedCategory}
             onValueChange={(itemValue, itemIndex) => {
                 setCategory(itemValue);
             }}
+            style={styles.picker}
             >
             <Picker.Item label="All" value="" />
             <Picker.Item label="Cereals" value="Cereals" />
@@ -114,26 +129,29 @@ const Products = () => {
             <Picker.Item label="Cut Flowers" value="Cutflowers" />
             <Picker.Item label="Livestock and Poultry (Backyard)" value="Livestock and Poultry (Backyard)" />
         </Picker>
-    <View style={styles.buttonContainer}>
-        <View style={{ flex: 1 }}>
-            <Button
-            title="All"
-            onPress={() => setActiveComponent('all')}
-            color={activeComponent === 'all' ? '#007BFF' : '#333'}
-            />
-        </View>
-        <View style={{ flex: 1 }}>
-            <Button
-            title="Available"
-            onPress={() => setActiveComponent('available')}
-            color={activeComponent === 'available' ? '#007BFF' : '#333'}
-            />
-        </View>
-        </View>
-            <Card>
-                {activeComponent === 'available' && <AvailableMarketProducts  products={productData}/>}
-                {activeComponent === 'all' && <AllMarketProducts  products={productData} />}
-            </Card>
+      </View>
+
+      <View style={styles.toggleContainer}>
+        <Button
+          compact
+          onPress={() => setActiveComponent('all')}
+          style={getButtonStyle('all')}
+          labelStyle={getTextStyle('all')}
+        >
+          All
+        </Button>
+        <Button
+          compact
+          onPress={() => setActiveComponent('available')}
+          style={getButtonStyle('available')}
+          labelStyle={getTextStyle('available')}
+        >
+          Available
+        </Button>
+      </View>
+
+      <MarketProducts  products={productData} />
+
     </SafeAreaView>
   );
 }
@@ -141,37 +159,58 @@ const Products = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ecf0f1',
-    padding: 8,
-    paddingBottom: 100,
+    backgroundColor: COLORS.pageBg,
   },
-
-  header: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    margin: 5,
+  searchAndSortSection: {
+    marginTop: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 20,
   },
-
-  searchAndSelect: {
-    justifyContent: 'space-between',
-    padding: 8,
-    margin: 5,
-  },
-  searchInput: {
+  searchContainer: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    padding: 8,
-    fontSize: 16, 
-    minHeight: 40, 
-    marginBottom: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    marginRight: 10,
   },
-  buttonContainer: {
+  input: {
+    flex: 1,
+    height: 40,
+    padding: 10,
+  },
+  sortBtn: {
+    width: 45,
+    height: 45,
+    backgroundColor: COLORS.orange,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    marginLeft: 10,
+  },
+  toggleContainer: {
+    marginHorizontal: 25,
     flexDirection: 'row',
     justifyContent: 'center',
+    marginVertical: 5,
+    borderWidth: 1,
+    borderColor: COLORS.orange,
+    borderRadius: 20,
+    overflow: 'hidden',
   },
+  toggleButton: {
+    borderRadius: 20,
+    flex: 1,
+    margin: 0,
+  },
+  picker: {
+    marginHorizontal: 25,
+  },
+
 });
 
 export default Products;
+
+
+

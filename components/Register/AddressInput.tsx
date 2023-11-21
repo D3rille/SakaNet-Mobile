@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useState } from 'react';
 import {
   View, TextInput, StyleSheet, SafeAreaView,
@@ -5,10 +6,45 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { RadioButton, Text } from 'react-native-paper';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
-const AddressInputs = () => {
+const AddressInputs = ({handleSubmit, handleInputChange, userData, goBack}) => {
   const [userType, setUserType] = useState('farmer');
+  const placeAddresCompoponent = {
+    REGION: 'administrative_area_level_1',
+    MUNICPALITY: 'locality',
+    BARANGAY: 'sublocality_level_1',
+    AREA: 'sublocality_level_2',
+    STREET: 'route',
+    PROVINCE: 'administrative_area_level_2',
+  }
 
+
+//Google Place Auto Complete (Quick Search Back-end)
+  function getAddressComponent(address_components, key) {
+    const value = address_components
+      .filter(aComp => aComp.types.includes(key))
+      .map(item => item.long_name)
+      .join(', ');
+    return value;
+  }
+
+  const updateUserDataWithAddress = (details) => {
+    if (details && details.address_components) {
+      const addressComponent = details.address_components;
+      const street = getAddressComponent(addressComponent, placeAddresCompoponent.STREET);
+      const barangay = getAddressComponent(addressComponent, placeAddresCompoponent.BARANGAY);
+      const cityOrMunicipality = getAddressComponent(addressComponent, placeAddresCompoponent.MUNICPALITY);
+      const region = getAddressComponent(addressComponent, placeAddresCompoponent.REGION);
+      const province =  getAddressComponent(addressComponent, placeAddresCompoponent.PROVINCE);
+      handleInputChange('address.street', street);
+      handleInputChange('address.barangay', barangay);
+      handleInputChange('address.cityOrMunicipality',  cityOrMunicipality);
+      handleInputChange('address.region', region);
+      handleInputChange('address.province', province);
+    }
+  };
+  
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -17,23 +53,51 @@ const AddressInputs = () => {
     >
       <SafeAreaView style={styles.container}>
         <Image
-          source={require("../assets/images/wave-bg.png")}
+          source={require("../../assets/images/wave-bg.png")}
           style={styles.backgroundImage}
         />
-        <ScrollView contentContainerStyle={styles.contentContainer}>
+        <ScrollView contentContainerStyle={styles.contentContainer} keyboardShouldPersistTaps='always'>
           <View style={styles.header}>
             <Image
-              source={require("../assets/images/LOGO-FINAL.png")}
+              source={require("../../assets/images/LOGO-FINAL.png")}
               style={styles.logo}
             />
           </View>
           <View style={styles.inputContainer}>
-            <AddressInput placeholder="Quick Search" />
-            <AddressInput placeholder="Street" />
-            <AddressInput placeholder="Barangay" />
-            <AddressInput placeholder="City/Municipality" />
-            <AddressInput placeholder="Province" />
-            <AddressInput placeholder="Region" />
+          
+            {/* Google Autocomplete */}
+            <View style={styles.inputWrapper}>
+              <GooglePlacesAutocomplete
+                placeholder="Quick Search"
+                minLength={2}
+                returnKeyType={'default'}
+                fetchDetails={true}
+                disableScroll={true}
+                listViewDisplayed={false}
+                onPress={(data, details = null) => {
+                  updateUserDataWithAddress(details);
+                }}
+                query={{
+                  key: 'AIzaSyAdcZcD7Nq7CitMFBFAGBrLlOGtetZCcVg',
+                  language: 'en',
+                  components: "country:ph",
+                }}
+                styles={{
+                  
+                  textInput: {
+                    paddingVertical: 10,
+                  },
+                  predefinedPlacesDescription: {
+                    color: "#1faadb",
+                  },
+                }}
+              />
+            </View>
+            <AddressInput placeholder="Street" type="street" handleInputChange={handleInputChange} userData={userData.address.street} />
+            <AddressInput placeholder="Barangay" type="barangay" handleInputChange={handleInputChange} userData={userData.address.barangay}  />
+            <AddressInput placeholder="City/Municipality" type="cityOrMunicipality" handleInputChange={handleInputChange} userData={userData.address.cityOrMunicipality}  />
+            <AddressInput placeholder="Province" type="province" handleInputChange={handleInputChange} userData={userData.address.province}  />
+            <AddressInput placeholder="Region" type="region" handleInputChange={handleInputChange} userData={userData.address.region}  />
           </View>
           <View style={styles.radioButtonContainer}>
             <Text style={styles.userTypeText}>Select User Type: </Text>
@@ -42,7 +106,9 @@ const AddressInputs = () => {
                 <RadioButton
                   value="farmer"
                   status={userType === 'farmer' ? 'checked' : 'unchecked'}
-                  onPress={() => setUserType('farmer')}
+                  onPress={() =>  {handleInputChange("role", "farmer"); setUserType("FARMER")}
+                    
+                  }
                   color="#2E603A"
                 />
                 <Text>Farmer</Text>
@@ -51,7 +117,7 @@ const AddressInputs = () => {
                 <RadioButton
                   value="buyer"
                   status={userType === 'buyer' ? 'checked' : 'unchecked'}
-                  onPress={() => setUserType('buyer')}
+                  onPress={() => {handleInputChange("role", "buyer") ; setUserType("BUYER")}}
                   color="#2E603A"
                 />
                 <Text>Buyer</Text>
@@ -59,11 +125,11 @@ const AddressInputs = () => {
             </View>
           </View>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.nextButton}>
+            <TouchableOpacity style={styles.nextButton} onPress={handleSubmit}>
               <Text style={styles.nextButtonText}>Sign Up</Text>
             </TouchableOpacity>
             
-            <TouchableOpacity style={styles.goBackButton}>
+            <TouchableOpacity style={styles.goBackButton} onPress={goBack}>
               <Text style={styles.goBackButtonText}>Go Back</Text>
             </TouchableOpacity>
           </View>
@@ -73,11 +139,13 @@ const AddressInputs = () => {
   );
 };
 
-const AddressInput = ({ placeholder }: { placeholder: string }) => (
+const AddressInput = ({ placeholder, handleInputChange, type, userData }) => (
   <View style={styles.inputWrapper}>
     <TextInput
       style={styles.input}
       placeholder={placeholder}
+      onChangeText={(text) => handleInputChange(`address.${type}`, text)}
+      value={userData}
     />
   </View>
 );
@@ -103,7 +171,9 @@ const styles = StyleSheet.create({
     marginTop:10
   },
   inputContainer: {
+    flex: 1,
     paddingHorizontal: 15,
+    justifyContent: "space-between",
     alignItems: "center",
     paddingBottom: 20,
   },
