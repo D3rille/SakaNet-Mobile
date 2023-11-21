@@ -1,26 +1,28 @@
 import React, { useState } from 'react';
-import { View, Image, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Image, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import client from "../graphql/apollo-client";
 
-import { useAuth } from '../context/auth';
-import {router} from "expo-router";
+function ChatsListHeader() {
+  const [searchQuery, setSearchQuery] = useState('');
 
-function CustomHeader() {
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const {logout} = useAuth();
+  const onKebabPress = () => {
+    console.log('Kebab icon pressed'); 
+  };
+
   return (
     <View style={styles.headerContainer}>
       <Image
-        source={require("../assets/images/LOGO-ONLY-FINAL.png")}
+        source={require("../../assets/images/Chats.png")}
         style={styles.logo}
       />
+      <Text style={styles.title}>Chats</Text>
+
       <View style={styles.searchSection}>
         <Ionicons name="search-outline" size={20} color="gray" style={styles.searchIcon} />
         <TextInput
           style={styles.input}
           placeholder="Search"
-          onChangeText={(text: string) => setSearchQuery(text)}
+          onChangeText={(text) => setSearchQuery(text)}
           value={searchQuery}
         />
         {searchQuery ? (
@@ -33,16 +35,10 @@ function CustomHeader() {
           />
         ) : null}
       </View>
-          {/* Temporary logout button */}
-          <TouchableOpacity
-          onPress={()=>{
-            logout();
-            client.clearStore();
-            router.replace("/login");
-          }}
-          >
-            <Ionicons name="cart" size={24} color="#2E603A" style={styles.notificationIcon} />
-          </TouchableOpacity>
+
+      <TouchableOpacity onPress={onKebabPress}>
+        <Ionicons name="ellipsis-vertical" size={20} color="gray" style={styles.icon} />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -68,6 +64,12 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     marginRight: 10,
     marginTop: 20,
+  },
+  title: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    marginRight: 10,
+    marginTop: 25,
   },
   searchSection: {
     flexDirection: 'row',
@@ -95,11 +97,11 @@ const styles = StyleSheet.create({
   clearIcon: {
     padding: 5,
   },
-  notificationIcon: {
+  icon: {
     padding: 5,
-    fontSize:30,
-    marginTop:25,
+    fontSize: 30,
+    marginTop: 25,
   },
 });
 
-export default CustomHeader;
+export default  ChatsListHeader;

@@ -12,3 +12,16 @@ export function formatWideAddress(address){
 
     return formattedAddress;
 }
+
+export function formatShortAddress(address){
+    if(!address){
+        return "";
+    }
+    const { cityOrMunicipality, province } = address;
+    var formattedAddress = "";
+
+    if(cityOrMunicipality){formattedAddress += `${cityOrMunicipality}, `;}
+    if(province){formattedAddress += `${province}`;}
+
+    return formattedAddress;
+}

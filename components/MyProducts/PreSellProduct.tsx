@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS } from '../../constants/index';
-//import AddProductSellModal from './Modals/AddProductSell';
+//import AddProductPreSellModal from './Modals/AddProductPreSell';
 
 type ProductItem = {
   id: string;
@@ -25,7 +25,7 @@ const products: ProductItem[] = [
   { id: '6', name: 'Product 6', image: 'path_to_image' },
 ];
 
-const Sell = () => {
+const PreSell = () => {
   const modalRef = useRef(null);
 
   const handleAddPress = () => {
@@ -59,11 +59,11 @@ const Sell = () => {
         columnWrapperStyle={styles.cardContainer}
       />
 
-      <TouchableOpacity style={styles.addIconContainer} onPress={handleAddPress}>
+      {/* <TouchableOpacity style={styles.addIconContainer} onPress={handleAddPress}>
         <Icon name="add-outline" size={50} color='white' />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
-      {/*<AddProductSellModal ref={modalRef} /> */}
+     {/* <AddProductPreSellModal ref={modalRef} /> */}
     </View>
   );
 };
@@ -126,4 +126,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Sell;
+export default PreSell;

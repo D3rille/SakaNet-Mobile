@@ -12,10 +12,11 @@ import {AuthProvider} from "../context/auth";
 import { ApolloProvider } from "@apollo/client";
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import CustomHeader from '../constants/CustomHeader'; 
+import CustomHeader from '../constants/CustomHeader';
+import { PaperProvider } from 'react-native-paper';
+import {SubscriptionProvider} from "../context/subscriptionProvider"; 
 
 
-import Sample from './sample';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -31,6 +32,7 @@ export {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const colorScheme = useColorScheme();
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/Poppins-Regular.ttf'),
     ...FontAwesome.font,
@@ -52,9 +54,8 @@ export default function RootLayout() {
   }
 
   return (
-    // <ApolloProvider client={client}>
+    
       <RootLayoutNav />
-    // </ApolloProvider>
   );
 }
 
@@ -100,31 +101,27 @@ const toastConfig = {
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
   return(
-      <ApolloProvider client={client}>
-        <AuthProvider>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-              <Stack>
-                <Stack.Screen 
-                  name="index" 
-                  options={{
-                      headerShown: false,
-                      header: () => <CustomHeader />
-                      }}
-            />
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-                <Stack.Screen name="paper" />
-                <Stack.Screen name="Signup" options={{ headerShown: false }} />
-              </Stack>
-            </ThemeProvider>
+    <ApolloProvider client={client}>
+      <AuthProvider>
+        <SubscriptionProvider>
+        <PaperProvider>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+                <Stack>
+                  <Stack.Screen name="index" options={{headerShown:false}}/>
+                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                  <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+                  <Stack.Screen name="paper" />
+                  <Stack.Screen name="login" options={{headerShown:false}}/>
+                  <Stack.Screen name="Signup" />
+                </Stack>
+              </ThemeProvider>
             </GestureHandlerRootView>
             <Toast  config={toastConfig}/>
-          </AuthProvider>
-      </ApolloProvider>
-
-    
-  
+          </PaperProvider>
+        </SubscriptionProvider>
+      </AuthProvider>
+    </ApolloProvider>
   );
 }
 

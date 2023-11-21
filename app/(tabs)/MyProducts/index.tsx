@@ -1,38 +1,101 @@
-import React, { useState, useRef } from 'react';
-import { View, StyleSheet, TextInput, TouchableOpacity, Text } from 'react-native';
-import { Button } from 'react-native-paper';
+//@ts-nocheck
+import React, { useState, useRef, useEffect } from 'react';
+import { View, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
+import { Button, FAB, Dialog, Portal, Text, ActivityIndicator } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
-import SellProducts from '../../../components/FarmerSide (MyProducts)/SellProduct';
-import PreSellProducts from '../../../components/FarmerSide (MyProducts)/PreSellProduct';
-import OpenClosedBottomSheet from '../../../components/FarmerSide (MyProducts)/OpenClosedBottomSheet'; 
+import SellProducts from '../../../components/MyProducts/SellProduct';
+import PreSellProducts from '../../../components/MyProducts/PreSellProduct';
+import OpenClosedBottomSheet from '../../../components/MyProducts/OpenClosedBottomSheet'; 
 import { COLORS, SIZES } from '../../../constants/index';
+import { Stack, useRouter, Link } from 'expo-router';
+import { AntDesign } from '@expo/vector-icons'; 
+import { useQuery, useLazyQuery } from '@apollo/client';
+import Toast from 'react-native-toast-message';
+
+import MyProductsHeader from '../../../components/MyProducts/MyProductsHeader';
+import { GET_MY_PRODUCTS, SEARCH_MY_PRODUCTS } from '../../../graphql/operations/product';
 
 // If status can only be 'sell' or 'presell'
-type StatusType = 'sell' | 'presell';
+type CategoryType = 'sell' | 'presell';
 
 const Product = () => {
-  const [status, setStatus] = useState<StatusType>('sell');
+  const router = useRouter();
+  const [status, setStatus] = useState<CategoryType>('open'); // open, closed
+  const [category, setCategory] = useState("Sell"); // Sell, Pre-Sell
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [filter, setFilter] = useState("");
+  const [searchFocus, setSearchFocus] = useState(false);
+
+  const [productData,  setProductData] = useState({});
+  const [totalProduct, setTotalProduct] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const { loading, error, data } = useQuery(
+    GET_MY_PRODUCTS,
+    {
+      variables: {
+        category:category,
+        limit:8,
+        page:currentPage,
+        status:status
+      },
+    }
+  );
+
+  const [
+    searchProduct,
+    { data: searchData, error: searchError, loading: searchLoading },
+  ] = useLazyQuery(
+    SEARCH_MY_PRODUCTS,
+    {
+      variables: {
+        category:category,
+        status:status,
+        searchInput: filter,
+      },
+    }
+  );
+
+
+  useEffect(()=>{
+    if (filter && searchData) {
+      setProductData(searchData.searchMyProducts);
+      setTotalProduct(productData.length);
+    } else if(data && !loading){
+      setProductData(data.getMyProducts.product);
+      setTotalProduct(data?.getMyProducts.totalProduct);
+    }
+
+    setTotalPages(Math.ceil(totalProduct / 10));
+
+  }, [data, loading, searchData, searchLoading, filter, totalProduct])
   
   // Define the type for the ref
   const bottomSheetRef = useRef<{ open: () => void }>(null);
 
-  const getButtonStyle = (buttonStatus: StatusType) => ({
+  const getButtonStyle = (buttonStatus: CategoryType) => ({
     ...styles.toggleButton,
-    backgroundColor: status === buttonStatus ? COLORS.orange : 'transparent',
+    backgroundColor: category === buttonStatus ? COLORS.orange : 'transparent',
   });
 
-  const getTextStyle = (buttonStatus: StatusType) => ({
-    color: status === buttonStatus ? 'white' : COLORS.orange,
+  const getTextStyle = (buttonStatus: CategoryType) => ({
+    color: category === buttonStatus ? 'white' : COLORS.orange,
     fontSize: SIZES.small,
   });
 
-  const renderProductList = () => {
-    if (status === 'sell') {
-      return <SellProducts />;
-    } else if (status === 'presell') {
-      return <PreSellProducts />;
-    }
-  };
+
+  
+  // const renderProductList = () => {
+  //   if (category === 'sell') {
+  //     return <SellProducts />;
+  //   } else if (category === 'presell') {
+  //     return <PreSellProducts />;
+  //   }
+  // };
+  const handleFilterChange = (text:string) =>{
+    setFilter(text);
+  }
 
   const handleSortPress = () => {
     if (bottomSheetRef.current) {
@@ -40,77 +103,134 @@ const Product = () => {
     }
   };
 
+  // const handleOpenDetails = () =>{
+  //   setOpenDialog("details");
+  // }
+
+  // if(loading){
+  //   return(
+  //     <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+  //       <ActivityIndicator size={"large"}/>
+  //     </View>
+  //   );
+  // } else if(error){
+  //   return(
+  //     <View style={{flex:1, justifyContent:"center", alignItems:"center", padding:20}}>
+  //       <Text>Error Loading My Products</Text>
+  //     </View>
+  //   )
+  // }
+
   return (
-    <View style={styles.container}>
-      <View style={styles.searchAndSortSection}>
-        <View style={styles.searchContainer}>
-          <Icon name="search" size={25} style={{ marginLeft: 20 }} />
-          <TextInput placeholder="Search" style={styles.input} />
-        </View>
-        <TouchableOpacity style={styles.sortBtn} onPress={handleSortPress}>
-          <Icon name="filter" size={30} color={'white'} />
-        </TouchableOpacity>
-      </View>
+    
+    <SafeAreaView style={styles.container}>
+
+      <MyProductsHeader 
+      handleSortPress = {handleSortPress}
+      handleFilterChange = {handleFilterChange}
+      setSearchFocus = {setSearchFocus}
+      searchProduct = {searchProduct}
+      />
+
+      {/* {openDialog == "details" && (<DetailsDialog visible={Boolean(openDialog)} setVisibility={setOpenDialog}/>)} */}
 
       <View style={styles.toggleContainer}>
         <Button
           compact
-          onPress={() => setStatus('sell')}
-          style={getButtonStyle('sell')}
-          labelStyle={getTextStyle('sell')}
+          onPress={() => {
+            setCategory('Sell');
+            setCurrentPage(1);
+            setTotalPages(1);
+          }}
+          style={getButtonStyle('Sell')}
+          labelStyle={getTextStyle('Sell')}
         >
           Sell
         </Button>
         <Button
           compact
-          onPress={() => setStatus('presell')}
-          style={getButtonStyle('presell')}
-          labelStyle={getTextStyle('presell')}
+          onPress={() => {
+            setCategory('Pre-Sell');
+            setCurrentPage(1);
+            setTotalPages(1);
+          }}
+          style={getButtonStyle('Pre-Sell')}
+          labelStyle={getTextStyle('Pre-Sell')}
         >
           Pre-sell
         </Button>
       </View>
 
-      {renderProductList()}
+
+      {loading && (<View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+        <ActivityIndicator size={"large"}/>
+      </View>)}
+
+      {error && (<View style={{flex:1, justifyContent:"center", alignItems:"center", padding:20}}>
+        <Text>Error Loading My Products</Text>
+      </View>)}
+
+      {data && !loading && (<ScrollView contentContainerStyle={{flexDirection:"row", flexWrap:"wrap", justifyContent:"space-between"}}>
+        {productData.length > 0 && productData?.map((product)=>(
+            <SellProducts key={product._id} product = {product}/>
+          )
+        )}
+      </ScrollView>)}
+      {/* {renderProductList()} */}
+
+      {/* Pagination */}
+      {!searchFocus && (<View style={{marginVertical:10, alignItems:"center", marginBottom:30}}>
+        <View style={{flexDirection:"row"}}>
+          <TouchableOpacity
+          onPress={()=>{
+            if(currentPage !=1 ){
+              setCurrentPage(currentPage-1);
+            }
+          }}
+          >
+            <AntDesign name="caretleft" size={24} color="black" />
+          </TouchableOpacity>
+          <Text style={{marginHorizontal:20}}>{currentPage}</Text>
+          <TouchableOpacity
+            onPress={()=>{
+              if(currentPage != totalPages){
+                setCurrentPage(currentPage + 1);
+              }else if(currentPage == totalPages){
+                Toast.show({
+                  type: 'info',
+                  text1: 'You have reached the end.'
+                });
+              }
+            }}
+          >
+            <AntDesign name="caretright" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
+      </View>)}
+
+      {/* Add Product Floating Button */}
+      
+      <FAB
+        icon="plus"
+        style={styles.fab}
+        color="white"
+        onPress={() => {router.push("(tabs)/MyProducts/addProduct/")}}
+      />
+    
 
       {/* Bottom Sheet */}
-      <OpenClosedBottomSheet ref={bottomSheetRef} />
-    </View>
+      <OpenClosedBottomSheet ref={bottomSheetRef} status={status} setStatus={setStatus}/>
+    </SafeAreaView>
   );
+  if(data && !loading){
+  }
+
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.pageBg,
-  },
-  searchAndSortSection: {
-    marginTop: 50,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 20,
-  },
-  searchContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    borderRadius: 10,
-    marginRight: 10,
-  },
-  input: {
-    flex: 1,
-    height: 40,
-    padding: 10,
-  },
-  sortBtn: {
-    width: 45,
-    height: 45,
-    backgroundColor: COLORS.orange,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10,
-    marginLeft: 10,
   },
   toggleContainer: {
     marginHorizontal: 25,
@@ -126,6 +246,13 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     flex: 1,
     margin: 0,
+  },
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0,
+    backgroundColor:COLORS.orange
   },
   // ... other styles you might have
 });
