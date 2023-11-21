@@ -1,9 +1,9 @@
 import { Stack } from 'expo-router';
 import CustomHeader from '../../../constants/CustomHeader'; 
 
-import MyProductsHeader from "../../../components/FarmerSide (MyProducts)/MyProductsHeader";
+import MyProductsHeader from "../../../components/MyProducts/MyProductsHeader";
 
-const StackLayout = () => {
+const MyProductsStack = () => {
     return (
         <Stack>
             <Stack.Screen 
@@ -25,4 +25,4 @@ const StackLayout = () => {
     );
 };
 
-export default StackLayout;
+export default MyProductsStack;

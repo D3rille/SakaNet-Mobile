@@ -15,7 +15,7 @@ import {
   GET_MARKET_PRODUCT, SEARCH_MY_PRODUCTS, GET_MY_PRODUCTS
 } from "../../../graphql/operations/product";
 import { formatToCurrency } from '../../../util/currencyFormatter';
-import AddProductBottomSheet from '../../../components/FarmerSide (MyProducts)/AddProductBottomSheet';
+import AddProductBottomSheet from '../../../components/MyProducts/AddProductBottomSheet';
 
 // type ProductItem = {
 //   id: string;

@@ -7,6 +7,9 @@ const MyProductsHeader = ({handleSortPress, handleFilterChange, setSearchFocus})
   return (
     <View style={{paddingVertical:10}}>
       <View style={styles.searchAndSortSection}>
+        {/* <TouchableOpacity style={styles.sortBtn} onPress={(event)=>{}}>
+          <Icon name="search" size={30} color={'white'} />
+        </TouchableOpacity> */}
         <View style={styles.searchContainer}>
           <Icon name="search" size={25} style={{ marginLeft: 20 }} />
           <TextInput 

@@ -11,15 +11,33 @@ import { useSubs } from '../../context/subscriptionProvider';
 import { useAuth } from '../../context/auth';
 import { READ_ALL_NOTIF, GET_NOTIFICATIONS } from '../../graphql/operations/notification';
 import { SubscriptionProvider } from '../../context/subscriptionProvider';
+import { useSegments } from 'expo-router';
+
 
 type IconName = string;
 
 const TabLayout = () => {
+  const segment = useSegments();
   const tabOffsetValue = useRef(new Animated.Value(0)).current;
   const {newNotifCount:notifCount} = useSubs();
   const {user, isLoaded} = useAuth();
   const [newNotifCount, setNewNotifCount] = useState(0);
   const [prodRoute, setProdRoute] = useState("Products");
+
+  const noTabRoutes = ["ChatConversation", "addProduct"];
+  //to check if segment needs to hide bottom nav
+  const checkForNoTabRoutes = () =>{
+    let included = false;
+    for (let index = 0; index < segment.length; index++) {
+      if(noTabRoutes.includes(segment[index])){
+        included = true;
+      } else{
+        included = false;
+      }
+    }
+    return included;
+  }
+
 
   useEffect(()=>{
     setNewNotifCount(notifCount);
@@ -135,6 +153,7 @@ const TabLayout = () => {
       tabBarShowLabel: false,
       tabBarStyle: {
         backgroundColor: 'white',
+        display: checkForNoTabRoutes() ? "none":"flex",
         // position: 'absolute',
         // bottom: 40,
         // marginHorizontal: 20,

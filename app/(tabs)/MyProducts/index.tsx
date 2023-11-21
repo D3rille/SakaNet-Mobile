@@ -3,16 +3,16 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, StyleSheet, TextInput, TouchableOpacity, SafeAreaView, ScrollView } from 'react-native';
 import { Button, FAB, Dialog, Portal, Text, ActivityIndicator } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
-import SellProducts from '../../../components/FarmerSide (MyProducts)/SellProduct';
-import PreSellProducts from '../../../components/FarmerSide (MyProducts)/PreSellProduct';
-import OpenClosedBottomSheet from '../../../components/FarmerSide (MyProducts)/OpenClosedBottomSheet'; 
+import SellProducts from '../../../components/MyProducts/SellProduct';
+import PreSellProducts from '../../../components/MyProducts/PreSellProduct';
+import OpenClosedBottomSheet from '../../../components/MyProducts/OpenClosedBottomSheet'; 
 import { COLORS, SIZES } from '../../../constants/index';
 import { Stack, useRouter, Link } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons'; 
 import { useQuery, useLazyQuery } from '@apollo/client';
 import Toast from 'react-native-toast-message';
 
-import MyProductsHeader from '../../../components/FarmerSide (MyProducts)/MyProductsHeader';
+import MyProductsHeader from '../../../components/MyProducts/MyProductsHeader';
 import { GET_MY_PRODUCTS, SEARCH_MY_PRODUCTS } from '../../../graphql/operations/product';
 
 // If status can only be 'sell' or 'presell'
@@ -56,6 +56,7 @@ const Product = () => {
       },
     }
   );
+
 
   useEffect(()=>{
     if (filter && searchData) {
@@ -128,6 +129,7 @@ const Product = () => {
       handleSortPress = {handleSortPress}
       handleFilterChange = {handleFilterChange}
       setSearchFocus = {setSearchFocus}
+      searchProduct = {searchProduct}
       />
 
       {/* {openDialog == "details" && (<DetailsDialog visible={Boolean(openDialog)} setVisibility={setOpenDialog}/>)} */}
