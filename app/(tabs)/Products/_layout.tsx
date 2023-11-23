@@ -6,7 +6,8 @@ const StackLayout = () => {
             <Stack.Screen
                 name="index"
                 options={{
-                    headerTitle: 'Market Products'
+                    headerTitle: 'Market Products',
+                    headerShown:false
                 }}
             />
              <Stack.Screen

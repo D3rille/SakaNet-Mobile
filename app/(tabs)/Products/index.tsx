@@ -99,14 +99,15 @@ const Products = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View style={{paddingVertical:10}}>
         <View style={styles.searchAndSortSection}>
           <View style={styles.searchContainer}>
-          <Icon name="search" size={25} style={{ marginLeft: 20 }} />
-          <TextInput placeholder="Search" style={styles.input} 
-             onChangeText={onChangeSearch}
-          />
+            <Icon name="search" size={25} style={{ marginLeft: 20 }} />
+            <TextInput placeholder="Search" style={styles.input} 
+              onChangeText={onChangeSearch}
+            />
+          </View>
         </View>
-        
       </View>
       {/* Picker  */}
       <View>

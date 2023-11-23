@@ -36,7 +36,7 @@ const AllMarketProducts = ({ products, handleLoadMore }) => {
     <FlatList
       data={products}
       renderItem={renderItem}
-      keyExtractor={product => product.id}
+      keyExtractor={product => product._id}
       numColumns={2}
       columnWrapperStyle={styles.cardContainer}
     />

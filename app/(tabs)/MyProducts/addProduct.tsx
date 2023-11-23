@@ -124,7 +124,7 @@ const AddProduct = () => {
       </ScrollView>)}
 
       {/* Pagination */}
-      {!searchFocus && (<View style={{marginVertical:10, alignItems:"center", marginBottom:30}}>
+      {!searchFocus && !loading &&(<View style={{marginVertical:10, alignItems:"center", marginBottom:30}}>
         <View style={{flexDirection:"row"}}>
           <TouchableOpacity
           onPress={()=>{
@@ -138,7 +138,7 @@ const AddProduct = () => {
           <Text style={{marginHorizontal:20}}>{currentPage}</Text>
           <TouchableOpacity
             onPress={()=>{
-              if(currentPage != totalPages){
+              if(currentPage != totalPages && !loading){
                 setCurrentPage(currentPage + 1);
               } else if(currentPage == totalPages){
                 Toast.show({

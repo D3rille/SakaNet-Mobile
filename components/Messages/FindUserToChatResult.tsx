@@ -7,8 +7,9 @@ import {router} from "expo-router";
 import { useAuth } from '../../context/auth';
 import { timePassed } from '../../util/dateUtils';
 import DefaultProfile from "../../assets/images/default_profile.jpg";
+import { formatWideAddress } from '../../util/addresssUtils';
 
-interface ChatItemProps {
+interface FindUserToChatProps {
     avatar: string;
     name: string;
     message: string;
@@ -23,7 +24,7 @@ const trimText = (text: string, maxLength: number) => {
     return text;
 };
 
-const ChatItem: React.FC<ChatItemProps> = ( {avatar, name, message, time, onPress} ) => {
+const SearchUserItem = ( {avatar, name, address, onPress} ) => {
     return (
         <TouchableOpacity onPress={onPress} style={styles.chatItem}>
             <Image source={
@@ -34,15 +35,14 @@ const ChatItem: React.FC<ChatItemProps> = ( {avatar, name, message, time, onPres
                     {trimText(name, 30)}
                 </Text>
                 <Text style={styles.message} numberOfLines={1}>
-                    {trimText(message, 33)}
+                    {trimText(address, 33)}
                 </Text>
             </View>
-            <Text style={styles.time}>{time}</Text>
         </TouchableOpacity>
     );
 };
 
-const ChatItems = ({data, handleGetMoreConversations}) => {
+const FindUserToChatResult = ({data}) => {
     const {user} = useAuth();
     const navigation = useNavigation();
 
@@ -53,44 +53,19 @@ const ChatItems = ({data, handleGetMoreConversations}) => {
                 <FlatList
                     data={data}
                     renderItem={({item}) =>
-                        <ChatItem
+                        <SearchUserItem
                             key={item._id}
                             avatar={item?.profile_pic}
-                            name={item?.name}
-                            message={item?.lastMessage?.message}
-                            time={timePassed(item?.lastMessage?.createdAt)}
-                            onPress={() => router.push({
-                                pathname:"/(tabs)/Messages/ChatConversation", 
-                                params:{convoId:`${item._id}`, userId:null}
-                            })}
+                            name={item?.username}
+                            address={formatWideAddress(item?.address)}
+                            onPress={() => router.push("/(tabs)/Messages/ChatConversation")}
                             // onPress={() => navigation.navigate('ChatConversation', { name: item.name })}
                         />
                     }
                     keyExtractor={item => item._id}
-                    onEndReachedThreshold={0.1}
-                    onEndReached={()=>handleGetMoreConversations()}
                  />
             </View>
         )
-
-        // return (
-    
-        //     <ScrollView >
-        //         <View style={styles.chatItemsContainer}>
-        //             {data.map((item) => {
-        //                 return(<ChatItem
-        //                     key={item._id}
-        //                     avatar={item?.profile_pic}
-        //                     name={item?.name}
-        //                     message={item?.lastMessage?.message}
-        //                     time={timePassed(item?.lastMessage?.createdAt)}
-        //                      onPress={() => router.push("/(tabs)/Messages/ChatConversation")}
-        //                     // onPress={() => navigation.navigate('ChatConversation', { name: item.name })}
-        //                 />)
-        //             })}
-        //         </View>
-        //     </ScrollView>
-        // );
     }
     
 };
@@ -114,11 +89,11 @@ const styles = StyleSheet.create({
         marginLeft: 10,
     },
     name: {
-        // fontWeight: 'bold',
+        fontWeight: 'bold',
         fontSize: 16,
         overflow: 'hidden',
     },
-    message: {
+    address: {
         color: '#666',
         fontSize: 14,
         overflow: 'hidden',
@@ -134,4 +109,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ChatItems;
+export default FindUserToChatResult;

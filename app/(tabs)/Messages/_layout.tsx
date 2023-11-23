@@ -9,14 +9,14 @@ const MessagesStack = () => {
             <Stack.Screen 
               name="index" 
               options={{
-                headerShown: true,
-                header: () => <ChatsListHeader />
+                headerShown: false,
+                // header: () => <ChatsListHeader />
               }}
             />
             <Stack.Screen 
               name="ChatConversation" 
               options={{
-                headerShown: true,
+                headerShown: false,
                 // header: () => <CustomHeader />
               }}
             />

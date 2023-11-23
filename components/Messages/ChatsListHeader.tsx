@@ -1,13 +1,15 @@
+//@ts-nocheck
 import React, { useState } from 'react';
 import { View, Image, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
-function ChatsListHeader() {
+function ChatsListHeader({findUser, setSearchFocus}) {
   const [searchQuery, setSearchQuery] = useState('');
 
   const onKebabPress = () => {
     console.log('Kebab icon pressed'); 
   };
+
 
   return (
     <View style={styles.headerContainer}>
@@ -22,8 +24,19 @@ function ChatsListHeader() {
         <TextInput
           style={styles.input}
           placeholder="Search"
+          onChange={()=>findUser({
+            variables:{
+                "searchInput":searchQuery,
+            }
+        })}
           onChangeText={(text) => setSearchQuery(text)}
           value={searchQuery}
+          onFocus={()=>setSearchFocus(true)}
+          onBlur={()=>{
+            if(!searchQuery){
+              setSearchFocus(false)
+            }
+          }}
         />
         {searchQuery ? (
           <Ionicons
@@ -31,7 +44,7 @@ function ChatsListHeader() {
             size={20}
             color="gray"
             style={styles.clearIcon}
-            onPress={() => setSearchQuery('')}
+            onPress={() => {setSearchQuery('')}}
           />
         ) : null}
       </View>
@@ -45,6 +58,7 @@ function ChatsListHeader() {
 
 const styles = StyleSheet.create({
   headerContainer: {
+    top:0,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'white',
@@ -57,6 +71,8 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     height: 100,
     paddingHorizontal: 10,
+    paddingVertical:10,
+    zIndex:1
   },
   logo: {
     width: 30, 

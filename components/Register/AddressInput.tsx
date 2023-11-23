@@ -9,7 +9,7 @@ import { RadioButton, Text } from 'react-native-paper';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 const AddressInputs = ({handleSubmit, handleInputChange, userData, goBack}) => {
-  const [userType, setUserType] = useState('farmer');
+  const [userType, setUserType] = useState('FARMER');
   const placeAddresCompoponent = {
     REGION: 'administrative_area_level_1',
     MUNICPALITY: 'locality',
@@ -104,9 +104,9 @@ const AddressInputs = ({handleSubmit, handleInputChange, userData, goBack}) => {
             <View style={styles.radioButtonGroup}>
               <View style={styles.radioButtonItem}>
                 <RadioButton
-                  value="farmer"
-                  status={userType === 'farmer' ? 'checked' : 'unchecked'}
-                  onPress={() =>  {handleInputChange("role", "farmer"); setUserType("FARMER")}
+                  value="FARMER"
+                  status={userType === 'FARMER' ? 'checked' : 'unchecked'}
+                  onPress={() =>  {handleInputChange("role", "FARMER"); setUserType("FARMER")}
                     
                   }
                   color="#2E603A"
@@ -115,9 +115,9 @@ const AddressInputs = ({handleSubmit, handleInputChange, userData, goBack}) => {
               </View>
               <View style={styles.radioButtonItem}>
                 <RadioButton
-                  value="buyer"
-                  status={userType === 'buyer' ? 'checked' : 'unchecked'}
-                  onPress={() => {handleInputChange("role", "buyer") ; setUserType("BUYER")}}
+                  value="BUYER"
+                  status={userType === 'BUYER' ? 'checked' : 'unchecked'}
+                  onPress={() => {handleInputChange("role", "BUYER") ; setUserType("BUYER")}}
                   color="#2E603A"
                 />
                 <Text>Buyer</Text>

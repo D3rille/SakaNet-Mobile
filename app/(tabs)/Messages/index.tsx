@@ -1,31 +1,133 @@
-import React, { useState, useRef } from 'react';
+//@ts-nocheck
+import React, { useState, useRef, useEffect } from 'react';
 import { View, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { FAB, ActivityIndicator } from 'react-native-paper';
+import { useLazyQuery, useQuery } from '@apollo/client';
+import Toast from 'react-native-toast-message';
+
 import { COLORS } from '../../../constants/index';
 import NewMessageModal from '../../../components/Messages/NewMessageModal'; 
 import ChatsListHeader from '../../../components/Messages/ChatsListHeader';
 import ChatItems from '../../../components/Messages/ChatItems';
 import { BottomSheetMethods } from '../../../components/Messages/BottomSheetScrollView'; 
+import {
+    FIND_USER_TO_CHAT, 
+    GET_CONVERSATIONS, 
+    GET_UNREAD_CONVO, 
+    UPDATE_CONVOS
+} from "../../../graphql/operations/chat";
+import { useAuth } from '../../../context/auth';
+import FindUserToChatResult from '../../../components/Messages/FindUserToChatResult';
+
 
 const Messages = () => {
-    const newMessageModalRef = useRef<BottomSheetMethods>(null);
+  const {user} = useAuth();
+  const [numPage, setNumPage] = useState(1);
+  const newMessageModalRef = useRef<BottomSheetMethods>(null);
+  const [searchFocus, setSearchFocus] = useState(false);
 
-    const handleAddPress = () => {
-        newMessageModalRef.current?.expand();
-    };
+  const handleAddPress = () => {
+      newMessageModalRef.current?.expand();
+  };
 
+  const {
+      data:getConvosData, 
+      loading:getConvosLoading, 
+      subscribeToMore:subscribeToMoreConvos, 
+      refetch:refetchConvos,
+      fetchMore:getMoreConversations
+    } = useQuery(GET_CONVERSATIONS,{
+      variables:{
+        limit:10,
+        page:1
+      },
+      onError:(error)=>{
+        Toast.show({
+          type:"error",
+          text1:"Cannot get Conversations."
+        })
+      }
+    });
+  
+    const handleGetMoreConversations = () =>{
+      if(getConvosData?.getConversations?.hasNextPage){
+        getMoreConversations({
+          variables:{
+            limit:10,
+            page: numPage + 1
+          },
+          onCompleted:()=>{
+            setNumPage(numPage + 1);
+          },
+          onError:(error)=>{
+            Toast.show({
+              type:"error",
+              text1:"Something went wrong",
+              text2: error?.message
+            })
+          },
+          updateQuery: (prev, { fetchMoreResult }) => {
+            if (!fetchMoreResult) return prev;
+            return Object.assign({}, prev, {
+              getConversations: {
+                ...prev.getConversations,
+                hasNextPage: fetchMoreResult?.getConversations?.hasNextPage,
+                conversations:[...prev?.getConversations?.conversations, ...fetchMoreResult?.getConversations?.conversations],
+              }
+            });
+            
+          },
+        })
+      }
+    }
+
+    const [findUser, {data:findUserData, loading:findUserLoading}] = useLazyQuery(FIND_USER_TO_CHAT);
+
+    useEffect(()=>{
+      subscribeToMoreConvos({
+        document:UPDATE_CONVOS,
+        variables:{receiverId:user?.id ?? ""},
+        updateQuery:(prev, {subscriptionData})=>{
+          if(!subscriptionData.data) return prev;
+          refetchConvos({
+            variables:{
+              limit:10,
+              page:1
+            },
+            onCompleted:()=>{
+              setNumPage(2);
+            }
+          });
+        }
+      });
+    }, []);
+
+    // console.log(findUserData)
     return (
         <View style={styles.container}> 
-            {/* <ChatsListHeader /> */}
+            <ChatsListHeader findUser={findUser} setSearchFocus={setSearchFocus}/>
             <View style={styles.cardContainer}>
-                <ChatItems />
+                {getConvosLoading && (
+                    <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+                        <ActivityIndicator size="large"/>
+                    </View>
+                )}
+                {getConvosData && !searchFocus && (
+                    <ChatItems data={getConvosData?.getConversations?.conversations} handleGetMoreConversations={handleGetMoreConversations}/>
+                )}
+
+                {findUserData && searchFocus &&(
+                    <FindUserToChatResult data={findUserData?.findUserToChat}/>
+                )}
             </View>
 
-            <TouchableOpacity 
-                style={styles.addIconContainer} 
-                onPress={handleAddPress}>
-                <Icon name="add-outline" size={50} color='white' />
-            </TouchableOpacity>
+            <FAB
+                icon="plus"
+                style={styles.fab}
+                color="white"
+                onPress={handleAddPress}
+            />
 
             <NewMessageModal ref={newMessageModalRef} />
         </View>
@@ -50,23 +152,13 @@ const styles = StyleSheet.create({
         elevation: 4,
         width: '100%',
     },
-    addIconContainer: {
+    fab: {
         position: 'absolute',
-        bottom: 80,
-        right: 20,
-        backgroundColor: COLORS.orange,
-        borderRadius: 30,
-        width: 60,
-        height: 60,
-        justifyContent: 'center',
-        alignItems: 'center',
-        elevation: 4,
-        shadowColor: '#000',
-        shadowOffset: { width: 1, height: 3 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
-        zIndex: 5, 
-    },
+        margin: 16,
+        right: 0,
+        bottom: 0,
+        backgroundColor:COLORS.orange
+      },
 });
 
 export default Messages;

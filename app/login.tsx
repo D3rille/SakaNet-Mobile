@@ -153,12 +153,12 @@ export default function Login() {
             </View>
 
             <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.loginButton}>
-                <Text style={styles.loginButtonText}  onPress={()=> handleLogin()}>Login</Text>
+              <TouchableOpacity style={styles.loginButton} onPress={()=> handleLogin()}>
+                <Text style={styles.loginButtonText}  >Login</Text>
               </TouchableOpacity>
               <View style={styles.loginContainer}>
                 <Text>Don't have an account yet?</Text>
-                <TouchableOpacity onPress={() => router.push("./Signup/")}>
+                <TouchableOpacity onPress={() => router.push("Signup")}>
                   <Text style={styles.loginText}> Sign Up</Text>
                 </TouchableOpacity>
               </View>

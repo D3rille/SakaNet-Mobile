@@ -3,11 +3,11 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import React from 'react';
 import { COLORS, SIZES } from '../../constants/index';
 
-const MyProductsHeader = ({handleSortPress, handleFilterChange, setSearchFocus}) => {
+const MyProductsHeader = ({handleSortPress, handleFilterChange, setSearchFocus, searchProduct}) => {
   return (
     <View style={{paddingVertical:10}}>
       <View style={styles.searchAndSortSection}>
-        {/* <TouchableOpacity style={styles.sortBtn} onPress={(event)=>{}}>
+        {/* <TouchableOpacity style={styles.sortBtn} onPress={(event)=>{searchProduct()}}>
           <Icon name="search" size={30} color={'white'} />
         </TouchableOpacity> */}
         <View style={styles.searchContainer}>
