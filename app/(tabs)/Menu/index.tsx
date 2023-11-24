@@ -4,20 +4,25 @@ import { Appbar, Card, Avatar } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { COLORS } from '../../../constants/index';
-import { useNavigation } from 'expo-router';
+import { useNavigation, router } from 'expo-router';
+
+import { sakanetGreen } from '../../../constants/Colors';
+import { useAuth } from '../../../context/auth';
+import client from '../../../graphql/apollo-client';
 
 const defaultAvatarUri = 'https://via.placeholder.com/150'; 
 const userName = 'Juan Dela Cruz';
 const screenHeight = Dimensions.get('window').height;
 
 const Menu = () => {
-    const navigation = useNavigation();
+    const {logout} = useAuth();
+    // const navigation = useNavigation();
     return (
         <View style={styles.container}>
             <Appbar.Header style={styles.appbar}>
                 <Appbar.Content title="Menu" titleStyle={styles.title}/>
             </Appbar.Header>
-            <Card style={styles.profileCard} onPress={() => navigation.navigate('MyProfile')}>
+            <Card style={styles.profileCard} onPress={() => {}}>
                 <Card.Title
                     title={userName}
                     left={(props) => <Avatar.Image {...props} source={{ uri: defaultAvatarUri }} />}
@@ -27,20 +32,35 @@ const Menu = () => {
             <View style={styles.bottomContainer}>
                 <Card style={styles.bottomCard} onPress={() => console.log('Bottom Card pressed')}>
                 <View style={styles.cardContainer}>
-                <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Settings')}>
+                <TouchableOpacity style={styles.menuItem} onPress={() => router.push("/(tabs)/Menu/Settings")}>
                     <Ionicons name="settings" size={24} color={COLORS.green} />
                     <Text style={styles.menuText}>Settings</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Orders')}>
+                <TouchableOpacity style={styles.menuItem} onPress={() => router.push("/(tabs)/Menu/Orders")}>
                     <Ionicons name="list" size={24} color={COLORS.green} />
                     <Text style={styles.menuText}>Orders</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Groups')}>
+                <TouchableOpacity style={styles.menuItem} onPress={() => router.push("/(tabs)/Menu/Groups")}>
                     <FontAwesome5 name="users" size={20} color={COLORS.green} />
                     <Text style={styles.menuText}>Groups</Text>
                 </TouchableOpacity>
                 </View>
                 </Card>
+            </View>
+            <View style={{marginHorizontal:16, marginVertical:30}}>
+                <TouchableOpacity 
+                    style={{justifyContent:"center", 
+                    backgroundColor:sakanetGreen,  
+                    padding:10, 
+                    borderRadius:5}}
+                    onPress={()=>{
+                        logout();
+                        client.clearStore();
+                        router.replace("/login");
+                      }}
+                >
+                    <Text style={{textAlign:"center", color:"white", fontSize:16}}>Log Out</Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -71,7 +91,9 @@ const styles = StyleSheet.create({
     },
     bottomContainer: {
         flex: 1,
-        justifyContent: 'flex-end',
+        marginHorizontal: 16,
+        marginVertical:20
+        // justifyContent: 'flex-end',
     },
     bottomCard: {
         backgroundColor: '#FCFDFE',
@@ -85,7 +107,8 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.3,
         shadowRadius: 4.65,
-        height: screenHeight / 2.3, 
+        paddingBottom:10
+        // height: screenHeight / 2.3, 
         
     },
         cardContainer: {
@@ -102,7 +125,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         marginHorizontal: 16,
         marginBottom: 10,
-        width: Dimensions.get('window').width - 32,
+        // width: Dimensions.get('window').width - 32,
         marginVertical:5
     },
     menuText: {

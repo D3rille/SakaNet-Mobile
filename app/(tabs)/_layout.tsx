@@ -24,7 +24,7 @@ const TabLayout = () => {
   const [newNotifCount, setNewNotifCount] = useState(0);
   const [prodRoute, setProdRoute] = useState("Products");
 
-  const noTabRoutes = ["ChatConversation", "addProduct"];
+  const noTabRoutes = ["ChatConversation", "addProduct", "Orders"];
   //to check if segment needs to hide bottom nav
   const checkForNoTabRoutes = () =>{
     let included = false;

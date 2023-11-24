@@ -49,6 +49,10 @@ const Messages = () => {
         })
       }
     });
+
+    useEffect(()=>{
+      refetchConvos();
+    },[])
   
     const handleGetMoreConversations = () =>{
       if(getConvosData?.getConversations?.hasNextPage){

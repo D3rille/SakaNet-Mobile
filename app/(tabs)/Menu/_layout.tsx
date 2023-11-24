@@ -8,7 +8,7 @@ const StackLayout = () => {
             <Stack.Screen 
               name="index" 
               options={{
-                headerShown: true,
+                headerShown: false,
                 header: () => <CustomHeader />
               }}
             />

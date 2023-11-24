@@ -3,12 +3,11 @@ import { View, Image, TextInput, StyleSheet, TouchableOpacity } from 'react-nati
 import Ionicons from '@expo/vector-icons/Ionicons';
 import client from "../graphql/apollo-client";
 
-import { useAuth } from '../context/auth';
 import {router} from "expo-router";
 
 function CustomHeader() {
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const {logout} = useAuth();
+
   return (
     <View style={styles.headerContainer}>
       <Image
@@ -35,11 +34,7 @@ function CustomHeader() {
       </View>
           {/* Temporary logout button */}
           <TouchableOpacity
-          onPress={()=>{
-            logout();
-            client.clearStore();
-            router.replace("/login");
-          }}
+          onPress={()=>{}}
           >
             <Ionicons name="cart" size={24} color="#2E603A" style={styles.notificationIcon} />
           </TouchableOpacity>

@@ -1,6 +1,6 @@
-import { View, Text, ScrollView } from 'react-native'
+import { View, ScrollView} from 'react-native'
 import React from 'react'
-import { Dialog, Portal, Text } from 'react-native-paper';
+import { Dialog, Portal, Text, Button } from 'react-native-paper';
 
 const CustomDialog = ({title, message, btnDisplay, callback, visible, setVisible}) => {
 
@@ -25,11 +25,11 @@ const CustomDialog = ({title, message, btnDisplay, callback, visible, setVisible
           </ScrollView>
         </Dialog.ScrollArea>
         <Dialog.Actions>
-          <Button onPress={() => handleClose()}>{buttonDisplay[btnDisplay ?? 0][0]}</Button>
           <Button onPress={() => {
             callback();
             handleClose();
-          }}>{buttonDisplay[btnDisplay ?? 0][1]}</Button>
+          }}>{buttonDisplay[btnDisplay ?? 0][0]}</Button>
+          <Button onPress={() => handleClose()}>{buttonDisplay[btnDisplay ?? 0][1]}</Button>
         </Dialog.Actions>
       </Dialog>
     </Portal>

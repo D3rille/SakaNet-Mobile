@@ -2,11 +2,11 @@ import {useRef, useState} from "react";
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
 import React from 'react'
 
-const HeadTabs = ({handleChangeStatus}) => {
+const HeadTabs = ({setStatus, activeIndex, setActiveIndex}) => {
     const statuses = ["Pending", "Accepted", "For Completion", "Completed"];
     const scrollRef = useRef(null);
     const itemsRef = useRef(statuses);
-    const [activeIndex, setActiveIndex] = useState(0);
+    // const [activeIndex, setActiveIndex] = useState(0);
     
 
     const selectCategory = (index) => {
@@ -43,8 +43,8 @@ const HeadTabs = ({handleChangeStatus}) => {
               key={index}
               style={activeIndex === index ? styles.categoriesBtnActive : styles.categoriesBtn}
               onPress={() => {
-                  handleChangeStatus(status);
-                  selectCategory(index);
+                selectCategory(index);
+                setStatus(status);
                 }}>
               <Text style={activeIndex === index ? styles.categoryTextActive : styles.categoryText}>
                 {status}
