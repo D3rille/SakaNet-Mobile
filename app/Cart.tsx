@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, Image, FlatList } from 'react-native';
 import { FontAwesome5, Ionicons, FontAwesome } from '@expo/vector-icons';
 import { Checkbox } from 'react-native-paper';
 import { COLORS } from '../constants';
 import { useNavigation } from '@react-navigation/native';
-
 
 function MyCart() {
   const navigation = useNavigation();
@@ -12,7 +11,7 @@ function MyCart() {
   const onBackPress = () => {
     navigation.goBack();
   };
-  
+
   const [quantities, setQuantities] = useState({});
   const [selectedItems, setSelectedItems] = useState({});
   const [cartItems, setCartItems] = useState([
@@ -32,6 +31,23 @@ function MyCart() {
       price: '₱30.00',
       imageUrl: 'https://via.placeholder.com/100',
     },
+        {
+      id: 1,
+      seller: 'Farmer 1',
+      productName: 'Product1 long long long long name',
+      details: ['Detail1', 'Detail2'],
+      price: '₱10.00',
+      imageUrl: 'https://via.placeholder.com/100',
+    },
+    {
+      id: 2,
+      seller: 'Farmer 2',
+      productName: 'Product2',
+      details: ['Detail1', 'Detail2'],
+      price: '₱30.00',
+      imageUrl: 'https://via.placeholder.com/100',
+    },
+    
   ]);
 
   const updateQuantity = (id, newQuantity) => {
@@ -61,64 +77,69 @@ function MyCart() {
     }, 0).toFixed(2);
   };
 
+  const renderItem = ({ item }) => (
+    <View key={item.id} style={styles.itemContainer}>
+      <View style={styles.sellerAndPriceContainer}>
+        <View style={styles.sellerContainer}>
+          <FontAwesome5 name="store" size={16} color="black" style={styles.storeIcon} />
+          <Text style={styles.sellerName}>{item.seller}</Text>
+        </View>
+        <Text style={styles.productPrice}>{item.price}</Text>
+      </View>
+      <View style={styles.divider} />
+      <View style={styles.bottomSection}>
+        <Checkbox
+          status={selectedItems[item.id] ? 'checked' : 'unchecked'}
+          onPress={() => toggleItemSelection(item.id, !selectedItems[item.id])}
+          color={COLORS.green}
+          style={styles.checkbox}
+        />
+        <Image source={{ uri: item.imageUrl }} style={styles.productImage} />
+        <View style={styles.productDetails}>
+          <Text style={styles.productName} numberOfLines={2} ellipsizeMode='tail'>
+            {item.productName}
+          </Text>
+          {item.details.map((detail, index) => (
+            <Text key={index} style={styles.detailText}>{detail}</Text>
+          ))}
+        </View>
+        <View style={styles.quantitySelector}>
+          <TouchableOpacity onPress={() => updateQuantity(item.id, (quantities[item.id] || 1) + 1)}>
+            <FontAwesome name="plus-square" size={22} color={COLORS.green} style={styles.iconButton} />
+          </TouchableOpacity>
+          <TextInput
+            style={styles.quantityInput}
+            onChangeText={(text) => updateQuantity(item.id, text)}
+            value={String(quantities[item.id] || 1)}
+            keyboardType="numeric"
+          />
+          <TouchableOpacity onPress={() => updateQuantity(item.id, (quantities[item.id] || 1) - 1)} disabled={quantities[item.id] === 1}>
+            <FontAwesome name="minus-square" size={22} color={quantities[item.id] === 1 ? COLORS.pageBg : '#DFDFDF'} style={styles.iconButton} />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={onBackPress}>
           <Ionicons name="chevron-back-outline" size={24} color="black" />
         </TouchableOpacity>
-
         <Text style={styles.headerText}>My Cart</Text>
         <TouchableOpacity style={styles.deleteButton} onPress={deleteSelectedItems}>
           <Ionicons name="trash-outline" size={22} color="gray" />
         </TouchableOpacity>
       </View>
 
-      <View style={styles.bodyContainer}>
-        {cartItems.map((item) => (
-          <View key={item.id} style={styles.itemContainer}>
-            <View style={styles.sellerAndPriceContainer}>
-              <View style={styles.sellerContainer}>
-                <FontAwesome5 name="store" size={16} color="black" style={styles.storeIcon} />
-                <Text style={styles.sellerName}>{item.seller}</Text>
-              </View>
-              <Text style={styles.productPrice}>{item.price}</Text>
-            </View>
-            <View style={styles.divider} />
-            <View style={styles.bottomSection}>
-              <Checkbox
-                status={selectedItems[item.id] ? 'checked' : 'unchecked'}
-                onPress={() => toggleItemSelection(item.id, !selectedItems[item.id])}
-                color={COLORS.green}
-                style={styles.checkbox}
-              />
-              <Image source={{ uri: item.imageUrl }} style={styles.productImage} />
-              <View style={styles.productDetails}>
-                <Text style={styles.productName} numberOfLines={2} ellipsizeMode='tail'>
-                  {item.productName}
-                </Text>
-                {item.details.map((detail, index) => (
-                  <Text key={index} style={styles.detailText}>{detail}</Text>
-                ))}
-              </View>
-              <View style={styles.quantitySelector}>
-                <TouchableOpacity onPress={() => updateQuantity(item.id, (quantities[item.id] || 1) + 1)}>
-                  <FontAwesome name="plus-square" size={22} color={COLORS.green} style={styles.iconButton} />
-                </TouchableOpacity>
-                <TextInput
-                  style={styles.quantityInput}
-                  onChangeText={(text) => updateQuantity(item.id, text)}
-                  value={String(quantities[item.id] || 1)}
-                  keyboardType="numeric"
-                />
-                <TouchableOpacity onPress={() => updateQuantity(item.id, (quantities[item.id] || 1) - 1)} disabled={quantities[item.id] === 1}>
-                  <FontAwesome name="minus-square" size={22} color={quantities[item.id] === 1 ? COLORS.pageBg : '#DFDFDF'} style={styles.iconButton} />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        ))}
-      </View>
+      <FlatList
+        data={cartItems}
+        renderItem={renderItem}
+        keyExtractor={item => item.id.toString()}
+        contentContainerStyle={styles.bodyContainer}
+        style={{ flex: 1 }}
+      />
 
       <View style={styles.footer}>
         <Text style={styles.totalPrice}>Total: ₱{calculateTotalPrice()}</Text>
@@ -157,12 +178,14 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   bodyContainer: {
-    flex: 1,
+    flexGrow: 1,
+    paddingBottom: 10,
   },
   itemContainer: {
     marginBottom: 20,
     borderRadius: 10,
     marginHorizontal: 15,
+    marginTop:2,
     backgroundColor: '#FFFFFF',
     shadowColor: "#000",
     shadowOffset: {
@@ -223,9 +246,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     flexShrink: 1,
-    lexWrap: 'wrap' 
-},
-
+  },
   detailText: {
     fontSize: 14,
     color: 'gray',
@@ -242,6 +263,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   iconButton: {
+    // Styles for your icon buttons
   },
   footer: {
     flexDirection: 'row',
