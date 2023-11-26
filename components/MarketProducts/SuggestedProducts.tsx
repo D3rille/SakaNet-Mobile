@@ -3,12 +3,15 @@ import React, { useState } from 'react';
 import StarRatingDisplay from 'react-native-star-rating-widget';
 import { View, Text, ScrollView, Image, Button, StyleSheet, Modal } from 'react-native';
 import { router } from 'expo-router';
-import { Card, Avatar } from 'react-native-paper';
+import { Card, Avatar, Text as Txt, Button as Btn } from 'react-native-paper';
 import PurchaseDialog from '../../components/MarketProducts/PurchaseDialog';
+import defaultProfileImage from "../../assets/images/default_profile.jpg";
+import { sakanetGreen } from '../../constants/Colors';
+import {formatWideAddress} from "../../util/addresssUtils";
 
 
-export default function SuggestedProducts({ product, productId }) {
-    const defaultProfileImage = require('../../assets/images/default_profile.jpg');
+export default function SuggestedProducts({ products, productId }) {
+    // const defaultProfileImage = require('../../assets/images/default_profile.jpg');
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const show = (product) => 
@@ -20,16 +23,22 @@ export default function SuggestedProducts({ product, productId }) {
 
     return (
       <View>
-         {product && product.length > 0 && (
+        {products && products.length == 0 && (
+          <View style={{justifyContent:"center"}}>
+            <Txt style={{textAlign:"center", color:"#c5c5c5"}} variant='headlineMedium'>No Products</Txt>
+          </View>
+        )}
+        {products && products.length > 0 && (
         <ScrollView contentContainerStyle={styles.cardContainer}>
-          {product.map((product) => (
+          {products.map((product) => (
             <View key={product._id} style={styles.card}>
               <View style={styles.rowContainer}>
                 <Avatar.Image
-                  source={product.seller.profile_pic
+                  source={product?.seller?.profile_pic
                     ? { uri: product.seller.profile_pic }
                     : defaultProfileImage
                   }
+                  size={50}
                 />
                 <View style={styles.textContainer}>
                   <Text style={styles.name}>{product.seller.name}</Text>
@@ -37,33 +46,38 @@ export default function SuggestedProducts({ product, productId }) {
                     <StarRatingDisplay
                       rating={product.seller.rating}
                       onChange={() => {}}
-                      starSize={20}
+                      starSize={18}
                       gap={0}
                     />
                     <Text>({product.seller.rating})</Text>
                   </View>
                   <Text style={styles.address}>
-                    {product.seller && ` ${product.seller.address.cityOrMunicipality}, ${product.seller.address.province}`}
+                    {formatWideAddress(product?.seller?.address)}
+                    {/* {product.seller && ` ${product.seller.address.cityOrMunicipality}, ${product.seller.address.province}`} */}
                   </Text>
                 </View>
               </View>
               <Image source={{ uri: product.item.photo }} style={styles.image} />
-              <Text style={styles.title}>
-                {product.item.englishName}
-              </Text>
-              <Text style={styles.stock}>
-                Stocks: {product.stocks} {product.unit}
-              </Text>
-              <Text style={styles.stock}>
-                Price: ₱{product.price}/{product.unit}
-              </Text>
-              <Button
-                title="Buy Now"
-                color="#2F603B"
+              <View style={{paddingTop: 5, paddingBottom:10}}>
+                <Text style={styles.title}>
+                    {product.item.englishName}
+                </Text>
+                <Text style={styles.stock}>
+                    Stocks: {product.stocks} {product.unit}
+                </Text>
+                <Text style={styles.stock}>
+                    Price: ₱{product.price}/{product.unit}
+                </Text>
+              </View>
+              <Btn
+                buttonColor={sakanetGreen}
+                textColor='white'
                 onPress={() => {
-                  show(product);
+                  show(product)
                 }}
-              />
+              >
+                Buy Now
+              </Btn>
             </View>
           ))}
         </ScrollView>

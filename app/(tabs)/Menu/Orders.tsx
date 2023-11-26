@@ -24,7 +24,7 @@ const Orders = () => {
     const [status, setStatus] = useState("Pending");
     const [activeIndex, setActiveIndex] = useState(0);
 
-    const {data, loading, error, fetchMore:fetchMoreOrders} = useQuery(GET_ORDERS,{
+    const {data, loading, error, fetchMore:fetchMoreOrders, refetch:refetchOrders} = useQuery(GET_ORDERS,{
         variables:{
             status:status,
             limit: 10,
@@ -35,6 +35,12 @@ const Orders = () => {
         }
     });
 
+    useEffect(()=>{
+      if(data){
+        refetchOrders();
+      }
+    },[data]);
+    
     const handleGetMoreOrders = () =>{
         if(data?.getOrders?.hasNextPage){
           fetchMoreOrders({

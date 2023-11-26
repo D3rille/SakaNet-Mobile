@@ -13,7 +13,9 @@ const StackLayout = () => {
              <Stack.Screen
                 name="[productid]"
                 options={{
-                    headerTitle: 'Products'
+                    headerShown:true,
+                    headerTitle: 'Products',
+                    headerBackVisible:true,
                 }}
             />
         </Stack>

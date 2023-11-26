@@ -2,24 +2,28 @@
 import React, { useContext, useState } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { Card } from 'react-native-paper';
-import {GET_ALL_MARKET_PRODUCTS, GET_AVAILABLE_MARKET_PRODUCTS, SEARCH_ALL_PRODUCT, SEARCH_AVAILABLE_PRODUCT } from '../../../graphql/operations/product';
-import { Searchbar, Button } from 'react-native-paper';
-// import AvailableMarketProducts from '../../../components/MarketProducts/AvailableMarketProducts';
-import MarketProducts from '../../../components/MarketProducts/MarketProducts';
-import { useQuery, useLazyQuery } from '@apollo/client';
+import { Searchbar, Button, Text as Txt } from 'react-native-paper';
 import { ActivityIndicator, MD2Colors } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { AntDesign } from '@expo/vector-icons';
+import Toast from 'react-native-toast-message';
+// import AvailableMarketProducts from '../../../components/MarketProducts/AvailableMarketProducts';
+import {GET_ALL_MARKET_PRODUCTS, GET_AVAILABLE_MARKET_PRODUCTS, SEARCH_ALL_PRODUCT, SEARCH_AVAILABLE_PRODUCT } from '../../../graphql/operations/product';
+import { useQuery, useLazyQuery } from '@apollo/client';
+import MarketProducts from '../../../components/MarketProducts/MarketProducts';
 import { AuthContext } from '../../../context/auth';
 import {Picker} from '@react-native-picker/picker';
-import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS, SIZES } from '../../../constants/index';
+import CustomHeader from '../../../constants/CustomHeader';
 
 
 const Products = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchFocus, setSearchFocus] = useState(false);
   const [activeComponent, setActiveComponent] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setCategory] = useState('');
   const { user } = useContext(AuthContext);
-  console.log(searchQuery)
   const { loading, error, data } = useQuery(
     activeComponent === "available"
       ? GET_AVAILABLE_MARKET_PRODUCTS
@@ -28,8 +32,8 @@ const Products = () => {
       variables: {
         type: selectedCategory,
         // limit:(searchFocus && searchQuery)?136:10,
-        limit: 6,
-        page: 1,
+        limit: 10,
+        page: currentPage,
       },
     }
   );
@@ -40,6 +44,9 @@ const Products = () => {
     searchProduct();
   };
 
+  const onQueryClear = () =>{
+    setSearchQuery("");
+  }
   
   const [searchProduct,{data:searchData, error:searchError, loading:searchLoading}]=useLazyQuery(
     activeComponent === "available"
@@ -59,32 +66,34 @@ const Products = () => {
     
     let productData;
     let totalProduct;
+    let totalPages;
     if (data) {
-        if (activeComponent === "available") {
-          if (searchQuery && searchData) {
-            productData = searchData.searchAvailableMarketProduct;
-            totalProduct = productData.length;
-            console.log("Searched", productData)
+      if (activeComponent === "available") {
+        if (searchQuery && searchData) {
+          productData = searchData.searchAvailableMarketProduct;
+          totalProduct = productData.length;
+          console.log("Searched", productData)
 
-          } else {
-            productData = data.getAvailableMarketProducts.product;
-            totalProduct = data?.getAvailableMarketProducts.totalProduct;
-          }
         } else {
-          if (searchQuery && searchData) {
-            productData = searchData.searchAllMarketProduct;
-            totalProduct = productData.length;
-            console.log("Searched", productData)
-          } else {
-            productData = data.getAllMarketProducts.product;
-            totalProduct = data?.getAllMarketProducts.totalProduct;
-          }
-      
-          const regex = new RegExp(`^${searchQuery}`, 'i');
-          // Add pagination later
-          // const totalPages = Math.ceil(totalProduct / 10);
+          productData = data.getAvailableMarketProducts.product;
+          totalProduct = data?.getAvailableMarketProducts.totalProduct;
         }
+        totalPages = Math.ceil(totalProduct / 10);
+      } else {
+        if (searchQuery && searchData) {
+          productData = searchData.searchAllMarketProduct;
+          totalProduct = productData.length;
+          console.log("Searched", productData)
+        } else {
+          productData = data.getAllMarketProducts.product;
+          totalProduct = data?.getAllMarketProducts.totalProduct;
+        }
+    
+        const regex = new RegExp(`^${searchQuery}`, 'i');
+        // Add pagination later
+        totalPages = Math.ceil(totalProduct / 10);
       }
+  }
      
       const getButtonStyle = (buttonStatus) => ({
         ...styles.toggleButton,
@@ -99,7 +108,7 @@ const Products = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{paddingVertical:10}}>
+      {/* <View style={{paddingVertical:10}}>
         <View style={styles.searchAndSortSection}>
           <View style={styles.searchContainer}>
             <Icon name="search" size={25} style={{ marginLeft: 20 }} />
@@ -108,7 +117,8 @@ const Products = () => {
             />
           </View>
         </View>
-      </View>
+      </View> */}
+      <CustomHeader search ={onChangeSearch} setSearchFocus = {setSearchFocus} query={searchQuery} onClear={onQueryClear}/>
       {/* Picker  */}
       <View>
       <Picker
@@ -150,8 +160,40 @@ const Products = () => {
           Available
         </Button>
       </View>
-
+      {/* Display if data but no result */}
+      {productData && productData.length == 0 && (
+        <View style={{flex:1, justifyContent:"center"}}>
+          <Txt style={{textAlign:"center", color:"#c5c5c5"}} variant='headlineMedium'>No Products</Txt>
+        </View>
+      )}
       <MarketProducts  products={productData} />
+
+      {/* Pagination */}
+      {!searchFocus && productData?.length > 0 && (<View style={{marginVertical:10, alignItems:"center", marginBottom:20}}>
+        <View style={{flexDirection:"row"}}>
+          <TouchableOpacity
+            onPress={()=>{
+              if(currentPage !=1 ){
+                setCurrentPage(currentPage-1);
+              }
+            }}
+            disabled={currentPage == 1}
+          >
+            <AntDesign name="caretleft" size={24} color={currentPage == 1 ? "#c5c5c5" : "black"} />
+          </TouchableOpacity>
+          <Text style={{marginHorizontal:20}}>{currentPage}</Text>
+          <TouchableOpacity
+            onPress={()=>{
+              if(currentPage != totalPages){
+                setCurrentPage(currentPage + 1);
+              }
+            }}
+            disabled={currentPage == totalPages}
+          >
+            <AntDesign name="caretright" size={24} color={currentPage == totalPages ? "#c5c5c5" : "black"} />
+          </TouchableOpacity>
+        </View>
+      </View>)}
 
     </SafeAreaView>
   );

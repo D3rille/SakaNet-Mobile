@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useState } from 'react';
 import { View, Image, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -5,8 +6,8 @@ import client from "../graphql/apollo-client";
 
 import {router} from "expo-router";
 
-function CustomHeader() {
-  const [searchQuery, setSearchQuery] = useState<string>('');
+function CustomHeader({search, setSearchFocus, query, onClear}) {
+  // const [searchQuery, setSearchQuery] = useState<string>('');
 
   return (
     <View style={styles.headerContainer}>
@@ -18,17 +19,21 @@ function CustomHeader() {
         <Ionicons name="search-outline" size={20} color="gray" style={styles.searchIcon} />
         <TextInput
           style={styles.input}
+          value={query}
           placeholder="Search"
-          onChangeText={(text: string) => setSearchQuery(text)}
-          value={searchQuery}
+          onChangeText={search}
+          onFocus={()=>setSearchFocus(true)}
+          onBlur={()=>setSearchFocus(false)}
+          // onChangeText={(text: string) => setSearchQuery(text)}
+          // value={searchQuery}
         />
-        {searchQuery ? (
+        {query ? (
           <Ionicons
             name="close-outline"
             size={20}
             color="gray"
             style={styles.clearIcon}
-            onPress={() => setSearchQuery('')}
+            onPress={onClear}
           />
         ) : null}
       </View>

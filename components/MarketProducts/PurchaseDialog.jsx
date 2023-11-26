@@ -40,7 +40,7 @@ const PurchaseDialog = ({ modalVisible, hide, selectedProduct, placeOrder, place
 
    
     const handleBuyNow = async() => {
-      console.log(contactNumber)
+      // console.log(contactNumber)
       placeOrder({
         variables: {
           order: {
@@ -63,7 +63,7 @@ const PurchaseDialog = ({ modalVisible, hide, selectedProduct, placeOrder, place
     };
   
       if (placeOrderLoading) return  <ActivityIndicator animating={true} color={MD2Colors.red800} />  ;
-      if (placeOrderError) return console.log("Error", error)
+      // if (placeOrderError) return console.log("Error", error)
     return (
       data ? (
     <Modal
@@ -107,27 +107,27 @@ const PurchaseDialog = ({ modalVisible, hide, selectedProduct, placeOrder, place
           </View>
         </View>
 
-        <View style={styles.inputRow}>
-          <TextInput
-                mode="outlined"
-                label="Quantity"
-                placeholder="0"
-                value={quantity.toString()}
-                onChangeText={(text) => parseFloat(setQuantity(text))}
-                keyboardType="number-pad"
-              />
-          <TextInput
-                mode="outlined"
-                label="Contact Number"
-                placeholder="0"
-                value={contactNumber}
-                onChangeText={(text) => setContactNumber(text)}
-              />
+          <View style={styles.inputRow}>
+            <TextInput
+              mode="outlined"
+              label="Quantity"
+              placeholder="0"
+              value={quantity.toString()}
+              onChangeText={(text) => parseFloat(setQuantity(text))}
+              keyboardType="number-pad"
+            />
+            <TextInput
+              mode="outlined"
+              label="Contact Number"
+              placeholder="0"
+              value={contactNumber}
+              onChangeText={(text) => setContactNumber(text)}
+            />
           </View>
 
           <Text>Mode of Payment</Text>
           <View style={styles.radioButtonRow}>
-          <RadioButton.Group onValueChange={newValue => setModeOfPayment(newValue)} value={modeOfPayment}>
+            <RadioButton.Group onValueChange={newValue => setModeOfPayment(newValue)} value={modeOfPayment}>
           <View style={styles.radioButtonRow}>
 
             <View style={styles.radioButtonRow}>
@@ -208,7 +208,6 @@ const PurchaseDialog = ({ modalVisible, hide, selectedProduct, placeOrder, place
           </Card>
         </View>
       </ScrollView>
-      <Toast/>
 
     </Modal>
       ):null

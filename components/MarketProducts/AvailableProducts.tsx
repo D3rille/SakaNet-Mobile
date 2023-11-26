@@ -1,88 +1,118 @@
 //@ts-nocheck
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import StarRatingDisplay from 'react-native-star-rating-widget';
 import { View, Text, ScrollView, Image, Button, StyleSheet, Modal } from 'react-native';
 import { router } from 'expo-router';
-import { Card, Avatar } from 'react-native-paper';
+import { Card, Avatar, Text as Txt, Button as Btn } from 'react-native-paper';
 import PurchaseDialog from '../../components/MarketProducts/PurchaseDialog';
-import { useMutation } from '@apollo/client';
-import {PLACE_ORDER} from '../../graphql/operations/order'
+import { useMutation, useLazyQuery } from '@apollo/client';
+import {PLACE_ORDER, GET_ORDERS} from '../../graphql/operations/order';
+import { GET_PRODUCT } from '../../graphql/operations/product';
+import defaultProfileImage from "../../assets/images/default_profile.jpg";
+import {formatWideAddress} from "../../util/addresssUtils";
+import { sakanetGreen } from '../../constants/Colors';
+import Toast from "react-native-toast-message";
+import PurchaseBottomSheet from './PurhcaseBottomSheet';
 
-export default function AvailableProducts({ product, productId }) {
-    const defaultProfileImage = require('../../assets/images/default_profile.jpg');
+export default function AvailableProducts({ products, productId, setOpenSheet, getProduct}) {
+    // const defaultProfileImage = require('../../assets/images/default_profile.jpg');
     const [modalVisible, setModalVisible] = useState(false);
-    const [selectedProduct, setSelectedProduct] = useState(null);
+    // const [selectedProduct, setSelectedProduct] = useState(null);
 
     const [placeOrder, { loading: placeOrderLoading, error: placeOrderError, data: placeOrderData }] = useMutation(PLACE_ORDER, {
+      // refetchQueries:[GET_ORDERS],
       onError: (error) => {
+        Toast.show({
+          type:"error",
+          text1:error?.message
+        })
         console.log(error.message);
       },
       onCompleted: (data) => {
+        Toast.show({
+          type:"success",
+          text1:"Successfully placed Order"
+        });
         console.log('Order placed successfully:', data);
+        hide();
       },
     });
-    
 
     const show = (product) => 
     {
-      setModalVisible(true);
-      setSelectedProduct(product);
+      // setModalVisible(true);
+      setOpenSheet(true);
+      // setSelectedProduct(product);
+      getProduct({
+        variables:{
+          productId:product?._id
+        }
+      });
 
     };
     const hide = () => setModalVisible(false);
+    // console.log(products[0]?.seller?.profile_pic)
     return (
-      <View>
-        {product && product.length > 0 && ( 
+      <View sytle={{flex:1}}>
+        {products && products.length == 0 && (
+          <View style={{justifyContent:"center"}}>
+            <Txt style={{textAlign:"center", color:"#c5c5c5"}} variant='headlineMedium'>No Products</Txt>
+          </View>
+        )}
         <ScrollView contentContainerStyle={styles.cardContainer}>
-    {product.map((product) => (
+        
+        {products && products.length > 0 && products.map((product) => (
         <View key={product._id} style={styles.card}>
         <View style={styles.rowContainer}>
             <Avatar.Image
-            source={product.seller.profile_pic
-                ? { uri: product.seller.profile_pic }
+            source={product?.seller?.profile_pic
+                ? { uri: product?.seller?.profile_pic }
                 : defaultProfileImage
             }
+            size={50}
             />
             <View style={styles.textContainer}>
-            <Text style={styles.name}>{product.seller.name}</Text>
-            <View style={styles.ratingContainer}>
-                <StarRatingDisplay
-                rating={product.seller.rating}
-                onChange={() => {}}
-                starSize={20}
-                gap={0}
-                />
-                <Text>({product.seller.rating})</Text>
-            </View>
-            <Text style={styles.address}> 
-            {product.seller && ` ${product.seller.address.cityOrMunicipality}, ${product.seller.address.province}`}
-            </Text>
+              <Text style={styles.name}>{product.seller.name}</Text>
+              <Text style={styles.address}> 
+                {formatWideAddress(product?.seller?.address)}
+              </Text>
+              <View style={styles.ratingContainer}>
+                  <StarRatingDisplay
+                  rating={product.seller.rating}
+                  onChange={() => {}}
+                  starSize={18}
+                  gap={0}
+                  />
+                  <Text>({product?.seller.rating})</Text>
+              </View>
             </View>
         </View>
         <Image source={{ uri: product.item.photo }} style={styles.image} />
-        <Text style={styles.title}>
-            {product.item.englishName}
-        </Text>
-        <Text style={styles.stock}>
-            Stocks: {product.stocks} {product.unit}
-        </Text>
-        <Text style={styles.stock}>
-            Price: ₱{product.price}/{product.unit}
-        </Text>
-        <Button
-            title="Buy Now"
-            color="#2F603B"
-            onPress={() => {
+        <View style={{paddingTop: 5, paddingBottom:10}}>
+          <Text style={styles.title}>
+              {product.item.englishName}
+          </Text>
+          <Text style={styles.stock}>
+              Stocks: {product.stocks} {product.unit}
+          </Text>
+          <Text style={styles.stock}>
+              Price: ₱{product.price}/{product.unit}
+          </Text>
+        </View>
+        <Btn
+          buttonColor={sakanetGreen}
+          textColor='white'
+          onPress={() => {
             show(product)
-            }}
-        />
+          }}
+        >
+          Buy Now
+        </Btn>
         </View>
     ))}
     </ScrollView>
-     )}
 
-
-    {selectedProduct && (
+      {/* {selectedProduct && (
             <PurchaseDialog 
             modalVisible={modalVisible} 
             hide={hide} 
@@ -90,9 +120,10 @@ export default function AvailableProducts({ product, productId }) {
             selectedProduct={selectedProduct}
             placeOrderLoading={placeOrderLoading}
             placeOrderError={placeOrderError} />
-        )}</View>
+      )} */}
+    </View>
 
-    );
+  );
   
 }
 

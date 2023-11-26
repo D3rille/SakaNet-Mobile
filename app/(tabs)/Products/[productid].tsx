@@ -1,8 +1,9 @@
  // @ts-nocheck
 import React, { useContext, useState, useRef, useMemo, useCallback } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, TextInput, ScrollView, TouchableOpacity} from 'react-native';
-import {GET_AVAILABLE_PRODUCTS, GET_SUGGESTED_PRODUCT} from '../../../graphql/operations/product';
-import { useQuery, useLazyQuery} from '@apollo/client';
+import {GET_AVAILABLE_PRODUCTS, GET_SUGGESTED_PRODUCT, GET_PRODUCT} from '../../../graphql/operations/product';
+import { PLACE_ORDER } from '../../../graphql/operations/order';
+import { useQuery, useLazyQuery, useMutation} from '@apollo/client';
 import { ActivityIndicator, MD2Colors, Button } from 'react-native-paper';
 import { AuthContext } from '../../../context/auth';
 import {Picker} from '@react-native-picker/picker';
@@ -13,12 +14,16 @@ import FilterBottomSheet from '../../../components/MarketProducts/FilterBottomSh
 import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { COLORS, SIZES } from '../../../constants/index';
 import Icon from 'react-native-vector-icons/Ionicons';
+import PurchaseBottomSheet from '../../../components/MarketProducts/PurhcaseBottomSheet';
+import Toast from 'react-native-toast-message';
 
  
  export default function App() {
    const { user } = useContext(AuthContext);
+   const [openSheet, setOpenSheet] = useState(false);
    const [productsType, setProductsType] = useState("Sell"); // Order or Preorder
    const [productsSortBy, setProductsSortBy] = useState("available"); // Available or Suggested Products
+  //  const [selectedProduct, setSelectedProduct] = useState(null);
    const [filters, setFilters] = useState({
     modeOfDelivery: "",
     area_limit: "",
@@ -28,9 +33,14 @@ import Icon from 'react-native-vector-icons/Ionicons';
   });
 
 
+  const [getProduct, { data:DialogData, loading:DialogLoading, error:DialogError }] = useLazyQuery(GET_PRODUCT, {
+    onError: (error) => {
+      console.log(error.message);
+    },
+  });
+
   const local = useLocalSearchParams(); //Product ID from Dynamic Route
   const productId = local.id
-  const [bottomSheetVisible, setBottomSheetVisible] = useState(false); //Toggle BottomSheet
   const sheetRef = useRef<BottomSheetModal>(null); //Bottom sheet Reference
 
   const snapPoints = useMemo(() => [ "60%", "100%"], []);
@@ -41,6 +51,20 @@ import Icon from 'react-native-vector-icons/Ionicons';
   //   sheetRef.current?.close();
   // }, []);
 
+  const [placeOrder] = useMutation(PLACE_ORDER, {
+    onCompleted:(data)=>{
+      Toast.show({
+        type:"success",
+        text1: data?.placeOrder
+      })
+    },
+    onError:(error)=>{
+      Toast.show({
+        type:"error",
+        text1:error?.message 
+      })
+    }
+  });
   const { data, loading, error } = useQuery(
     productsSortBy === "available" ? GET_AVAILABLE_PRODUCTS : GET_SUGGESTED_PRODUCT,
     {
@@ -92,7 +116,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
    return (
      <SafeAreaView style={styles.container}> 
-     <View  style={styles.headerContainer}>
+        <View  style={styles.headerContainer}>
          <Picker
              selectedValue={productsSortBy}
              style={styles.picker}
@@ -107,7 +131,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
           <TouchableOpacity style={styles.sortBtn} onPress={handleSnapPress}>
             <Icon name="filter" size={30} color={'white'} />
           </TouchableOpacity>
-          </View>
+        </View>
   
           <View style={styles.toggleContainer}>
             <Button
@@ -129,17 +153,26 @@ import Icon from 'react-native-vector-icons/Ionicons';
           </View>
          
          {productsSortBy === 'suggested' && productData ? (
-          <SuggestedProducts product={productData} productId={productId} />
+          <SuggestedProducts products={productData} productId={productId} />
         ) : null}
 
         {productsSortBy === 'available' && productData ? (
-          <AvailableProducts product={productData} productId={productId} />
+          <AvailableProducts products={productData} productId={productId} setOpenSheet={setOpenSheet} getProduct={getProduct}/>
         ) : null}
 
          <FilterBottomSheet 
          sheetRef={sheetRef} 
          updateFilters={updateFilters} 
          snapPoints={snapPoints} />
+
+        <PurchaseBottomSheet
+        openSheet={openSheet}
+        setOpenSheet={setOpenSheet}
+        placeOrder={placeOrder}
+        data = {DialogData?.getProduct}
+        loading = {DialogLoading}
+        error = {DialogError}
+        />
      </SafeAreaView>
    );
  }
@@ -148,7 +181,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
    container: {
      flex: 1,
      backgroundColor: '#ecf0f1',
-     padding: 8,
+    //  padding: 8,
      paddingBottom: 100,
    },
  
@@ -156,7 +189,9 @@ import Icon from 'react-native-vector-icons/Ionicons';
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    paddingHorizontal:10,
+    paddingTop:5
+    // marginBottom: 10,
   },
   picker: {
     flex: 1,

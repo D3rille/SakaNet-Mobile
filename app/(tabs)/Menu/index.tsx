@@ -1,5 +1,6 @@
+//@ts-nocheck
 import * as React from 'react';
-import { View, StyleSheet, Dimensions, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, Dimensions, TouchableOpacity, Text, Image } from 'react-native';
 import { Appbar, Card, Avatar } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -9,14 +10,17 @@ import { useNavigation, router } from 'expo-router';
 import { sakanetGreen } from '../../../constants/Colors';
 import { useAuth } from '../../../context/auth';
 import client from '../../../graphql/apollo-client';
+import { useSubs } from '../../../context/subscriptionProvider';
+import DefaultProfile from "../../../assets/images/default_profile.jpg";
 
-const defaultAvatarUri = 'https://via.placeholder.com/150'; 
-const userName = 'Juan Dela Cruz';
+// const defaultAvatarUri = 'https://via.placeholder.com/150'; 
+// const userName = 'Juan Dela Cruz';
 const screenHeight = Dimensions.get('window').height;
 
 const Menu = () => {
     const {logout} = useAuth();
-    // const navigation = useNavigation();
+    const {profile} = useSubs();
+    
     return (
         <View style={styles.container}>
             <Appbar.Header style={styles.appbar}>
@@ -24,8 +28,10 @@ const Menu = () => {
             </Appbar.Header>
             <Card style={styles.profileCard} onPress={() => {}}>
                 <Card.Title
-                    title={userName}
-                    left={(props) => <Avatar.Image {...props} source={{ uri: defaultAvatarUri }} />}
+                    title={profile?.profile?.username}
+                    left={(props) => <Avatar.Image {...props} source={
+                        profile?.profile?.profile_pic ? {uri: profile?.profile?.profile_pic} : DefaultProfile
+                    } />}
                     leftStyle={styles.avatar}
                 />
             </Card>
@@ -55,9 +61,8 @@ const Menu = () => {
                     borderRadius:5}}
                     onPress={()=>{
                         logout();
-                        client.clearStore();
                         router.replace("/login");
-                      }}
+                    }}
                 >
                     <Text style={{textAlign:"center", color:"white", fontSize:16}}>Log Out</Text>
                 </TouchableOpacity>

@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 import CustomHeader from '../../../constants/CustomHeader'; 
 
-
+//@ts-nocheck
 const StackLayout = () => {
     return (
         <Stack>
@@ -9,7 +9,7 @@ const StackLayout = () => {
               name="index" 
               options={{
                 headerShown: false,
-                header: () => <CustomHeader />
+                // header: () => <CustomHeader />
               }}
             />
         </Stack>

@@ -275,9 +275,9 @@ const ChatConversation = () => {
       onBackPress={onBackPress} 
     />
     <View style={styles.chatContainer}>
-      {getMessagesData && !getMessagesLoading && (<GiftedChat
+      {getMessagesData?.getMessages?.messages && !getMessagesLoading && (<GiftedChat
         text={messageInput}
-        onInputTextChanged={text => setMessageInput(text)}
+        onInputTextChanged={setMessageInput}
         messages={messages}
         onSend={()=>handleSendMessage(convoId, messageInput)}
         user={{

@@ -1,6 +1,7 @@
 import React, { useReducer, createContext, useEffect, useState, useContext } from 'react';
 import jwtDecode from 'jwt-decode';
 import * as SecureStore from 'expo-secure-store';
+import client from "../graphql/apollo-client";
 import { Slot } from 'expo-router';
 
 const initialState = {
@@ -82,6 +83,7 @@ function AuthProvider(props) {
   async function login(userData) {
     try {
       await SecureStore.setItemAsync('jwtToken', userData.token);
+      await client.resetStore();
       dispatch({
         type: 'LOGIN',
         payload: userData
@@ -94,6 +96,7 @@ function AuthProvider(props) {
   // upon logout, remove token from SecureStore
   async function logout() {
     try {
+      await client.resetStore();
       await SecureStore.deleteItemAsync('jwtToken');
       dispatch({ type: 'LOGOUT' });
     } catch (error) {

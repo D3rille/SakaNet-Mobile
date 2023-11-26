@@ -12,7 +12,7 @@ const AllMarketProducts = ({ products, handleLoadMore }) => {
       style={styles.card}
       onPress={() =>
         router.push({
-          pathname: '/Products/[productid]',
+          pathname: '/(tabs)/Products/[productid]/',
           params: {
             id: product._id,
           },

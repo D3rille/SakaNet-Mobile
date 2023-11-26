@@ -175,35 +175,38 @@ const Product = () => {
             <SellProducts key={product._id} product = {product}/>
           )
         )}
+        {productData && productData.length == 0 && (
+        <View style={{flex:1, justifyContent:"center", paddingVertical:50}}>
+          <Text style={{textAlign:"center", color:"#c5c5c5"}} variant='headlineMedium'>No Products</Text>
+        </View>
+        )}
       </ScrollView>)}
       {/* {renderProductList()} */}
 
+      
       {/* Pagination */}
-      {!searchFocus && (<View style={{marginVertical:10, alignItems:"center", marginBottom:30}}>
+      {!searchFocus && productData.length > 0 && (<View style={{marginVertical:10, alignItems:"center", marginBottom:30}}>
         <View style={{flexDirection:"row"}}>
           <TouchableOpacity
-          onPress={()=>{
-            if(currentPage !=1 ){
-              setCurrentPage(currentPage-1);
-            }
-          }}
+            onPress={()=>{
+              if(currentPage !=1 ){
+                setCurrentPage(currentPage-1);
+              }
+            }}
+            disabled={currentPage == 1}
           >
-            <AntDesign name="caretleft" size={24} color="black" />
+            <AntDesign name="caretleft" size={24} color={currentPage == 1 ? "#c5c5c5" : "black"} />
           </TouchableOpacity>
           <Text style={{marginHorizontal:20}}>{currentPage}</Text>
           <TouchableOpacity
             onPress={()=>{
               if(currentPage != totalPages){
                 setCurrentPage(currentPage + 1);
-              }else if(currentPage == totalPages){
-                Toast.show({
-                  type: 'info',
-                  text1: 'You have reached the end.'
-                });
               }
             }}
+            disabled={currentPage == totalPages}
           >
-            <AntDesign name="caretright" size={24} color="black" />
+            <AntDesign name="caretright" size={24} color={currentPage == totalPages ? "#c5c5c5" : "black"} />
           </TouchableOpacity>
         </View>
       </View>)}
