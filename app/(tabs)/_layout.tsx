@@ -204,7 +204,7 @@ function getWidth() {
 }
 
 const styles = StyleSheet.create({
-  // Add your custom styles here if needed
+
 });
 
 

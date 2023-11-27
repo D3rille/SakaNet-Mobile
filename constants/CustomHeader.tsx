@@ -3,11 +3,18 @@ import React, { useState } from 'react';
 import { View, Image, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import client from "../graphql/apollo-client";
+import { useNavigation} from '@react-navigation/native';
 
 import {router} from "expo-router";
 
 function CustomHeader({search, setSearchFocus, query, onClear}) {
   // const [searchQuery, setSearchQuery] = useState<string>('');
+
+  // const navigation = useNavigation();
+  const navigateToCart = () => {
+    router.push("/Cart/");
+  };
+
 
   return (
     <View style={styles.headerContainer}>
@@ -37,11 +44,9 @@ function CustomHeader({search, setSearchFocus, query, onClear}) {
           />
         ) : null}
       </View>
-          {/* Temporary logout button */}
-          <TouchableOpacity
-          onPress={()=>{}}
-          >
-            <Ionicons name="cart" size={24} color="#2E603A" style={styles.notificationIcon} />
+
+          <TouchableOpacity onPress={navigateToCart}> 
+            <Ionicons name="cart-outline" size={24} color="#2E603A" style={styles.notificationIcon} />
           </TouchableOpacity>
     </View>
   );

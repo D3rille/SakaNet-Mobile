@@ -114,6 +114,7 @@ function RootLayoutNav() {
                   <Stack.Screen name="paper" />
                   <Stack.Screen name="login" options={{headerShown:false}}/>
                   <Stack.Screen name="Signup" />
+                  <Stack.Screen name="Cart" options={{presentation:"modal", headerShown:false}} />
                 </Stack>
               </ThemeProvider>
             </GestureHandlerRootView>
