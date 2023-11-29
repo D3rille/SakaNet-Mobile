@@ -78,21 +78,24 @@ import Toast from 'react-native-toast-message';
     }
   );
 
-    console.log("Filers", filters)
-      if (loading) return <ActivityIndicator animating={true} color={MD2Colors.red800} />;
-      if (error) return <p>Error: {error.message}</p>;
+    
+  if (loading) return (
+    <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+      <ActivityIndicator animating={true} size="large" />
+    </View>
+  );
+  if (error) return <p>Error: {error.message}</p>;
 
 
-      let productData = [];
+  let productData = [];
 
-      if (data) {
-
-        if (productsSortBy === "available" && data.getAvailableProducts) {
-          productData = data.getAvailableProducts.product;
-        } else if (productsSortBy === "suggested" && data.getSuggestedProducts) {
-          productData = data.getSuggestedProducts.product;
-        } 
-      }
+  if (data) {
+    if (productsSortBy === "available" && data.getAvailableProducts) {
+      productData = data.getAvailableProducts.product;
+    } else if (productsSortBy === "suggested" && data.getSuggestedProducts) {
+      productData = data.getSuggestedProducts.product;
+    } 
+  }
   
   const updateFilters = (newFilters) => {
     setFilters({
@@ -153,7 +156,7 @@ import Toast from 'react-native-toast-message';
           </View>
          
          {productsSortBy === 'suggested' && productData ? (
-          <SuggestedProducts products={productData} productId={productId} />
+          <SuggestedProducts products={productData} productId={productId} setOpenSheet={setOpenSheet} getProduct={getProduct}/>
         ) : null}
 
         {productsSortBy === 'available' && productData ? (

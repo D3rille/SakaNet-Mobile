@@ -113,17 +113,17 @@ export default FilterBottomSheet = ({ sheetRef, updateFilters, snapPoints }) => 
 
         />
 
-        {show && (
+        {show ? (
           <DateTimePicker
             value={date}
             mode={mode}
             is24Hour={true}
             onChange={onChange}
           />
-        )}
-        {selectedDate && (
+        ):null}
+        {selectedDate ? (
             <Text>{selectedDate.toLocaleDateString()}</Text>
-        )
+        ):null
 
         }
          <Button style={styles.button} mode="contained" onPress={() => showMode("date")}  buttonColor="#2F603B">

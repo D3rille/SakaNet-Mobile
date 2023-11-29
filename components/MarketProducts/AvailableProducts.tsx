@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import StarRatingDisplay from 'react-native-star-rating-widget';
 import { View, Text, ScrollView, Image, Button, StyleSheet, Modal } from 'react-native';
 import { router } from 'expo-router';
-import { Card, Avatar, Text as Txt, Button as Btn } from 'react-native-paper';
+import { Card, Avatar, Text as Txt, Button as Btn, Divider } from 'react-native-paper';
 import PurchaseDialog from '../../components/MarketProducts/PurchaseDialog';
 import { useMutation, useLazyQuery } from '@apollo/client';
 import {PLACE_ORDER, GET_ORDERS} from '../../graphql/operations/order';
@@ -18,7 +18,6 @@ export default function AvailableProducts({ products, productId, setOpenSheet, g
     // const defaultProfileImage = require('../../assets/images/default_profile.jpg');
     const [modalVisible, setModalVisible] = useState(false);
     // const [selectedProduct, setSelectedProduct] = useState(null);
-
     const [placeOrder, { loading: placeOrderLoading, error: placeOrderError, data: placeOrderData }] = useMutation(PLACE_ORDER, {
       // refetchQueries:[GET_ORDERS],
       onError: (error) => {
@@ -54,14 +53,15 @@ export default function AvailableProducts({ products, productId, setOpenSheet, g
     // console.log(products[0]?.seller?.profile_pic)
     return (
       <View sytle={{flex:1}}>
-        {products && products.length == 0 && (
+        {products && products.length == 0 ? (
           <View style={{justifyContent:"center"}}>
             <Txt style={{textAlign:"center", color:"#c5c5c5"}} variant='headlineMedium'>No Products</Txt>
           </View>
-        )}
+        ):null}
+
         <ScrollView contentContainerStyle={styles.cardContainer}>
         
-        {products && products.length > 0 && products.map((product) => (
+        {products && products.length > 0 ? products.map((product) => (
         <View key={product._id} style={styles.card}>
         <View style={styles.rowContainer}>
             <Avatar.Image
@@ -87,7 +87,14 @@ export default function AvailableProducts({ products, productId, setOpenSheet, g
               </View>
             </View>
         </View>
-        <Image source={{ uri: product.item.photo }} style={styles.image} />
+        <View style={{margin:5, flexWrap:"wrap", padding:5}}>
+            <Txt style={{flexWrap:"wrap", width:"100%"}}>
+              {product?.product_description}
+            </Txt>
+        </View>
+        <Divider/>
+          <Image source={{ uri: product.item.photo }} style={styles.image} />
+        <Divider/>
         <View style={{paddingTop: 5, paddingBottom:10}}>
           <Text style={styles.title}>
               {product.item.englishName}
@@ -109,7 +116,7 @@ export default function AvailableProducts({ products, productId, setOpenSheet, g
           Buy Now
         </Btn>
         </View>
-    ))}
+    )):null}
     </ScrollView>
 
       {/* {selectedProduct && (
@@ -130,6 +137,7 @@ export default function AvailableProducts({ products, productId, setOpenSheet, g
 const styles = StyleSheet.create({
     cardContainer: {
       paddingHorizontal: 16,
+      paddingBottom:100
     },
     card: {
       marginVertical: 10,
@@ -142,6 +150,7 @@ const styles = StyleSheet.create({
     rowContainer: {
       flexDirection: 'row',
       alignItems: 'center',
+      marginBottom:10
     },
     textContainer: {
       marginLeft: 16,

@@ -1,6 +1,6 @@
 //@ts-nocheck
 import React, { useCallback, useRef, useMemo, useEffect, useState } from "react";
-import { StyleSheet, View, TouchableOpacity, Image, Button } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Image, Button, ScrollView } from "react-native";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import StarRatingDisplay from 'react-native-star-rating-widget';
 import { TextInput, Text, ActivityIndicator, RadioButton, Avatar,  DataTable, MD2Colors, Button as Btn } from 'react-native-paper';
@@ -87,8 +87,7 @@ const PurchaseBottomSheet = ({openSheet, setOpenSheet, placeOrder, data, loading
         onError:(error)=>{
             Toast.show({
               type:"error",
-              text1: "Error",
-              text2: error?.message
+              text1: error?.message
             })
             // console.error(error.message);
         }
@@ -135,19 +134,19 @@ const PurchaseBottomSheet = ({openSheet, setOpenSheet, placeOrder, data, loading
         }}
         
       >
-        {loading && (
+        {loading ? (
           <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
             <ActivityIndicator size={"large"}/>
           </View>
-        )}
+        ):null}
 
-        {error && (
+        {error ? (
           <View style={{flex:1, justifyContent:"center", alignItems:"center", padding:20}}>
             <Text>Error Loading Product Information</Text>
           </View>
-        )}
+        ):null}
 
-        {data && !loading && (
+        {data && !loading ? (
         <BottomSheetScrollView contentContainerStyle={styles.contentContainer}>
           <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
             <View style={styles.rowContainer}>
@@ -240,63 +239,74 @@ const PurchaseBottomSheet = ({openSheet, setOpenSheet, placeOrder, data, loading
           </View>
 
           {/* Product Details */}
-          <View style={styles.productDetails}>
-              <DataTable>
-              <DataTable.Header>
-                  <DataTable.Title
-                  >
-                      Product Details
-                  </DataTable.Title>
-              </DataTable.Header>
-                  <DataTable.Row>
-                      <DataTable.Cell>Product Id</DataTable.Cell>
-                      <DataTable.Cell>{product._id}</DataTable.Cell>
-                  </DataTable.Row>
-
-                  <DataTable.Row>
-                      <DataTable.Cell>Category</DataTable.Cell>
-                      <DataTable.Cell>
-                      <View style={product.category == "Pre-Sell" ? styles.preOrderBox : styles.orderBox}>
-                        <Text style={styles.categoryText}>
-                          {product.category == "Pre-Sell" ? "PRE-ORDER" : "Order"}
+            <View style={styles.productDetails}>
+                <DataTable>
+                <DataTable.Header>
+                    <DataTable.Title
+                    >
+                        Product Details
+                    </DataTable.Title>
+                </DataTable.Header>
+                    <DataTable.Row>
+                        <DataTable.Cell>Product Id</DataTable.Cell>
+                        <DataTable.Cell>
+                        <Text style={{flexWrap:"wrap"}}>
+                          {product._id}
                         </Text>
-                      </View>
-                    </DataTable.Cell>
-                  </DataTable.Row>
+                        </DataTable.Cell>
+                    </DataTable.Row>
 
-                  <DataTable.Row>
-                      <DataTable.Cell>Stocks</DataTable.Cell>
-                      <DataTable.Cell>{product.stocks}</DataTable.Cell>
-                  </DataTable.Row>
+                    <DataTable.Row>
+                        <DataTable.Cell>Category</DataTable.Cell>
+                        <DataTable.Cell>
+                        <View style={product.category == "Pre-Sell" ? styles.preOrderBox : styles.orderBox}>
+                          <Text style={styles.categoryText}>
+                            {product.category == "Pre-Sell" ? "PRE-ORDER" : "Order"}
+                          </Text>
+                        </View>
+                      </DataTable.Cell>
+                    </DataTable.Row>
 
-                  <DataTable.Row>
-                      <DataTable.Cell>Minimum Order</DataTable.Cell>
-                      <DataTable.Cell>{product.minimum_order}</DataTable.Cell>
-                  </DataTable.Row>
+                    <DataTable.Row>
+                        <DataTable.Cell>Stocks</DataTable.Cell>
+                        <DataTable.Cell>{product.stocks}</DataTable.Cell>
+                    </DataTable.Row>
 
-                  <DataTable.Row>
-                      <DataTable.Cell>Seller Address</DataTable.Cell>
-                      <DataTable.Cell>{formatWideAddress(seller.address)}</DataTable.Cell>
-                  </DataTable.Row>
+                    <DataTable.Row>
+                        <DataTable.Cell>Minimum Order</DataTable.Cell>
+                        <DataTable.Cell>{product.minimum_order}</DataTable.Cell>
+                    </DataTable.Row>
 
-                  <DataTable.Row>
-                      <DataTable.Cell>Delivery Method</DataTable.Cell>
-                      <DataTable.Cell>{product.modeOfDelivery}</DataTable.Cell>
-                  </DataTable.Row>
+                    <DataTable.Row>
+                        <DataTable.Cell>Seller Address</DataTable.Cell>
+                        <DataTable.Cell>
+                          <Text style={{flexWrap:"wrap"}}>
+                            {formatWideAddress(seller.address)}
+                          </Text>
+                        </DataTable.Cell>
+                    </DataTable.Row>
 
-                  <DataTable.Row>
-                      <DataTable.Cell>Pickup Location</DataTable.Cell>
-                      <DataTable.Cell>{product.pickup_location}</DataTable.Cell>
-                  </DataTable.Row>
+                    <DataTable.Row>
+                        <DataTable.Cell>Delivery Method</DataTable.Cell>
+                        <DataTable.Cell>{product.modeOfDelivery}</DataTable.Cell>
+                    </DataTable.Row>
 
-                  <DataTable.Row>
-                      <DataTable.Cell>Closing</DataTable.Cell>
-                      <DataTable.Cell>{timePassed(product.until)}</DataTable.Cell>
-                  </DataTable.Row>
-              </DataTable>
-          </View>
+                    <DataTable.Row>
+                        <DataTable.Cell>Pickup Location</DataTable.Cell>
+                        <DataTable.Cell>
+                        <Text style={{flexWrap:"wrap"}}>
+                          {product.pickup_location}
+                        </Text>
+                        </DataTable.Cell>
+                    </DataTable.Row>
 
-        </BottomSheetScrollView>)}
+                    <DataTable.Row>
+                        <DataTable.Cell>Closing</DataTable.Cell>
+                        <DataTable.Cell>{timePassed(product.until)}</DataTable.Cell>
+                    </DataTable.Row>
+                </DataTable>
+            </View>
+        </BottomSheetScrollView>):null}
       </BottomSheet>
     </View>
   );

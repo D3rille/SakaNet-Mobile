@@ -148,17 +148,23 @@ export default function MyProfile({ navigation }: IndexProps) {
     return (
       <View style={styles.reviewCard}>
         <View style={styles.reviewHeader}>
-          <View style={{flexDirection:"row", flex:1}}>
+          <View style={{flexDirection:"row", flex:1, paddingVertical:5}}>
             <Image source={
               item?.profile_pic ? { uri: item?.profile_pic } : defaultProfile
               } style={styles.avatar} />
-            <Text style={styles.userNameReview}>{item.username}</Text>
+            <View style={{flexDirection:"column", alignItems:"flex-start", marginLeft:10}}>
+              <Text style={styles.userNameReview}>{item.username}</Text>
+              <Text style={{fontSize:10}}>
+              <FontAwesome name="star" size={10} color="#FFD700" />
+              {`(${item.rate})`}
+              </Text>
+            </View>
           </View>
-          <Text style={{position:"absolute", top:0, right:10, color:"#c5c5c5"}}>{item.edited ? "edited" : ""}</Text>
+          <Text style={{position:"absolute", top:0, right:10, color:"#c5c5c5", fontSize:11}}>{item.edited ? "edited" : ""}</Text>
         </View>
-        <ScrollView>
+        <Text style={{color:"#c5c5c5", fontSize:11, position:"absolute", bottom:10, right:10}}>{formatDate(item?.createdAt, "ll")}</Text>
+        <ScrollView contentContainerStyle={{marginVertical:5}}>
           <Text style={styles.reviewText}>{item.comment}</Text>
-          <Text style={{position:"absolute",  bottom:5, right:10, color:"#c5c5c5"}}>{formatDate(item?.createdAt, "ll")}</Text>
         </ScrollView>
       </View>
     );
@@ -200,7 +206,7 @@ export default function MyProfile({ navigation }: IndexProps) {
 
             <View style={styles.userNameContainer}>
               <Text style={styles.userName}>{userInfo?.username}</Text>
-              <Text style={styles.displayName}>{`(${userInfo.displayName})`}</Text>
+              <Text style={styles.displayName}>{`(${userInfo?.displayName})`}</Text>
               <Text style={styles.jobRole}>{userInfo?.role}</Text>
               <Text style={styles.connections}>
                 <Text style={styles.connectionsNumber}>{profile?.connections}</Text> 
@@ -439,7 +445,7 @@ const styles = StyleSheet.create({
     width: windowWidth - 50,
     //marginBottom: scale(10),
     minHeight: scale(150),
-    maxHeight: scale(300),
+    maxHeight: scale(320),
   },
 
   reviewHeader: {
@@ -453,7 +459,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   userNameReview: {
-    marginLeft: 10,
     fontWeight: "bold",
   },
   reviewText: {
