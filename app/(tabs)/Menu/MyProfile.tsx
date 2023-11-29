@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from "react";
 import {
   View,
@@ -7,12 +8,20 @@ import {
   ScrollView,
   Image,
   Dimensions,
+  ImageBackground,
 } from "react-native";
 import { scale } from "react-native-size-matters";
 import Container from "../../../components/MyProfile/Container";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import { COLORS } from "../../../constants";
 import Carousel from "react-native-reanimated-carousel";
+import { router } from "expo-router";
+import { Avatar } from "react-native-paper";
+
+import { useSubs } from "../../../context/subscriptionProvider";
+import defaultCover from "../../../assets/images/default_cover.png";
+import defaultProfile from "../../../assets/images/default_profile.jpg";
+import { formatWideAddress } from "../../../util/addresssUtils";
 
 interface IndexProps {
   navigation: {
@@ -29,9 +38,12 @@ interface Review {
 
 const { width: windowWidth } = Dimensions.get("window");
 
-export default function index({ navigation }: IndexProps) {
+export default function MyProfile({ navigation }: IndexProps) {
+  const {profile} = useSubs();
+  let userInfo = profile?.profile;
+
   const onBackPress = () => {
-    navigation.goBack();
+    router.back();
   };
 
   const ratingOverview = {
@@ -126,29 +138,40 @@ export default function index({ navigation }: IndexProps) {
         <TouchableOpacity onPress={onBackPress}>
           <Ionicons name="chevron-back" size={scale(25)} color={COLORS.black} />
         </TouchableOpacity>
-        <Text style={styles.headerUsername}>Jhanjhan</Text>
+        <Text style={styles.headerUsername}>{userInfo?.username}</Text>
       </View>
 
       <ScrollView style={styles.scrollContainer}>
         <View style={styles.mainContainer}>
           {/* Card for Upper Section */}
           <View style={styles.upperCard}>
-            <View style={styles.coverImageContainer}>
-              <Text>Cover Image</Text>
-            </View>
+            <ImageBackground source={
+              userInfo?.cover_photo ? {uri:userInfo?.cover_photo} : defaultCover
+              } resizeMode="cover" style={styles.coverImageContainer}>
+            </ImageBackground>
+            {/* <View style={styles.coverImageContainer}>
+            </View> */}
 
             <View style={styles.profileImageOuterContainer}>
-              <View style={styles.profileImageInnerContainer}>
-                <Text>Profile Image</Text>
-              </View>
+              <Avatar.Image 
+                source = {
+                  userInfo?.profile_pic ? {uri:userInfo.profile_pic} : defaultProfile
+                } 
+                size={150}
+              />
+              {/* <View style={styles.profileImageInnerContainer}> */}
+
+                {/* <Text>Profile Image</Text>
+              </View> */}
             </View>
 
             <View style={styles.userNameContainer}>
-              <Text style={styles.userName}>Jhanjhan</Text>
-              <Text style={styles.displayName}>(Jhan Unlayao)</Text>
-              <Text style={styles.jobRole}>Farmer</Text>
+              <Text style={styles.userName}>{userInfo?.username}</Text>
+              <Text style={styles.displayName}>{`(${userInfo.displayName})`}</Text>
+              <Text style={styles.jobRole}>{userInfo?.role}</Text>
               <Text style={styles.connections}>
-                <Text style={styles.connectionsNumber}>50</Text> Connections
+                <Text style={styles.connectionsNumber}>{profile?.connections}</Text> 
+                {profile?.connections > 1 ? "Connections" : "Connection"}
               </Text>
             </View>
           </View>
@@ -158,25 +181,25 @@ export default function index({ navigation }: IndexProps) {
             <Text style={styles.detailsTitle}>Details</Text>
             <View style={styles.detailItem}>
               <Ionicons name="location" size={scale(20)} color="#C9C9C9" />
-              <Text style={styles.detailText}>Lucena City</Text>
+              <Text style={styles.detailText}>{formatWideAddress(userInfo?.address)}</Text>
             </View>
 
-            <View style={styles.detailItem}>
+            {userInfo?.account_mobile ? (<View style={styles.detailItem}>
               <Ionicons name="call" size={scale(20)} color="#C9C9C9" />
-              <Text style={styles.detailText}>09837475839</Text>
-            </View>
+              <Text style={styles.detailText}>{userInfo.account_mobile}</Text>
+            </View>): null}
 
-            <View style={styles.detailItem}>
+            {userInfo.account_email ? (<View style={styles.detailItem}>
               <Ionicons name="mail" size={scale(20)} color="#C9C9C9" />
-              <Text style={styles.detailText}>jhan@gmail.com</Text>
-            </View>
+              <Text style={styles.detailText}>{userInfo.account_email}</Text>
+            </View>): null}
           </View>
 
           {/* Card for Rating Overview*/}
 
           <View style={styles.ratingCard}>
             <Text style={styles.ratingTitle}>
-              Rating Overview ({ratingOverview.total})
+              Rating Overview ({userInfo?.ratingStatistics?.reviewerCount ?? 0})
             </Text>
             <Text style={styles.averageRating}>
               {ratingOverview.average.toFixed(1)}

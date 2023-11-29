@@ -278,7 +278,7 @@ const ChatConversation = () => {
       {getMessagesData?.getMessages?.messages && !getMessagesLoading ? (<GiftedChat
         text={messageInput}
         onInputTextChanged={setMessageInput}
-        messages={messages}
+        messages={messages ? messages : []}
         onSend={()=>handleSendMessage(convoId, messageInput)}
         user={{
           _id: profile?.profile?._id,
