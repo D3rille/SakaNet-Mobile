@@ -11,8 +11,9 @@ import {useMutation} from "@apollo/client";
 import Toast from "react-native-toast-message";
 import {router} from "expo-router";
 
-import { formatDate } from "../../util/dateUtils";
+import { formatDate, timePassed } from "../../util/dateUtils";
 import { CREATE_PRODUCT, GET_MY_PRODUCTS } from "../../graphql/operations/product";
+import { ADD_TO_CART, GET_CART_ITEMS } from "../../graphql/operations/cart";
 import defaultProfileImage from "../../assets/images/default_profile.jpg";
 import { formatWideAddress } from "../../util/addresssUtils";
 import { formatToCurrency } from "../../util/currencyFormatter";
@@ -27,6 +28,9 @@ const PurchaseBottomSheet = ({openSheet, setOpenSheet, placeOrder, data, loading
   const [modeOfPayment, setModeOfPayment] = useState("");
   const [deliveryAddress, setDeliveryAddress] = useState("");
 
+  const [addToCart] = useMutation(ADD_TO_CART);
+  
+
   useEffect(()=>{
     if(openSheet && snapPoints){
       sheetRef.current?.snapToIndex(2);
@@ -36,10 +40,6 @@ const PurchaseBottomSheet = ({openSheet, setOpenSheet, placeOrder, data, loading
 
   const snapPoints = useMemo(() => ["25%", "50%", "100%"], []);
 
-  // callbacks
-  // const handleSheetChange = useCallback((index:number) => {
-  //   console.log("handleSheetChange", index);
-  // }, []);
   const handleSnapPress = useCallback((index) => {
     sheetRef.current?.snapToIndex(index);
   }, []);
@@ -48,27 +48,6 @@ const PurchaseBottomSheet = ({openSheet, setOpenSheet, placeOrder, data, loading
     setOpenSheet(false);
   }, []);
 
-  // const onUntilChange = useCallback((event, selectedDate) => {
-  //   const currentDate = selectedDate;
-  //   setOpenDatePicker(false);
-  //   setUntil(currentDate);
-  // }, []);
-
-  // const onHarvestDateChange = useCallback((event, selectedDate) => {
-  //   const currentDate = selectedDate;
-  //   setOpenDatePicker(false);
-  //   setHarvestDate(currentDate);
-  // }, []);
-
-  // render
-  // const renderItem = useCallback(
-  //   (item:any) => (
-  //     <View key={item} style={styles.itemContainer}>
-  //       <Text>{item}</Text>
-  //     </View>
-  //   ),
-  //   []
-  // );
   let product;
   let seller;
   if(data?.product){
@@ -77,6 +56,43 @@ const PurchaseBottomSheet = ({openSheet, setOpenSheet, placeOrder, data, loading
   }
   if(data?.seller){
     seller = data?.seller;
+  }
+
+  const executeAddToCart = () => {
+    addToCart({variables:{
+            "order": {
+              "type": product?.category == "Sell" ? "Order":"Pre-Order",
+              "productId": product?._id,
+              "seller": {
+                "id": seller?.id,
+                "name": seller?.name
+              },
+              "quantity": parseFloat(quantity),
+              "modeOfPayment": modeOfPayment,
+              "modeOfDelivery":product.modeOfDelivery,
+              "deliveryAddress": deliveryAddress,
+              "phoneNumber": contactNumber.trim(),
+              "unit": product?.unit,
+              "photo": product.photo ? product.photo : product.item.photo
+            }
+        },
+        refetchQueries:[GET_CART_ITEMS],
+        onCompleted:()=>{
+          Toast.show({
+            type:"success",
+            text1: "Succesfully Added to Cart"
+          })
+            // handleClose();
+        },
+        onError:(error)=>{
+            Toast.show({
+              type:"error",
+              text1: "Error",
+              text2: error?.message
+            })
+            // console.error(error.message);
+        }
+    })
   }
 
 
@@ -216,7 +232,9 @@ const PurchaseBottomSheet = ({openSheet, setOpenSheet, placeOrder, data, loading
                 buttonColor={sakanetGreen}
                 textColor="white"
                 // style={{borderRadius:4}}
-                onPress={()=>{}}
+                onPress={()=>{
+                  executeAddToCart()
+                }}
               >Add to Cart</Btn>
               
           </View>
@@ -273,7 +291,7 @@ const PurchaseBottomSheet = ({openSheet, setOpenSheet, placeOrder, data, loading
 
                   <DataTable.Row>
                       <DataTable.Cell>Closing</DataTable.Cell>
-                      <DataTable.Cell>{product.until}</DataTable.Cell>
+                      <DataTable.Cell>{timePassed(product.until)}</DataTable.Cell>
                   </DataTable.Row>
               </DataTable>
           </View>

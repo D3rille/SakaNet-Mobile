@@ -1,16 +1,16 @@
 //@ts-nocheck
 import React, { useState } from 'react';
 import { View, Image, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { Badge } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import client from "../graphql/apollo-client";
 import { useNavigation} from '@react-navigation/native';
 
 import {router} from "expo-router";
+import { useSubs } from '../context/subscriptionProvider';
 
 function CustomHeader({search, setSearchFocus, query, onClear}) {
-  // const [searchQuery, setSearchQuery] = useState<string>('');
-
-  // const navigation = useNavigation();
+  const{cartItemsCount} = useSubs();
   const navigateToCart = () => {
     router.push("/Cart/");
   };
@@ -45,8 +45,9 @@ function CustomHeader({search, setSearchFocus, query, onClear}) {
         ) : null}
       </View>
 
-          <TouchableOpacity onPress={navigateToCart}> 
-            <Ionicons name="cart-outline" size={24} color="#2E603A" style={styles.notificationIcon} />
+          <TouchableOpacity onPress={navigateToCart}>
+            {cartItemsCount > 0 ? (<Badge style={{position:"absolute", bottom:25, right:9, zIndex:1}}>{cartItemsCount}</Badge>):null} 
+            <Ionicons name="cart-outline" size={24} color="#2E603A" style={[styles.notificationIcon, {marginRight:cartItemsCount > 0 ? 10:0}]} />
           </TouchableOpacity>
     </View>
   );

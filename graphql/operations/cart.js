@@ -53,3 +53,10 @@ export const DELETE_CARTITEM = gql`
     }
 `;
 
+// deletes selected cart items
+export const CLEAR_CART_ITEMS = gql`
+mutation ClearCartItems($cartItemIds: [String]) {
+  clearCartItems(cartItemIds: $cartItemIds)
+}
+`;
+

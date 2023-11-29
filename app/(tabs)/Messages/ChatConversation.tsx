@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-import { ActivityIndicator, Avatar } from 'react-native-paper';
+import { ActivityIndicator, Avatar, Text as Txt } from 'react-native-paper';
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Bubble, GiftedChat, Send, InputToolbar, IMessage } from 'react-native-gifted-chat';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -184,10 +184,10 @@ const ChatConversation = () => {
     try {
       sendMessage({
           variables:{conversationId, message},
-          refetchQueries:[{
-              query:GET_MESSAGES,
-              variables:{conversationId}
-          }],
+          // refetchQueries:[{
+          //     query:GET_MESSAGES,
+          //     variables:{conversationId}
+          // }],
           onError:(error)=>{
               Toast.show({
                 type:"error",
@@ -275,7 +275,7 @@ const ChatConversation = () => {
       onBackPress={onBackPress} 
     />
     <View style={styles.chatContainer}>
-      {getMessagesData?.getMessages?.messages && !getMessagesLoading && (<GiftedChat
+      {getMessagesData?.getMessages?.messages && !getMessagesLoading ? (<GiftedChat
         text={messageInput}
         onInputTextChanged={setMessageInput}
         messages={messages}
@@ -302,7 +302,11 @@ const ChatConversation = () => {
             <ActivityIndicator size="large"/>
           </View>
         )}
-      />)}
+      />):(
+        <View style={{textAlign:"center", color:"#c5c5c5"}} variant='headlineMedium'>
+          <Txt>No Conversation Yet</Txt>
+        </View>
+      )}
    </View>
    </>
   );

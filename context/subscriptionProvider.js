@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useQuery, useSubscription } from '@apollo/client';
 import { GET_NOTIFICATIONS, NOTIF_SUB } from '../graphql/operations/notification';
 import {UPDATE_CONVO_COUNT, GET_UNREAD_CONVO} from "../graphql/operations/chat";
+import {GET_CART_ITEMS} from "../graphql/operations/cart";
 import { GET_MY_PROFILE } from '../graphql/operations/profile';
 import { useAuth } from './auth.js';
 
@@ -12,11 +13,18 @@ export const SubscriptionProvider = ({ children }) => {
   const { subscribeToMore, data } = useQuery(GET_NOTIFICATIONS);
   const {data:profileInfo, loading:myProfileLoading} = useQuery(GET_MY_PROFILE);
   const {data:unreadConvoData, loading:unreadConvoLoading, subscribeToMore:subscribeToNewConvo} = useQuery(GET_UNREAD_CONVO);
+  const {data:cartData, loading:cartLoading} = useQuery(GET_CART_ITEMS);
   
   const [newNotifCount, setNewNotifCount] = useState(0);
   const [newConvoCount, setNewConvoCount] = useState(0);
+  // const [cartItemsCount, setCartItemsCount] = useState(0);
 
   const profile = profileInfo?.getMyProfile;
+  const cart = cartData?.getCartItems;
+  const cartItemsCount = cart?.length;
+  // console.log(cartItemsCount);
+  // console.log(cart.length)
+  
   useEffect(()=>{
     subscribeToMore({
       document:NOTIF_SUB,
@@ -74,9 +82,19 @@ useEffect(()=>{
     return count;
   })
 }, [notifData]);
+
+// useEffect(()=>{
+//   setCartItemsCount(()=>{
+//     var count = 0;
+//     if(cartData && cartData?.GET_CART_ITEMS){
+//       count = cart.length;
+//     }
+//     return count
+//   });
+// },[cart]);
   
   return (
-    <SubscriptionContext.Provider value={{notifData, newNotifCount,newConvoCount, profile}}>
+    <SubscriptionContext.Provider value={{notifData, newNotifCount,newConvoCount, profile, cart,cartLoading, cartItemsCount}}>
       {children}
     </SubscriptionContext.Provider>
   );
