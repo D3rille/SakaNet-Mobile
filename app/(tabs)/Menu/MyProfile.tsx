@@ -1,5 +1,5 @@
 //@ts-nocheck
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {
   View,
   Text,
@@ -17,11 +17,16 @@ import { COLORS } from "../../../constants";
 import Carousel from "react-native-reanimated-carousel";
 import { router } from "expo-router";
 import { Avatar } from "react-native-paper";
+import {useQuery, useLazyQuery} from "@apollo/client";
+import Toast from "react-native-toast-message";
 
 import { useSubs } from "../../../context/subscriptionProvider";
+import { useAuth } from "../../../context/auth";
 import defaultCover from "../../../assets/images/default_cover.png";
 import defaultProfile from "../../../assets/images/default_profile.jpg";
 import { formatWideAddress } from "../../../util/addresssUtils";
+import {GET_ALL_REVIEWS} from "../../../graphql/operations/review";
+import { formatDate } from "../../../util/dateUtils";
 
 interface IndexProps {
   navigation: {
@@ -30,17 +35,57 @@ interface IndexProps {
 }
 
 interface Review {
-  id: string;
-  name: string;
-  avatar: string;
-  text: string;
+  _id:string;
+  reviewerId:string;
+  username:string;
+  edited:boolean;
+  date:string;
+  comment:string;
+  profile_pic:string;
+  subjectedUser:string
 }
 
 const { width: windowWidth } = Dimensions.get("window");
 
 export default function MyProfile({ navigation }: IndexProps) {
   const {profile} = useSubs();
+  const {user} = useAuth();
   let userInfo = profile?.profile;
+
+  const [reviews, setReviews] = useState([]);
+
+  const ratingsData = {
+    "5": userInfo?.ratingStatistics.fiveStar ?? 0,
+    "4": userInfo?.ratingStatistics.fourStar ?? 0,
+    "3": userInfo?.ratingStatistics.threeStar ?? 0,
+    "2": userInfo?.ratingStatistics.twoStar ?? 0,
+    "1": userInfo?.ratingStatistics.oneStar ?? 0,
+  };
+
+
+  const [getAllReviews, {data:getReviewsData, loading:getReviewsLoading}] = useLazyQuery(GET_ALL_REVIEWS, {
+    variables:{
+      subjectedUser:user.id
+    }, 
+    onError:(error)=>{
+      Toast.show({
+        type:"error",
+        text1:error?.message
+      })
+    }
+  });
+
+  useEffect(()=>{
+    if(profile){
+      getAllReviews();
+    }
+  },[profile]);
+
+  useEffect(()=>{
+    if(getReviewsData && !getReviewsLoading){
+      setReviews(getReviewsData?.getAllReviews);
+    }
+  },[getReviewsData, getReviewsLoading])
 
   const onBackPress = () => {
     router.back();
@@ -97,36 +142,24 @@ export default function MyProfile({ navigation }: IndexProps) {
       ));
   };
 
-  const reviews: Review[] = [
-    {
-      id: "1",
-      name: "User 1",
-      avatar: "https://via.placeholder.com/150",
-      text: "Good transaction. Madali makipagusap",
-    },
-    {
-      id: "2",
-      name: "User 2",
-      avatar: "https://via.placeholder.com/150",
-      text: "Madali makipagusap",
-    },
-    {
-      id: "3",
-      name: "User 3",
-      avatar: "https://via.placeholder.com/150",
-      text: "Good transaction. ",
-    },
-  ];
 
   // Carousel Render Item
   const renderItem = ({ item }: { item: Review }) => {
     return (
       <View style={styles.reviewCard}>
         <View style={styles.reviewHeader}>
-          <Image source={{ uri: item.avatar }} style={styles.avatar} />
-          <Text style={styles.userNameReview}>{item.name}</Text>
+          <View style={{flexDirection:"row", flex:1}}>
+            <Image source={
+              item?.profile_pic ? { uri: item?.profile_pic } : defaultProfile
+              } style={styles.avatar} />
+            <Text style={styles.userNameReview}>{item.username}</Text>
+          </View>
+          <Text style={{position:"absolute", top:0, right:10, color:"#c5c5c5"}}>{item.edited ? "edited" : ""}</Text>
         </View>
-        <Text style={styles.reviewText}>{item.text}</Text>
+        <ScrollView>
+          <Text style={styles.reviewText}>{item.comment}</Text>
+          <Text style={{position:"absolute",  bottom:5, right:10, color:"#c5c5c5"}}>{formatDate(item?.createdAt, "ll")}</Text>
+        </ScrollView>
       </View>
     );
   };
@@ -171,10 +204,16 @@ export default function MyProfile({ navigation }: IndexProps) {
               <Text style={styles.jobRole}>{userInfo?.role}</Text>
               <Text style={styles.connections}>
                 <Text style={styles.connectionsNumber}>{profile?.connections}</Text> 
-                {profile?.connections > 1 ? "Connections" : "Connection"}
+                {profile?.connections > 1 ? " Connections" : " Connection"}
               </Text>
             </View>
           </View>
+
+          {userInfo?.description ? (<View style={styles.descriptionCard}>
+              <Text style={{textAlign:"justify"}}>
+                {userInfo?.description}
+              </Text>
+          </View>):null}
 
           {/* Card for Details Section */}
           <View style={styles.detailsCard}>
@@ -202,10 +241,10 @@ export default function MyProfile({ navigation }: IndexProps) {
               Rating Overview ({userInfo?.ratingStatistics?.reviewerCount ?? 0})
             </Text>
             <Text style={styles.averageRating}>
-              {ratingOverview.average.toFixed(1)}
+              {userInfo.rating.toFixed(1)}
             </Text>
-            <View style={styles.starsContainer}>{renderStars(5)}</View>
-            {renderRatingBars(ratingOverview.countPerStar)}
+            <View style={styles.starsContainer}>{renderStars(Math.round(userInfo?.rating))}</View>
+            {/* {renderRatingBars(ratingsData)} */}
           </View>
 
           {/* Card for Reviews Section */}
@@ -231,7 +270,8 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    padding: scale(10),
+    // padding: scale(10),
+    padding:15,
     backgroundColor: COLORS.white,
     //borderBottomWidth: 0.6,
     //borderBottomColor: 'gray',
@@ -340,6 +380,16 @@ const styles = StyleSheet.create({
     paddingBottom: scale(20),
     paddingLeft: scale(10),
   },
+  descriptionCard: {
+    backgroundColor: COLORS.white,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 3,
+    padding:20,
+    marginBottom:10
+  },
 
   detailItem: {
     flexDirection: "row",
@@ -393,6 +443,7 @@ const styles = StyleSheet.create({
   },
 
   reviewHeader: {
+    flex:1,
     flexDirection: "row",
     alignItems: "center",
   },
