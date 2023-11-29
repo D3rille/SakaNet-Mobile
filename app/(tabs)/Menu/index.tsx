@@ -26,7 +26,7 @@ const Menu = () => {
             <Appbar.Header style={styles.appbar}>
                 <Appbar.Content title="Menu" titleStyle={styles.title}/>
             </Appbar.Header>
-            <Card style={styles.profileCard} onPress={() => {}}>
+            <Card style={styles.profileCard} onPress={() => router.push("/(tabs)/Menu/MyProfile")}>
                 <Card.Title
                     title={profile?.profile?.username}
                     left={(props) => <Avatar.Image {...props} source={
