@@ -12,6 +12,12 @@ const StackLayout = () => {
                 header: () => <CustomHeader />
               }}
             />
+            <Stack.Screen 
+              name="MyProfile" 
+              options={{
+                headerShown: false,
+              }}
+            />
         </Stack>
     );
 };
