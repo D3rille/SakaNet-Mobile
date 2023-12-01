@@ -138,9 +138,9 @@ const ChatConversation = () => {
     }
   }
 
-  useEffect(()=>{
-    loadErrorMessages();
-  },[])
+  // useEffect(()=>{
+  //   loadErrorMessages();
+  // },[])
   
   useEffect(() => {
     const unsubscribe = subscribeToNewMessage({
