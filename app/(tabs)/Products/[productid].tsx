@@ -86,7 +86,11 @@ import { AntDesign } from '@expo/vector-icons';
       <ActivityIndicator animating={true} size="large" />
     </View>
   );
-  if (error) return <p>Error: {error.message}</p>;
+  if (error) return(
+    <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+      <Text>Something went wrong</Text>
+    </View>
+  );
 
 
   let productData = [];
