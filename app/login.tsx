@@ -142,13 +142,13 @@ export default function Login() {
                 style={styles.icon}
                 onPress={() => setPasswordVisible(!isPasswordVisible)}
               >
-                {password !== "" && (
+                {password !== "" ? (
                   <Icon
                     name={isPasswordVisible ? "eye-off" : "eye"}
                     size={24}
                     color="#2E603A"
                   />
-                )}
+                ):null}
               </TouchableOpacity>
             </View>
 

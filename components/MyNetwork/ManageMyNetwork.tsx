@@ -143,7 +143,7 @@ const MyConnections: React.FC = () => {
                   </Button>
                 </View>
               </Card.Content>
-              {index < myConnections.length - 1 && <Divider />}
+              {index < myConnections.length - 1 ? <Divider />: null}
             </React.Fragment>
           ))}
         </Card>

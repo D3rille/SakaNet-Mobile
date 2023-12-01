@@ -51,7 +51,7 @@ const Notifications = () => {
           </View>
         </View>
         <Divider/>
-        {(!notifData.getNotifications || notifData.getNotifications == []) && (<Text style={{flex:1}}>No Notifications</Text>)}
+        {(!notifData.getNotifications || notifData.getNotifications == []) ? (<Text style={{flex:1}}>No Notifications</Text>):null}
         <FlatList
             style={{paddingBottom:30, paddingTop:10}}
             data={notifData?.getNotifications}

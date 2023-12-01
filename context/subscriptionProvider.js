@@ -74,11 +74,11 @@ if(data){
 useEffect(()=>{
   setNewNotifCount(()=>{
     var count=0;
-    notifData && notifData.getNotifications.map((notification)=>{
+    notifData ? notifData?.getNotifications?.map((notification)=>{
       if(notification.read == false){
         count++;
       }
-    });
+    }):null;
     return count;
   })
 }, [notifData]);

@@ -26,6 +26,7 @@ const Messages = () => {
   const [numPage, setNumPage] = useState(1);
   const newMessageModalRef = useRef<BottomSheetMethods>(null);
   const [searchFocus, setSearchFocus] = useState(false);
+  const [convos, setConvos] = useState([]);
 
   const handleAddPress = () => {
       newMessageModalRef.current?.expand();
@@ -43,6 +44,7 @@ const Messages = () => {
         page:1
       },
       onError:(error)=>{
+        console.log(error?.message);
         Toast.show({
           type:"error",
           text1:"Cannot get Conversations."
@@ -51,8 +53,11 @@ const Messages = () => {
     });
 
     useEffect(()=>{
-      refetchConvos();
-    },[])
+      if(getConvosData && !getConvosLoading){
+        setConvos(getConvosData?.getConversations?.conversations);
+      }
+
+    },[getConvosData, getConvosLoading])
   
     const handleGetMoreConversations = () =>{
       if(getConvosData?.getConversations?.hasNextPage){
@@ -89,22 +94,18 @@ const Messages = () => {
     const [findUser, {data:findUserData, loading:findUserLoading}] = useLazyQuery(FIND_USER_TO_CHAT);
 
     useEffect(()=>{
-      subscribeToMoreConvos({
+      const unsubscribe = subscribeToMoreConvos({
         document:UPDATE_CONVOS,
         variables:{receiverId:user?.id ?? ""},
         updateQuery:(prev, {subscriptionData})=>{
           if(!subscriptionData.data) return prev;
-          refetchConvos({
-            variables:{
-              limit:10,
-              page:1
-            },
-            onCompleted:()=>{
-              setNumPage(2);
-            }
-          });
+          refetchConvos();
         }
       });
+      return () => {
+        // Cleanup: Unsubscribe from the subscription when the component unmounts
+        unsubscribe();
+      };
     }, []);
 
     // console.log(findUserData)
@@ -112,26 +113,26 @@ const Messages = () => {
         <View style={styles.container}> 
             <ChatsListHeader findUser={findUser} setSearchFocus={setSearchFocus}/>
             <View style={styles.cardContainer}>
-                {getConvosLoading && (
+                {getConvosLoading ? (
                     <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
                         <ActivityIndicator size="large"/>
                     </View>
-                )}
-                {getConvosData && !searchFocus && (
-                    <ChatItems data={getConvosData?.getConversations?.conversations} handleGetMoreConversations={handleGetMoreConversations}/>
-                )}
+                ):null}
+                {getConvosData && !searchFocus ? (
+                    <ChatItems data={convos} handleGetMoreConversations={handleGetMoreConversations}/>
+                ):null}
 
-                {findUserData && searchFocus &&(
+                {findUserData && searchFocus ?(
                     <FindUserToChatResult data={findUserData?.findUserToChat}/>
-                )}
+                ):null}
             </View>
 
-            <FAB
+            {/* <FAB
                 icon="plus"
                 style={styles.fab}
                 color="white"
                 onPress={handleAddPress}
-            />
+            /> */}
 
             <NewMessageModal ref={newMessageModalRef} />
         </View>

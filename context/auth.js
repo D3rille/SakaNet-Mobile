@@ -89,7 +89,7 @@ function AuthProvider(props) {
         payload: userData
       });
     } catch (error) {
-      console.error('Error storing token in SecureStore:', error);
+      // console.error('Error storing token in SecureStore:', error);
     }
   }
 

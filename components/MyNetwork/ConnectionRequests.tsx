@@ -105,7 +105,7 @@ const ConnectionRequests = ({acceptConnection, declineConnection}) => {
                     </TouchableOpacity>
                   </View>
                 </Card.Content>
-                {index < data?.getConnectionRequests?.length - 1 && <Divider />}
+                {index < data?.getConnectionRequests?.length - 1 ? <Divider />:null}
               </React.Fragment>
             ))
           ) : (

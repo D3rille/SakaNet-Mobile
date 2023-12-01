@@ -1,7 +1,7 @@
 //@ts-nocheck
 import React, { useState, useEffect } from 'react';
 import StarRatingDisplay from 'react-native-star-rating-widget';
-import { View, Text, ScrollView, Image, Button, StyleSheet, Modal } from 'react-native';
+import { View, Text, ScrollView, Image, Button, StyleSheet, Modal, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { Card, Avatar, Text as Txt, Button as Btn, Divider } from 'react-native-paper';
 import PurchaseDialog from '../../components/MarketProducts/PurchaseDialog';
@@ -13,8 +13,9 @@ import {formatWideAddress} from "../../util/addresssUtils";
 import { sakanetGreen } from '../../constants/Colors';
 import Toast from "react-native-toast-message";
 import PurchaseBottomSheet from './PurhcaseBottomSheet';
+import { AntDesign } from '@expo/vector-icons';
 
-export default function AvailableProducts({ products, productId, setOpenSheet, getProduct}) {
+export default function AvailableProducts({ products, setOpenSheet, getProduct, currentPage, setCurrentPage, totalPages}) {
     // const defaultProfileImage = require('../../assets/images/default_profile.jpg');
     const [modalVisible, setModalVisible] = useState(false);
     // const [selectedProduct, setSelectedProduct] = useState(null);
@@ -117,6 +118,34 @@ export default function AvailableProducts({ products, productId, setOpenSheet, g
         </Btn>
         </View>
     )):null}
+
+    {/* Pagination */}
+    {products?.length > 0 ? (<View style={{marginVertical:10, alignItems:"center", marginBottom:20}}>
+        <View style={{flexDirection:"row"}}>
+          <TouchableOpacity
+            onPress={()=>{
+              if(currentPage !=1 ){
+                setCurrentPage(currentPage-1);
+              }
+            }}
+            disabled={currentPage == 1}
+          >
+            <AntDesign name="caretleft" size={24} color={currentPage == 1 ? "#c5c5c5" : "black"} />
+          </TouchableOpacity>
+          <Text style={{marginHorizontal:20}}>{currentPage}</Text>
+          <TouchableOpacity
+            onPress={()=>{
+              if(currentPage != totalPages){
+                setCurrentPage(currentPage + 1);
+              }
+            }}
+            disabled={currentPage == totalPages}
+          >
+            <AntDesign name="caretright" size={24} color={currentPage == totalPages ? "#c5c5c5" : "black"} />
+          </TouchableOpacity>
+        </View>
+      </View>):null}
+
     </ScrollView>
 
       {/* {selectedProduct && (
@@ -137,7 +166,7 @@ export default function AvailableProducts({ products, productId, setOpenSheet, g
 const styles = StyleSheet.create({
     cardContainer: {
       paddingHorizontal: 16,
-      paddingBottom:100
+      paddingBottom:50
     },
     card: {
       marginVertical: 10,

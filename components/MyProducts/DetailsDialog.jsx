@@ -28,9 +28,9 @@ const DetailsDialog = ({visible, setVisibility, product}) =>{
               <Text>Available Stocks: {product.stocks}</Text>
               <Text>Minimum Order: {product.minimum_order}</Text>
               <Text>Until: {formatDate(product.until, "ll")}</Text>
-              {product.category == "Pre-Sell" && (<Text>Harvest Date: {product.dateOfHarvest}</Text>)}
+              {product.category == "Pre-Sell" ? (<Text>Harvest Date: {product.dateOfHarvest}</Text>):null}
               <Text>Mode of Delivery: {product.modeOfDelivery}</Text>
-              {product.modeOfDelivery == "pick-up" && (<Text>Pick-up Location: {product.pickup_location}</Text>)}
+              {product.modeOfDelivery == "pick-up" ? (<Text>Pick-up Location: {product.pickup_location}</Text>):null}
               <Text>Area Limit: {product.area_limit}</Text>
               <Text>Created: {timePassed(product.createdAt)}</Text>
             </ScrollView>

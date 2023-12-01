@@ -108,23 +108,23 @@ const AddProduct = () => {
   return (
     <SafeAreaView style={styles.container}>
 
-      {loading && (<View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+      {loading ? (<View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
         <ActivityIndicator size={"large"}/>
-      </View>)}
+      </View>):null}
 
-      {error && (<View style={{flex:1, justifyContent:"center", alignItems:"center", padding:20}}>
+      {error ? (<View style={{flex:1, justifyContent:"center", alignItems:"center", padding:20}}>
         <Text>Error Loading Products</Text>
-      </View>)}
+      </View>):null}
 
       {/* Product Cards */}
-      {data && !loading && (<ScrollView contentContainerStyle={{flexDirection:"row", flexWrap:"wrap", justifyContent:"space-between", paddingTop:10}}>
-        {productData?.length > 0 && productData?.map((product)=>(
+      {data && !loading ? (<ScrollView contentContainerStyle={{flexDirection:"row", flexWrap:"wrap", justifyContent:"space-between", paddingTop:10}}>
+        {productData?.length > 0 ? productData?.map((product)=>(
           <ProductCard key={product._id} product={product} setOpenSheet={setOpenSheet} getDataForModal={getDataForModal}/>
-        ))}
-      </ScrollView>)}
+        )):null}
+      </ScrollView>):null}
 
       {/* Pagination */}
-      {!searchFocus && !loading &&(<View style={{marginVertical:10, alignItems:"center", marginBottom:30}}>
+      {!searchFocus && !loading ? (<View style={{marginVertical:10, alignItems:"center", marginBottom:30}}>
         <View style={{flexDirection:"row"}}>
           <TouchableOpacity
           onPress={()=>{
@@ -138,7 +138,7 @@ const AddProduct = () => {
           <Text style={{marginHorizontal:20}}>{currentPage}</Text>
           <TouchableOpacity
             onPress={()=>{
-              if(currentPage != totalPages && !loading){
+              if((currentPage != totalPages) && !loading){
                 setCurrentPage(currentPage + 1);
               } else if(currentPage == totalPages){
                 Toast.show({
@@ -151,7 +151,7 @@ const AddProduct = () => {
             <AntDesign name="caretright" size={24} color="black" />
           </TouchableOpacity>
         </View>
-      </View>)}
+      </View>):null}
       
         <AddProductBottomSheet 
           openSheet={openSheet} 

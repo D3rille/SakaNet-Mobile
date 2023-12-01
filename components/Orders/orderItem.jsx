@@ -23,8 +23,8 @@ const OrderItem = ({
     const [reason, setReason] = useState("");
     return (
         <>
-        {openDialog == "details" && (<OrderDetailsDialog visible={Boolean(openDialog)} setVisibility={setOpenDialog} order={order} />)}
-        {openDialog == "declineOrder" && (
+        {openDialog == "details" ? (<OrderDetailsDialog visible={Boolean(openDialog)} setVisibility={setOpenDialog} order={order} />):null}
+        {openDialog == "declineOrder" ? (
             <DeclineOrderDialog
                 title={"Decline Order"}
                 message={"Please state a reason for declining the order"}
@@ -34,8 +34,8 @@ const OrderItem = ({
                 reason={reason}
                 setReason={setReason}
             />
-        )}
-        {openDialog == "acceptOrder" && (
+        ):null}
+        {openDialog == "acceptOrder" ? (
             <CustomDialog
                 title={"Accept Order"}
                 message={"Are you sure you want to accept this order?"}
@@ -44,9 +44,9 @@ const OrderItem = ({
                 callback={()=>handleUpdateStatus(order._id, "Pending", "Accepted", null, false)}
                 
             />
-        )}
+        ):null}
 
-        {openDialog == "markComplete" && (
+        {openDialog == "markComplete" ? (
             <CustomDialog
                 visible={Boolean(openDialog)}
                 setVisible={setOpenDialog}
@@ -57,9 +57,9 @@ const OrderItem = ({
                     handleUpdateStatus(order._id, "Accepted", "For Completion", order?.buyer?.id, order?.modeOfPayment );
                 }}
           />
-        )}
+        ):null}
 
-        {openDialog == "returnToStock" && (
+        {openDialog == "returnToStock" ? (
             <CustomDialog
                 visible={Boolean(openDialog)}
                 setVisible={setOpenDialog}
@@ -74,8 +74,8 @@ const OrderItem = ({
                     handleReturnStock(order?._id, order?.productId);
                 }}
           />
-        )}
-        {openDialog == "cancelOrder" && (
+        ):null}
+        {openDialog == "cancelOrder" ? (
             <CustomDialog
                 visible={Boolean(openDialog)}
                 setVisible={setOpenDialog}
@@ -86,8 +86,8 @@ const OrderItem = ({
                     handleCancelOrder(order._id);
                 }}
           />
-        )}
-        {openDialog == "receivedOrder" && (
+        ):null}
+        {openDialog == "receivedOrder" ? (
             <CustomDialog
                 visible={Boolean(openDialog)}
                 setVisible={setOpenDialog}
@@ -98,7 +98,7 @@ const OrderItem = ({
                     handleUpdateStatus(order._id, "For Completion", "Completed", null, false)
                 }}
           />
-        )}
+        ):null}
 
         <Card style={{backgroundColor:"white", marginVertical:10}}>
             <Card.Content>
@@ -140,30 +140,30 @@ const OrderItem = ({
             </Card.Content>
             <Card.Actions>
                 {/* Pending - Farmer side*/}
-                {status == "Pending" && role == "FARMER" && (<>
+                {status == "Pending" && role == "FARMER" ? (<>
                     <Button mode="contained" buttonColor="green" onPress={()=>{
                         setOpenDialog("acceptOrder");
                     }}>Accept</Button>
                     <Button mode= "contained" buttonColor='red'
                         onPress={()=>setOpenDialog("declineOrder")}
                     >Decline</Button>
-                </>)}
+                </>):null}
                 {/* Pending - Buyer side */}
-                {status == "Pending" && role == "BUYER" && (<>
+                {status == "Pending" && role == "BUYER" ? (<>
                     <Button mode= "contained" buttonColor='red' onPress={()=>setOpenDialog("cancelOrder")}>Cancel</Button>
-                </>)}
+                </>):null}
                 {/* Accepted - Farmer side */}
-                {status == "Accepted" && role == "FARMER" && (<>
+                {status == "Accepted" && role == "FARMER" ? (<>
                     <Button mode="contained" buttonColor="green" onPress={()=> setOpenDialog("markComplete")}>Complete</Button>
-                </>)}
+                </>):null}
                 {/* For Completion - Farmer side */}
-                {status == "For Completion" && role == "FARMER" && (<>
+                {status == "For Completion" && role == "FARMER" ? (<>
                     <Button mode="contained" buttonColor="green" onPress={()=>setOpenDialog("returnToStock")}>Return to Stock ?</Button>
-                </>)}
+                </>):null}
                 {/* For Completion - Buyer side */}
-                {status == "For Completion" && role == "BUYER" && (<>
+                {status == "For Completion" && role == "BUYER" ? (<>
                     <Button mode="contained" buttonColor="green" onPress={()=>setOpenDialog("receivedOrder")}>Received Order</Button>
-                </>)}
+                </>):null}
             </Card.Actions>
         </Card>
         

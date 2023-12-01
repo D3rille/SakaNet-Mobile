@@ -6,10 +6,21 @@ const StackLayout = () => {
     return (
         <Stack>
             <Stack.Screen 
-              name="index" 
+              name="index"
+              options={{
+                headerShown:false
+              }} 
+              // options={{
+              //   headerShown: true,
+              //   header: () => <CustomHeader />
+              // }}
+            />
+            <Stack.Screen 
+              name="manageMyNetwork" 
               options={{
                 headerShown: true,
-                header: () => <CustomHeader />
+                headerTitle:"My Network"
+                // header: () => <CustomHeader />
               }}
             />
         </Stack>

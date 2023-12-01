@@ -162,30 +162,30 @@ const Product = () => {
       </View>
 
 
-      {loading && (<View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+      {loading ? (<View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
         <ActivityIndicator size={"large"}/>
-      </View>)}
+      </View>):null}
 
-      {error && (<View style={{flex:1, justifyContent:"center", alignItems:"center", padding:20}}>
+      {error ? (<View style={{flex:1, justifyContent:"center", alignItems:"center", padding:20}}>
         <Text>Error Loading My Products</Text>
-      </View>)}
+      </View>):null}
 
-      {data && !loading && (<ScrollView contentContainerStyle={{flexDirection:"row", flexWrap:"wrap", justifyContent:"space-between"}}>
+      {data && !loading ? (<ScrollView contentContainerStyle={{flexDirection:"row", flexWrap:"wrap", justifyContent:"space-between"}}>
         {productData.length > 0 && productData?.map((product)=>(
             <SellProducts key={product._id} product = {product}/>
           )
         )}
-        {productData && productData.length == 0 && (
+        {productData && productData.length == 0 ? (
         <View style={{flex:1, justifyContent:"center", paddingVertical:50}}>
           <Text style={{textAlign:"center", color:"#c5c5c5"}} variant='headlineMedium'>No Products</Text>
         </View>
-        )}
-      </ScrollView>)}
+        ):null}
+      </ScrollView>):null}
       {/* {renderProductList()} */}
 
       
       {/* Pagination */}
-      {!searchFocus && productData.length > 0 && (<View style={{marginVertical:10, alignItems:"center", marginBottom:30}}>
+      {!searchFocus && productData.length > 0 ? (<View style={{marginVertical:10, alignItems:"center", marginBottom:30}}>
         <View style={{flexDirection:"row"}}>
           <TouchableOpacity
             onPress={()=>{
@@ -209,7 +209,7 @@ const Product = () => {
             <AntDesign name="caretright" size={24} color={currentPage == totalPages ? "#c5c5c5" : "black"} />
           </TouchableOpacity>
         </View>
-      </View>)}
+      </View>):null}
 
       {/* Add Product Floating Button */}
       
@@ -225,8 +225,6 @@ const Product = () => {
       <OpenClosedBottomSheet ref={bottomSheetRef} status={status} setStatus={setStatus}/>
     </SafeAreaView>
   );
-  if(data && !loading){
-  }
 
 };
 

@@ -17,7 +17,7 @@ import {useQuery, useMutation} from "@apollo/client";
 import Toast from 'react-native-toast-message';
 import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev";
 
-import { GET_MESSAGES, SEND_MESSAGE, NEW_MESSAGE } from '../../../graphql/operations/chat';
+import { GET_MESSAGES, SEND_MESSAGE, NEW_MESSAGE, GET_CONVERSATIONS } from '../../../graphql/operations/chat';
 import { COLORS } from '../../../constants/index';
 import { useNavigation } from '@react-navigation/native';
 import { useSubs } from '../../../context/subscriptionProvider';
@@ -82,6 +82,7 @@ const ChatConversation = () => {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [messageInput, setMessageInput] = useState("");
   const navigation = useNavigation(); // Use the useNavigation hook
+  const [loaded, setLoaded] = useState(false);
  
   const [sendMessage] = useMutation(SEND_MESSAGE);
 
@@ -91,6 +92,11 @@ const ChatConversation = () => {
     error:getMessagesError, 
     fetchMore:fetchMoreMessages,
     subscribeToMore:subscribeToNewMessage} = useQuery(GET_MESSAGES, {
+    onCompleted:(data)=>{
+      if(!loaded){let new_messages = processMessages(data?.getMessages?.messages)?.reverse();
+      setMessages(new_messages);
+      setLoaded(true);}
+    },
     variables:{
         conversationId:convoId ?? "",
         limit:10,
@@ -132,9 +138,9 @@ const ChatConversation = () => {
     }
   }
 
-  // useEffect(()=>{
-  //   loadErrorMessages();
-  // },[])
+  useEffect(()=>{
+    loadErrorMessages();
+  },[])
   
   useEffect(() => {
     const unsubscribe = subscribeToNewMessage({
@@ -152,13 +158,28 @@ const ChatConversation = () => {
             }
           };
         }
+        let arrivedMessage = {
+          _id:newMessage?._id,
+          text:newMessage?.message ?? "",
+          user:{
+            _id:newMessage.sender,
+            name:newMessage.username,
+            avatar:newMessage.profile_pic
+          },
+          createdAt:new Date(newMessage.createdAt),
+          system: !Boolean(newMessage.sender),
+          conversationId:newMessage.conversationId
+        }
+
+        setMessages((previousMessages) => GiftedChat.append(previousMessages, arrivedMessage));
   
-        return {
-          getMessages: {
-            ...prev?.getMessages,
-            messages: [...(prev?.getMessages?.messages || []), newMessage]
-          }
-        };
+        
+        // return {
+        //   getMessages: {
+        //     ...prev?.getMessages,
+        //     messages: [...(prev?.getMessages?.messages || []), newMessage]
+        //   }
+        // };
       }
     });
   
@@ -168,12 +189,12 @@ const ChatConversation = () => {
     };
   }, [convoId]);
 
-  useEffect(() => { 
-    if(getMessagesData && !getMessagesLoading){
-      let messages = getMessagesData?.getMessages?.messages;
-      setMessages(messages ? processMessages(messages)?.reverse(): []);
-    }
-  }, [getMessagesData, getMessagesLoading, setMessages]);
+  // useEffect(() => { 
+  //   if(getMessagesData?.getMessages && !){
+  //     let messages = getMessagesData?.getMessages?.messages;
+  //     setMessages(messages ? processMessages(messages)?.reverse(): []);
+  //   }
+  // }, [getMessagesData, get]);
   
 
   // const onSend = useCallback((messages: IMessage[] = []) => {
@@ -184,10 +205,10 @@ const ChatConversation = () => {
     try {
       sendMessage({
           variables:{conversationId, message},
-          // refetchQueries:[{
-          //     query:GET_MESSAGES,
-          //     variables:{conversationId}
-          // }],
+          refetchQueries:[{
+              query:GET_MESSAGES,
+              variables:{conversationId}
+          }],
           onError:(error)=>{
               Toast.show({
                 type:"error",
@@ -267,6 +288,7 @@ const ChatConversation = () => {
     router.back();
   };
 
+
   return (
     <>
     <ChatConversationHeader
@@ -275,7 +297,7 @@ const ChatConversation = () => {
       onBackPress={onBackPress} 
     />
     <View style={styles.chatContainer}>
-      {getMessagesData?.getMessages?.messages && !getMessagesLoading ? (<GiftedChat
+    {getMessagesData && !getMessagesLoading ? (<GiftedChat
         text={messageInput}
         onInputTextChanged={setMessageInput}
         messages={messages ? messages : []}
@@ -302,11 +324,12 @@ const ChatConversation = () => {
             <ActivityIndicator size="large"/>
           </View>
         )}
-      />):(
+      />):null}
+      {/* {getMessagesData?.getMessages?.messages && !getMessagesLoading ? ():(
         <View style={{textAlign:"center", color:"#c5c5c5"}} variant='headlineMedium'>
           <Txt>No Conversation Yet</Txt>
         </View>
-      )}
+      )} */}
    </View>
    </>
   );

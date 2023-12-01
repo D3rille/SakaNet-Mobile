@@ -29,7 +29,7 @@ const ChatBubbles: React.FC<ChatBubblesProps> = ({ messages, onSend }) => {
     const isReceived = item.type === 'received';
     return (
       <View style={[styles.messageContainer, isReceived ? styles.receivedContainer : styles.sentContainer]}>
-        {isReceived && item.user && <Image source={{ uri: item.user.avatar }} style={styles.avatar} />}
+        {isReceived && item.user ? <Image source={{ uri: item.user.avatar }} style={styles.avatar} /> : null}
         <View style={[styles.bubble, isReceived ? styles.receivedBubble : styles.sentBubble]}>
           <Text style={styles.text}>{item.text}</Text>
         </View>

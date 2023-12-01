@@ -164,19 +164,19 @@ const AddProductBottomSheet = ({openSheet, setOpenSheet, data, loading, error}) 
           resetInputs();
         }}
       >
-        {loading && (
+        {loading ? (
           <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
             <ActivityIndicator size={"large"}/>
           </View>
-        )}
+        ):null}
 
-        {error && (
+        {error ? (
           <View style={{flex:1, justifyContent:"center", alignItems:"center", padding:20}}>
             <Text>Error Loading Product Information</Text>
           </View>
-        )}
+        ):null}
 
-        {data && !loading && (<BottomSheetScrollView contentContainerStyle={styles.contentContainer}>
+        {data && !loading ? (<BottomSheetScrollView contentContainerStyle={styles.contentContainer}>
           <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
             <Avatar.Image size={100} source={{uri:data?.photo}} />
           </View>
@@ -333,17 +333,17 @@ const AddProductBottomSheet = ({openSheet, setOpenSheet, data, loading, error}) 
                   editable={false}
                 />
               </TouchableOpacity>
-              {openDatePicker == "until" && (<DateTimePicker
+              {openDatePicker == "until" ? (<DateTimePicker
                 testID="dateTimePicker"
                 value={until}
                 mode={"date"}
                 is24Hour={true}
                 onChange={onUntilChange}
-              />)}
+              />):null}
             </View>
             
             {/* Harvest Date */}
-            {category == "Pre-Sell" &&(<View style={{flex:1, flexDirection:"row", alignItems:"center"}}>
+            {category == "Pre-Sell" ?(<View style={{flex:1, flexDirection:"row", alignItems:"center"}}>
               <TouchableOpacity
                 style={[styles.textInput,{flex:1}]}
                 onPress={()=>setOpenDatePicker("harvestDate")}
@@ -357,18 +357,18 @@ const AddProductBottomSheet = ({openSheet, setOpenSheet, data, loading, error}) 
                 />
               </TouchableOpacity>
                
-              {openDatePicker == "harvestDate" && (<DateTimePicker
+              {openDatePicker == "harvestDate" ? (<DateTimePicker
                 testID="dateTimePicker"
                 value={harvestDate}
                 mode={"date"}
                 is24Hour={true}
                 onChange={onHarvestDateChange}
-              />)}
+              />):null}
 
-            </View>)}
+            </View>):null}
 
             {/* Pickup Location */}
-            {modeOfDelivery == "pick-up" && (<View style={{flex:1, flexDirection:"row"}}>
+            {modeOfDelivery == "pick-up" ? (<View style={{flex:1, flexDirection:"row"}}>
               <TextField
                 outlineStyle={{borderColor:"black"}}
                 mode="outlined"
@@ -377,7 +377,7 @@ const AddProductBottomSheet = ({openSheet, setOpenSheet, data, loading, error}) 
                 value={pickUpLocation}
                 onChangeText={text => setPickUpLocation(text)}
               />  
-            </View>)}
+            </View>):null}
 
             {/* Description */}
             <View style={{flex:1, flexDirection:"row"}}>
@@ -417,7 +417,7 @@ const AddProductBottomSheet = ({openSheet, setOpenSheet, data, loading, error}) 
             </View>
           </View>
           {/* {data.map(renderItem)} */}
-        </BottomSheetScrollView>)}
+        </BottomSheetScrollView>):null}
       </BottomSheet>
     </View>
   );

@@ -31,8 +31,8 @@ const OrderDetailsDialog = ({visible, setVisibility, order}) =>{
               <Text>{user.role == "FARMER" ? 'Buyer: ' : "Seller: "}{user.role == "FARMER" ? order.buyer.name : order.seller.name}</Text>
               <Text>Mode of Payment: {order.modeOfPayment}</Text>
               <Text>Mode of Delivery: {order.modeOfDelivery}</Text>
-              {order.modeOfDelivery == "delivery" && (<Text>Delivery Address: {order?.deliveryAddress}</Text>)}
-              {order.status == "Completed" && (<Text>Accomplished: {formatDate(order?.accomplishedAt, "llll")}</Text>)}
+              {order.modeOfDelivery == "delivery" ? (<Text>Delivery Address: {order?.deliveryAddress}</Text>): null}
+              {order.status == "Completed" ? (<Text>Accomplished: {formatDate(order?.accomplishedAt, "llll")}</Text>):null}
             </ScrollView>
           </Dialog.ScrollArea>
         </Dialog>

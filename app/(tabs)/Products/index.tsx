@@ -161,15 +161,15 @@ const Products = () => {
         </Button>
       </View>
       {/* Display if data but no result */}
-      {productData && productData.length == 0 && (
+      {productData && productData.length == 0 ?(
         <View style={{flex:1, justifyContent:"center"}}>
           <Txt style={{textAlign:"center", color:"#c5c5c5"}} variant='headlineMedium'>No Products</Txt>
         </View>
-      )}
+      ):null}
       <MarketProducts  products={productData} />
 
       {/* Pagination */}
-      {!searchFocus && productData?.length > 0 && (<View style={{marginVertical:10, alignItems:"center", marginBottom:20}}>
+      {!searchFocus && productData?.length > 0 ? (<View style={{marginVertical:10, alignItems:"center", marginBottom:20}}>
         <View style={{flexDirection:"row"}}>
           <TouchableOpacity
             onPress={()=>{
@@ -193,7 +193,7 @@ const Products = () => {
             <AntDesign name="caretright" size={24} color={currentPage == totalPages ? "#c5c5c5" : "black"} />
           </TouchableOpacity>
         </View>
-      </View>)}
+      </View>):null}
 
     </SafeAreaView>
   );

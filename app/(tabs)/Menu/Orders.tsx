@@ -251,16 +251,16 @@ const Orders = () => {
         return (
             <View>
                 <HeadTabs activeIndex={activeIndex} setActiveIndex={setActiveIndex} setStatus={setStatus}/>
-                {error && (
+                {error ? (
                     <View style={{justifyContent:"center", alignItems:"center"}}>
                         <Text>Something went wrong, cannot load orders. Please try again.</Text>
                     </View>
-                )}
-                {data?.getOrders?.orders.length == 0 && (
+                ):null}
+                {data?.getOrders?.orders.length == 0 ? (
                     <View style={{justifyContent:"center", alignItems:"center", padding:80}}>
                         <Text style={{textAlign:"center", color:"#c5c5c5"}} variant='headlineMedium'>No Orders</Text>
                     </View>
-                )}
+                ):null}
                 
                 <View style={styles.container}>
                     <FlatList

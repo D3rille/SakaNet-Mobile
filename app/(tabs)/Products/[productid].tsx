@@ -7,7 +7,7 @@ import { useQuery, useLazyQuery, useMutation} from '@apollo/client';
 import { ActivityIndicator, MD2Colors, Button } from 'react-native-paper';
 import { AuthContext } from '../../../context/auth';
 import {Picker} from '@react-native-picker/picker';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, router } from 'expo-router';
 import SuggestedProducts from '../../../components/MarketProducts/SuggestedProducts';
 import AvailableProducts from '../../../components/MarketProducts/AvailableProducts';
 import FilterBottomSheet from '../../../components/MarketProducts/FilterBottomSheet';
@@ -16,6 +16,7 @@ import { COLORS, SIZES } from '../../../constants/index';
 import Icon from 'react-native-vector-icons/Ionicons';
 import PurchaseBottomSheet from '../../../components/MarketProducts/PurhcaseBottomSheet';
 import Toast from 'react-native-toast-message';
+import { AntDesign } from '@expo/vector-icons';
 
  
  export default function App() {
@@ -23,6 +24,7 @@ import Toast from 'react-native-toast-message';
    const [openSheet, setOpenSheet] = useState(false);
    const [productsType, setProductsType] = useState("Sell"); // Order or Preorder
    const [productsSortBy, setProductsSortBy] = useState("available"); // Available or Suggested Products
+   const [currentPage, setCurrentPage] = useState(1);
   //  const [selectedProduct, setSelectedProduct] = useState(null);
    const [filters, setFilters] = useState({
     modeOfDelivery: "",
@@ -43,7 +45,7 @@ import Toast from 'react-native-toast-message';
   const productId = local.id
   const sheetRef = useRef<BottomSheetModal>(null); //Bottom sheet Reference
 
-  const snapPoints = useMemo(() => [ "60%", "100%"], []);
+  const snapPoints = useMemo(() => [ "60%", "85%"], []);
   const handleSnapPress = useCallback(() => {
     sheetRef.current?.present();
   }, []);
@@ -72,8 +74,8 @@ import Toast from 'react-native-toast-message';
         category: productsType,
         itemId: productId,
         filter: filters,
-        page: 1,
-        limit: 6,
+        page: currentPage,
+        limit: 10,
       },
     }
   );
@@ -88,14 +90,21 @@ import Toast from 'react-native-toast-message';
 
 
   let productData = [];
+  let totalProduct;
+  let totalPages;
 
   if (data) {
     if (productsSortBy === "available" && data.getAvailableProducts) {
       productData = data.getAvailableProducts.product;
+      totalProduct = data?.getAvailableProducts?.totalProduct;
+      totalPages = Math.ceil(totalProduct/10);
     } else if (productsSortBy === "suggested" && data.getSuggestedProducts) {
       productData = data.getSuggestedProducts.product;
+      totalProduct = data?.getSuggestedProducts?.totalProduct;
+      totalPages = Math.ceil(totalProduct/10);
     } 
   }
+
   
   const updateFilters = (newFilters) => {
     setFilters({
@@ -103,7 +112,6 @@ import Toast from 'react-native-toast-message';
       ...newFilters,
       
     });
-    console.log(newFilters)
   };
     
   const getButtonStyle = (buttonStatus: StatusType) => ({
@@ -120,6 +128,12 @@ import Toast from 'react-native-toast-message';
    return (
      <SafeAreaView style={styles.container}> 
         <View  style={styles.headerContainer}>
+          <TouchableOpacity
+            onPress={()=>router.back()}
+            style={{marginRight:30}}
+          >
+            <AntDesign name="arrowleft" size={24} color="black" />
+          </TouchableOpacity>
          <Picker
              selectedValue={productsSortBy}
              style={styles.picker}
@@ -156,11 +170,25 @@ import Toast from 'react-native-toast-message';
           </View>
          
          {productsSortBy === 'suggested' && productData ? (
-          <SuggestedProducts products={productData} productId={productId} setOpenSheet={setOpenSheet} getProduct={getProduct}/>
+          <SuggestedProducts 
+          products={productData} 
+          setOpenSheet={setOpenSheet} 
+          getProduct={getProduct}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalPages={totalPages}
+          />
         ) : null}
 
         {productsSortBy === 'available' && productData ? (
-          <AvailableProducts products={productData} productId={productId} setOpenSheet={setOpenSheet} getProduct={getProduct}/>
+          <AvailableProducts 
+          products={productData} 
+          setOpenSheet={setOpenSheet} 
+          getProduct={getProduct}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalPages={totalPages}
+          />
         ) : null}
 
          <FilterBottomSheet 
@@ -192,8 +220,10 @@ import Toast from 'react-native-toast-message';
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal:10,
-    paddingTop:5
+    marginHorizontal:20,
+    // paddingTop:5
+    marginTop:20,
+    paddingVertical:10
     // marginBottom: 10,
   },
   picker: {
@@ -204,7 +234,8 @@ import Toast from 'react-native-toast-message';
     marginHorizontal: 25,
     flexDirection: 'row',
     justifyContent: 'center',
-    marginVertical: 20,
+    // marginVertical: 10,
+    marginBottom:5,
     borderWidth: 1,
     borderColor: COLORS.orange,
     borderRadius: 20,

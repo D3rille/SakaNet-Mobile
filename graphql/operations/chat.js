@@ -170,6 +170,7 @@ export const UPDATE_GROUP_PROFILE_PIC = gql`
 export const NEW_MESSAGE = gql`
     subscription NewMessage($conversationId: String) {
     newMessage(conversationId: $conversationId) {
+        _id
         profile_pic
         username
         conversationId

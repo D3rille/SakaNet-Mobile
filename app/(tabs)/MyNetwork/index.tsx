@@ -5,6 +5,7 @@ import { Card, Text } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useQuery, useMutation} from "@apollo/client";
 import Toast from 'react-native-toast-message';
+import {router} from "expo-router";
 
 import ConnectionRequests from '../../../components/MyNetwork/ConnectionRequests';
 import SuggestedUsers from '../../../components/MyNetwork/SuggestedUsers';
@@ -20,6 +21,7 @@ import {
 } from "../../../graphql/operations/myNetwork";
 import {GET_SUGGESTED_GROUPS} from "../../../graphql/operations/poolGroup";
 import { useAuth } from '../../../context/auth';
+import CustomHeader from '../../../constants/CustomHeader';
 
 const MyNetwork = () => {
   const {user} = useAuth();
@@ -109,12 +111,13 @@ const MyNetwork = () => {
 
   return (
     <View style={styles.container}>
+      <CustomHeader/>
       <ScrollView contentContainerStyle={styles.contentContainer}>
         {/* <MyConnections/> */}
-        <TouchableOpacity onPress={() => console.log('Card Pressed')}>
+        <TouchableOpacity onPress={() => router.push("/(tabs)/MyNetwork/manageMyNetwork")}>
           <Card style={styles.manageCard}>
             <Card.Content style={styles.cardContent}>
-              <Text style={styles.cardText}>Manage My Network</Text>
+              <Text style={styles.cardText}>View My Network</Text>
               <Ionicons name="chevron-forward-outline" size={20} color="black" />
             </Card.Content>
           </Card>
@@ -124,7 +127,7 @@ const MyNetwork = () => {
 
         <SuggestedUsers requestConnection={requestConnection} suggestedUsersResults={suggestedUsersResults}/>
 
-        {user?.role == "FARMER" && (<SuggestedGroups suggestedGroupsResults={suggestedGroupsResults} />)}
+        {user?.role == "FARMER" ? (<SuggestedGroups suggestedGroupsResults={suggestedGroupsResults} />):null}
 
       </ScrollView>
     </View>

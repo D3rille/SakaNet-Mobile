@@ -140,7 +140,7 @@ const TabLayout = () => {
               navigation.navigate('Notifications');
               readAllNotif();
             }}>
-              {newNotifCount > 0 && (<Badge style={{position:"absolute", bottom:30, right:9, zIndex:1}}>{newNotifCount}</Badge>)}
+              {newNotifCount > 0 ? (<Badge style={{position:"absolute", bottom:30, right:9, zIndex:1}}>{newNotifCount}</Badge>):null}
               <Ionicons name={iconName as any} size={size} color={color} />
             </TouchableOpacity>
             </>

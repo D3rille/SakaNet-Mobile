@@ -7,9 +7,10 @@ import { setContext } from '@apollo/client/link/context';
 import * as SecureStore from 'expo-secure-store';
 
 const httpLink = createHttpLink({
-  uri: 'http://192.168.1.228:4000/graphql',
+  uri: 'https://shrieking-alien-62479-c8880a5b9ebb.herokuapp.com/graphql',
 });
-
+//https://shrieking-alien-62479-c8880a5b9ebb.herokuapp.com/graphql
+//'http://192.168.1.228:4000/graphql'
 const authLink = setContext(async (_, { headers }) => {
   let token = "";
   try {
@@ -28,10 +29,11 @@ const authLink = setContext(async (_, { headers }) => {
 });
 
 const wsLink =  new GraphQLWsLink(createClient({
-  url: 'ws://192.168.1.228:4000/graphql/subscriptions',
+  url: 'wss://shrieking-alien-62479-c8880a5b9ebb.herokuapp.com/graphql/subscriptions',
   reconnect:true
 }));
-
+//wss://shrieking-alien-62479-c8880a5b9ebb.herokuapp.com/graphql/subscriptions
+//ws://192.168.1.228:4000/graphql/subscriptions
 // The split function takes three parameters:
 //
 // * A function that's called for each operation to execute

@@ -233,7 +233,7 @@ export default function Signup() {
               <View
                 style={[
                   styles.passwordInputContainer,
-                  isMatched === false && { borderColor: "red" },
+                  isMatched === false ? { borderColor: "red" } : null,
                 ]}
               >
                 <Icon
@@ -253,20 +253,20 @@ export default function Signup() {
                   style={styles.icon}
                   onPress={() => setPasswordVisible(!isPasswordVisible)}
                 >
-                  {userData.password !== "" && (
+                  {userData.password !== "" ? (
                     <Icon
                       name={isPasswordVisible ? "eye-off" : "eye"}
                       size={24}
                       color="#2E603A"
                     />
-                  )}
+                  ):null}
                 </TouchableOpacity>
               </View>
 
               <View
                 style={[
                   styles.passwordInputContainer,
-                  isMatched === false && { borderColor: "red" },
+                  isMatched === false ? { borderColor: "red" } : null,
                 ]}
               >
                 <Icon
@@ -288,21 +288,21 @@ export default function Signup() {
                     setConfirmPasswordVisible(!isConfirmPasswordVisible)
                   }
                 >
-                  {confirmPassword !== "" && (
+                  {confirmPassword !== "" ? (
                     <Icon
                       name={isConfirmPasswordVisible ? "eye-off" : "eye"}
                       size={24}
                       color="#2E603A"
                     />
-                  )}
+                  ):null}
                 </TouchableOpacity>
               </View>
 
-              {isMatched === false && (
+              {isMatched === false ? (
                 <Text style={{ color: "red", marginTop: 5 }}>
                   Password not matched
                 </Text>
-              )}
+              ):null}
 
               <View style={styles.checkboxContainer}>
                 <Checkbox
