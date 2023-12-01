@@ -17,6 +17,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import PurchaseBottomSheet from '../../../components/MarketProducts/PurhcaseBottomSheet';
 import Toast from 'react-native-toast-message';
 import { AntDesign } from '@expo/vector-icons';
+import { loadErrorMessages } from '@apollo/client/dev';
 
  
  export default function App() {
@@ -34,6 +35,9 @@ import { AntDesign } from '@expo/vector-icons';
     until: null,
   });
 
+  useEffect(()=>{
+    loadErrorMessages();
+  },[])
   const [productData,  setProductData] = useState({});
   const [totalProduct, setTotalProduct] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
@@ -201,7 +205,7 @@ import { AntDesign } from '@expo/vector-icons';
             <Text>Error Loading Products</Text>
           </View>):null}
          
-         {productsSortBy === 'suggested' && !loading && productData ? (
+         {/* {productsSortBy === 'suggested' && !loading && productData ? (
           <SuggestedProducts 
           products={productData} 
           setOpenSheet={setOpenSheet} 
@@ -210,18 +214,18 @@ import { AntDesign } from '@expo/vector-icons';
           setCurrentPage={setCurrentPage}
           totalPages={totalPages}
           />
-        ) : null}
+        ) : null} */}
 
-        {productsSortBy === 'available' && !loading && productData ? (
-          <AvailableProducts 
-          products={productData} 
-          setOpenSheet={setOpenSheet} 
-          getProduct={getProduct}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          totalPages={totalPages}
-          />
-        ) : null}
+        {/* {productsSortBy == 'available' && !loading && productData ? (
+          ) : null} */}
+        {!loading && productData ?(<AvailableProducts 
+        products={productData} 
+        setOpenSheet={setOpenSheet} 
+        getProduct={getProduct}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        totalPages={totalPages}
+        />):null}
 
          <FilterBottomSheet 
          sheetRef={sheetRef} 
