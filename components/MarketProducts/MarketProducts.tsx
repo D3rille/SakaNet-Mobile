@@ -14,7 +14,7 @@ const AllMarketProducts = ({ products}) => {
         router.push({
           pathname: '/(tabs)/Products/[productid]/',
           params: {
-            id: product._id,
+            productid: product._id,
           },
         })
       }

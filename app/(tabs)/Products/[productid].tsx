@@ -4,12 +4,12 @@ import { View, Text, SafeAreaView, StyleSheet, TextInput, ScrollView, TouchableO
 import {GET_AVAILABLE_PRODUCTS, GET_SUGGESTED_PRODUCT, GET_PRODUCT} from '../../../graphql/operations/product';
 import { PLACE_ORDER } from '../../../graphql/operations/order';
 import { useQuery, useLazyQuery, useMutation} from '@apollo/client';
-import { ActivityIndicator, MD2Colors, Button } from 'react-native-paper';
+import { ActivityIndicator, MD2Colors, Button, Text as Txt } from 'react-native-paper';
 import { AuthContext } from '../../../context/auth';
 import {Picker} from '@react-native-picker/picker';
 import { useLocalSearchParams, router } from 'expo-router';
-import SuggestedProducts from '../../../components/MarketProducts/SuggestedProducts';
-import AvailableProducts from '../../../components/MarketProducts/AvailableProducts';
+// import SuggestedProducts from '../../../components/MarketProducts/SuggestedProducts';
+// import AvailableProducts from '../../../components/MarketProducts/AvailableProducts';
 import FilterBottomSheet from '../../../components/MarketProducts/FilterBottomSheet';
 import BottomSheet, { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { COLORS, SIZES } from '../../../constants/index';
@@ -19,14 +19,14 @@ import Toast from 'react-native-toast-message';
 import { AntDesign } from '@expo/vector-icons';
 import { loadErrorMessages } from '@apollo/client/dev';
 
+import ProductCard from '../../../components/MarketProducts/ProductCard';
+
  
  export default function App() {
-  //  const { user } = useContext(AuthContext);
    const [openSheet, setOpenSheet] = useState(false);
    const [productsType, setProductsType] = useState("Sell"); // Order or Preorder
    const [productsSortBy, setProductsSortBy] = useState("available"); // Available or Suggested Products
    const [currentPage, setCurrentPage] = useState(1);
-  //  const [selectedProduct, setSelectedProduct] = useState(null);
    const [filters, setFilters] = useState({
     modeOfDelivery: "",
     area_limit: "",
@@ -35,12 +35,10 @@ import { loadErrorMessages } from '@apollo/client/dev';
     until: null,
   });
 
-  useEffect(()=>{
-    loadErrorMessages();
-  },[])
-  const [productData,  setProductData] = useState({});
-  const [totalProduct, setTotalProduct] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
+  
+  // const [productData,  setProductData] = useState([]);
+  // const [totalProduct, setTotalProduct] = useState(0);
+  // const [totalPages, setTotalPages] = useState(1);
 
 
   const [getProduct, { data:DialogData, loading:DialogLoading, error:DialogError }] = useLazyQuery(GET_PRODUCT, {
@@ -50,7 +48,7 @@ import { loadErrorMessages } from '@apollo/client/dev';
   });
 
   const local = useLocalSearchParams(); //Product ID from Dynamic Route
-  const productId = local.id
+  const productId = local.productid;
   const sheetRef = useRef<BottomSheetModal>(null); //Bottom sheet Reference
 
   const snapPoints = useMemo(() => [ "60%", "85%"], []);
@@ -88,50 +86,47 @@ import { loadErrorMessages } from '@apollo/client/dev';
     }
   );
 
-  useEffect(()=>{
-    if(data && !loading){
-      if (productsSortBy === "available" && data.getAvailableProducts) {
-        setProductData(data.getAvailableProducts.product);
-        setTotalProduct(data?.getAvailableProducts?.totalProduct);
-      } else if(productsSortBy === "suggested" && data.getSuggestedProducts){
-        setProductData(data.getSuggestedProducts.product);
-        setTotalProduct(data?.getSuggestedProducts?.totalProduct);
-      }
+  // useEffect(()=>{
+  //   if(data && !loading){
+  //     if (productsSortBy === "available" && data?.getAvailableProducts) {
+  //       setProductData(data?.getAvailableProducts.product);
+  //       setTotalProduct(data?.getAvailableProducts?.totalProduct);
+  //     } else if(productsSortBy === "suggested" && data.getSuggestedProducts){
+  //       setProductData(data.getSuggestedProducts.product);
+  //       setTotalProduct(data?.getSuggestedProducts?.totalProduct);
+  //     }
 
-    }
+  //   }
 
-    setTotalPages(Math.ceil(totalProduct / 10));
+  //   setTotalPages(Math.ceil(totalProduct / 10));
 
-  }, [data, loading, totalProduct, productsSortBy]);
-
-    
-  // if (loading) return (
-  //   <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
-  //     <ActivityIndicator animating={true} size="large" />
-  //   </View>
-  // );
-  // if (error) return(
-  //   <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
-  //     <Text>Something went wrong</Text>
-  //   </View>
-  // );
+  // }, [data, loading, totalProduct, productsSortBy]);
 
 
-  // let productData = [];
-  // let totalProduct=0;
-  // let totalPages=1;
+  const show = (product) => {
+      setOpenSheet(true);
+      getProduct({
+        variables:{
+          productId:product?._id
+        }
+      });
+  };
 
-  // if (data && !loading) {
-  //   if (productsSortBy === "available" && data.getAvailableProducts) {
-  //     productData = data.getAvailableProducts.product;
-  //     totalProduct = data?.getAvailableProducts?.totalProduct;
-  //     totalPages = Math.ceil(totalProduct/10);
-  //   } else if (productsSortBy === "suggested" && data.getSuggestedProducts) {
-  //     productData = data.getSuggestedProducts.product;
-  //     totalProduct = data?.getSuggestedProducts?.totalProduct;
-  //     totalPages = Math.ceil(totalProduct/10);
-  //   } 
-  // }
+  let productData = [];
+  let totalProduct=0;
+  let totalPages=1;
+
+  if (data && !loading) {
+    if (productsSortBy === "available" && data.getAvailableProducts) {
+      productData = data.getAvailableProducts.product;
+      totalProduct = data?.getAvailableProducts?.totalProduct;
+      totalPages = Math.ceil(totalProduct/10);
+    } else if (productsSortBy === "suggested" && data.getSuggestedProducts) {
+      productData = data.getSuggestedProducts.product;
+      totalProduct = data?.getSuggestedProducts?.totalProduct;
+      totalPages = Math.ceil(totalProduct/10);
+    } 
+  }
 
   
   const updateFilters = (newFilters) => {
@@ -204,6 +199,48 @@ import { loadErrorMessages } from '@apollo/client/dev';
           {error ? (<View style={{flex:1, justifyContent:"center", alignItems:"center", padding:20}}>
             <Text>Error Loading Products</Text>
           </View>):null}
+
+          {!loading && productData && productData.length == 0 ? (
+          <View style={{justifyContent:"center"}}>
+            <Txt style={{textAlign:"center", color:"#c5c5c5"}} variant='headlineMedium'>No Products</Txt>
+          </View>
+          ):null}
+
+          { !loading && productData?(
+            <ScrollView contentContainerStyle={styles.cardContainer}>
+              {productData?.map((product, index)=>(
+                <ProductCard key={index} product={product} show={show}/>
+              ))}
+
+              {/* Pagination */}
+              {productData?.length > 0  ? (
+              <View style={{marginVertical:10, alignItems:"center", marginBottom:20}}>
+                  <View style={{flexDirection:"row"}}>
+                    <TouchableOpacity
+                      onPress={()=>{
+                        if(currentPage !=1 ){
+                          setCurrentPage(currentPage-1);
+                        }
+                      }}
+                      disabled={currentPage == 1}
+                    >
+                      <AntDesign name="caretleft" size={24} color={currentPage == 1 ? "#c5c5c5" : "black"} />
+                    </TouchableOpacity>
+                    <Text style={{marginHorizontal:20}}>{currentPage}</Text>
+                    <TouchableOpacity
+                      onPress={()=>{
+                        if(currentPage != totalPages){
+                          setCurrentPage(currentPage + 1);
+                        }
+                      }}
+                      disabled={currentPage == totalPages}
+                    >
+                      <AntDesign name="caretright" size={24} color={currentPage == totalPages ? "#c5c5c5" : "black"} />
+                    </TouchableOpacity>
+                  </View>
+                </View>):null}
+            </ScrollView>
+          ):null}
          
          {/* {productsSortBy === 'suggested' && !loading && productData ? (
           <SuggestedProducts 
@@ -218,14 +255,14 @@ import { loadErrorMessages } from '@apollo/client/dev';
 
         {/* {productsSortBy == 'available' && !loading && productData ? (
           ) : null} */}
-        {!loading && productData ?(<AvailableProducts 
+        {/* {!loading && productData ?(<AvailableProducts 
         products={productData} 
         setOpenSheet={setOpenSheet} 
         getProduct={getProduct}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
         totalPages={totalPages}
-        />):null}
+        />):null} */}
 
          <FilterBottomSheet 
          sheetRef={sheetRef} 
@@ -249,18 +286,18 @@ import { loadErrorMessages } from '@apollo/client/dev';
      flex: 1,
      backgroundColor: '#ecf0f1',
     //  padding: 8,
-     paddingBottom: 100,
    },
- 
+   cardContainer: {
+    paddingHorizontal: 16,
+    paddingBottom:50
+  },
    headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginHorizontal:20,
-    // paddingTop:5
     marginTop:20,
     paddingVertical:10
-    // marginBottom: 10,
   },
   picker: {
     flex: 1,
@@ -270,7 +307,6 @@ import { loadErrorMessages } from '@apollo/client/dev';
     marginHorizontal: 25,
     flexDirection: 'row',
     justifyContent: 'center',
-    // marginVertical: 10,
     marginBottom:5,
     borderWidth: 1,
     borderColor: COLORS.orange,

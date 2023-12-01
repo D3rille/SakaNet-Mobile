@@ -19,24 +19,24 @@ export default function AvailableProducts({ products, setOpenSheet, getProduct, 
     // const defaultProfileImage = require('../../assets/images/default_profile.jpg');
     const [modalVisible, setModalVisible] = useState(false);
     // const [selectedProduct, setSelectedProduct] = useState(null);
-    const [placeOrder, { loading: placeOrderLoading, error: placeOrderError, data: placeOrderData }] = useMutation(PLACE_ORDER, {
-      // refetchQueries:[GET_ORDERS],
-      onError: (error) => {
-        Toast.show({
-          type:"error",
-          text1:error?.message
-        })
-        console.log(error.message);
-      },
-      onCompleted: (data) => {
-        Toast.show({
-          type:"success",
-          text1:"Successfully placed Order"
-        });
-        console.log('Order placed successfully:', data);
-        hide();
-      },
-    });
+    // const [placeOrder, { loading: placeOrderLoading, error: placeOrderError, data: placeOrderData }] = useMutation(PLACE_ORDER, {
+    //   // refetchQueries:[GET_ORDERS],
+    //   onError: (error) => {
+    //     Toast.show({
+    //       type:"error",
+    //       text1:error?.message
+    //     })
+    //     console.log(error.message);
+    //   },
+    //   onCompleted: (data) => {
+    //     Toast.show({
+    //       type:"success",
+    //       text1:"Successfully placed Order"
+    //     });
+    //     console.log('Order placed successfully:', data);
+    //     hide();
+    //   },
+    // });
 
     const show = (product) => 
     {

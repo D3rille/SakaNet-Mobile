@@ -38,7 +38,7 @@ const PurchaseBottomSheet = ({openSheet, setOpenSheet, placeOrder, data, loading
   },[openSheet, snapPoints]);
 
 
-  const snapPoints = useMemo(() => ["25%", "50%", "100%"], []);
+  const snapPoints = useMemo(() => ["25%", "50%", "80%"], []);
 
   const handleSnapPress = useCallback((index) => {
     sheetRef.current?.snapToIndex(index);
