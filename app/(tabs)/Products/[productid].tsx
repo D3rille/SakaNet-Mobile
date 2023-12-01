@@ -1,5 +1,5 @@
  // @ts-nocheck
-import React, { useContext, useState, useRef, useMemo, useCallback } from 'react';
+import React, { useContext, useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, TextInput, ScrollView, TouchableOpacity} from 'react-native';
 import {GET_AVAILABLE_PRODUCTS, GET_SUGGESTED_PRODUCT, GET_PRODUCT} from '../../../graphql/operations/product';
 import { PLACE_ORDER } from '../../../graphql/operations/order';
@@ -20,7 +20,7 @@ import { AntDesign } from '@expo/vector-icons';
 
  
  export default function App() {
-   const { user } = useContext(AuthContext);
+  //  const { user } = useContext(AuthContext);
    const [openSheet, setOpenSheet] = useState(false);
    const [productsType, setProductsType] = useState("Sell"); // Order or Preorder
    const [productsSortBy, setProductsSortBy] = useState("available"); // Available or Suggested Products
@@ -33,6 +33,10 @@ import { AntDesign } from '@expo/vector-icons';
     minPrice: 0,
     until: null,
   });
+
+  const [productData,  setProductData] = useState({});
+  const [totalProduct, setTotalProduct] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
 
   const [getProduct, { data:DialogData, loading:DialogLoading, error:DialogError }] = useLazyQuery(GET_PRODUCT, {
@@ -80,34 +84,50 @@ import { AntDesign } from '@expo/vector-icons';
     }
   );
 
+  useEffect(()=>{
+    if(data && !loading){
+      if (productsSortBy === "available" && data.getAvailableProducts) {
+        setProductData(data.getAvailableProducts.product);
+        setTotalProduct(data?.getAvailableProducts?.totalProduct);
+      } else if(productsSortBy === "suggested" && data.getSuggestedProducts){
+        setProductData(data.getSuggestedProducts.product);
+        setTotalProduct(data?.getSuggestedProducts?.totalProduct);
+      }
+
+    }
+
+    setTotalPages(Math.ceil(totalProduct / 10));
+
+  }, [data, loading, totalProduct, productsSortBy]);
+
     
-  if (loading) return (
-    <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
-      <ActivityIndicator animating={true} size="large" />
-    </View>
-  );
-  if (error) return(
-    <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
-      <Text>Something went wrong</Text>
-    </View>
-  );
+  // if (loading) return (
+  //   <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+  //     <ActivityIndicator animating={true} size="large" />
+  //   </View>
+  // );
+  // if (error) return(
+  //   <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+  //     <Text>Something went wrong</Text>
+  //   </View>
+  // );
 
 
-  let productData = [];
-  let totalProduct;
-  let totalPages;
+  // let productData = [];
+  // let totalProduct=0;
+  // let totalPages=1;
 
-  if (data) {
-    if (productsSortBy === "available" && data.getAvailableProducts) {
-      productData = data.getAvailableProducts.product;
-      totalProduct = data?.getAvailableProducts?.totalProduct;
-      totalPages = Math.ceil(totalProduct/10);
-    } else if (productsSortBy === "suggested" && data.getSuggestedProducts) {
-      productData = data.getSuggestedProducts.product;
-      totalProduct = data?.getSuggestedProducts?.totalProduct;
-      totalPages = Math.ceil(totalProduct/10);
-    } 
-  }
+  // if (data && !loading) {
+  //   if (productsSortBy === "available" && data.getAvailableProducts) {
+  //     productData = data.getAvailableProducts.product;
+  //     totalProduct = data?.getAvailableProducts?.totalProduct;
+  //     totalPages = Math.ceil(totalProduct/10);
+  //   } else if (productsSortBy === "suggested" && data.getSuggestedProducts) {
+  //     productData = data.getSuggestedProducts.product;
+  //     totalProduct = data?.getSuggestedProducts?.totalProduct;
+  //     totalPages = Math.ceil(totalProduct/10);
+  //   } 
+  // }
 
   
   const updateFilters = (newFilters) => {
@@ -172,8 +192,16 @@ import { AntDesign } from '@expo/vector-icons';
               Pre-Order
             </Button>
           </View>
+
+          {loading ? (<View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+            <ActivityIndicator size={"large"}/>
+          </View>):null}
+
+          {error ? (<View style={{flex:1, justifyContent:"center", alignItems:"center", padding:20}}>
+            <Text>Error Loading Products</Text>
+          </View>):null}
          
-         {productsSortBy === 'suggested' && productData ? (
+         {productsSortBy === 'suggested' && !loading && productData ? (
           <SuggestedProducts 
           products={productData} 
           setOpenSheet={setOpenSheet} 
@@ -184,7 +212,7 @@ import { AntDesign } from '@expo/vector-icons';
           />
         ) : null}
 
-        {productsSortBy === 'available' && productData ? (
+        {productsSortBy === 'available' && !loading && productData ? (
           <AvailableProducts 
           products={productData} 
           setOpenSheet={setOpenSheet} 

@@ -4,7 +4,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native';
 import { router } from 'expo-router';
 
-const AllMarketProducts = ({ products, handleLoadMore }) => {
+const AllMarketProducts = ({ products}) => {
 
   const renderItem = ({ item: product }) => (
     <TouchableOpacity

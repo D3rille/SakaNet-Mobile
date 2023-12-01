@@ -61,8 +61,16 @@ const Products = () => {
   );
 
   
-    if (loading) return <ActivityIndicator animating={true} color={MD2Colors.red800} />;
-    if (error) return <p>Error: {error.message}</p>;
+  if (loading) return (
+    <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+      <ActivityIndicator animating={true} size="large" />
+    </View>
+  );
+  if (error) return(
+    <View style={{flex:1, justifyContent:"center", alignItems:"center"}}>
+      <Text>Something went wrong</Text>
+    </View>
+  );
     
     let productData;
     let totalProduct;

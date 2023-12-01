@@ -199,8 +199,14 @@ const PurchaseBottomSheet = ({openSheet, setOpenSheet, placeOrder, data, loading
               label="Contact Number"
               placeholder="0"
               value={contactNumber}
-              onChangeText={(text) => setContactNumber(text)}
+              onChangeText={(text) => setContactNumber(text.trim())}
             />
+            {product.modeOfDelivery == "delivery" ? (<TextInput
+              mode="outlined"
+              label="Delivery Address"
+              value={deliveryAddress}
+              onChangeText={(text) => setDeliveryAddress(text)}
+            />):null}
           </View>
 
           <Text style={{paddingHorizontal:10, paddingTop:10}}>Mode of Payment</Text>
@@ -291,14 +297,14 @@ const PurchaseBottomSheet = ({openSheet, setOpenSheet, placeOrder, data, loading
                         <DataTable.Cell>{product.modeOfDelivery}</DataTable.Cell>
                     </DataTable.Row>
 
-                    <DataTable.Row>
+                    {product?.modeOfDelivery == "pick-up" ? (<DataTable.Row>
                         <DataTable.Cell>Pickup Location</DataTable.Cell>
                         <DataTable.Cell>
                         <Text style={{flexWrap:"wrap"}}>
                           {product.pickup_location}
                         </Text>
                         </DataTable.Cell>
-                    </DataTable.Row>
+                    </DataTable.Row>):null}
 
                     <DataTable.Row>
                         <DataTable.Cell>Closing</DataTable.Cell>
