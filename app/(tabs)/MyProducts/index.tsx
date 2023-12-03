@@ -253,9 +253,9 @@ const styles = StyleSheet.create({
     margin: 16,
     right: 0,
     bottom: 0,
-    backgroundColor:COLORS.orange
+    backgroundColor:COLORS.orange,
+    borderRadius:50
   },
-  // ... other styles you might have
 });
 
 export default Product;

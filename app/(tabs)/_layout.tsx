@@ -119,12 +119,14 @@ const TabLayout = () => {
             }
             }>
               <View style={{
-                width: 55,
-                height: 55,
+                width: 60,
+                height: 60,
                 backgroundColor: focused ? COLORS.green : 'gray',
                 borderRadius: 30,
                 justifyContent: 'center',
                 alignItems: 'center',
+                borderTopWidth: 2,
+                borderColor: '#EBEBEB',
                 marginBottom: Platform.OS === "android" ? 30 : 10,
               }}>
                 <FontAwesome5 name={iconName} size={22} color='white' />
@@ -158,7 +160,10 @@ const TabLayout = () => {
         // bottom: 40,
         // marginHorizontal: 20,
         height: 60,
-        borderRadius: 10,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        borderTopWidth: 2.5,
+        borderColor: '#EBEBEB',
         shadowColor: '#000',
         shadowOpacity: 0.06,
         shadowOffset: {

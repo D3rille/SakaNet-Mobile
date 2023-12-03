@@ -304,6 +304,7 @@ export default function Signup() {
                 </Text>
               ):null}
 
+{/*
               <View style={styles.checkboxContainer}>
                 <Checkbox
                   status={termsAccepted ? "checked" : "unchecked"}
@@ -315,6 +316,9 @@ export default function Signup() {
                   By creating, you are accepting term & conditions
                 </Text>
               </View>
+
+              */}
+
 
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
@@ -371,10 +375,11 @@ const styles = StyleSheet.create({
     padding: 10,
     justifyContent: "flex-start",
     alignItems: "center",
+    marginTop:30
   },
   logo: {
-    width: 150,
-    height: 150,
+    width: 90,
+    height: 90,
     resizeMode: "contain",
     marginBottom: 5,
   },
@@ -464,6 +469,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     marginBottom: 10,
+    marginTop:30
   },
   nextButton: {
     backgroundColor: "#2E603A",

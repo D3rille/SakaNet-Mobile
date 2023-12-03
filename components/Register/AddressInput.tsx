@@ -58,10 +58,7 @@ const AddressInputs = ({handleSubmit, handleInputChange, userData, goBack}) => {
         />
         <ScrollView contentContainerStyle={styles.contentContainer} keyboardShouldPersistTaps='always'>
           <View style={styles.header}>
-            <Image
-              source={require("../../assets/images/LOGO-FINAL.png")}
-              style={styles.logo}
-            />
+            <Text style={styles.headerText}>Enter Address</Text>
           </View>
           <View style={styles.inputContainer}>
           
@@ -164,11 +161,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 10,
   },
-  logo: {
-    width: 90,
-    height: 90,
-    resizeMode: "contain",
-    marginTop:10
+  headerText: {
+    paddingTop:20,
+    fontWeight:'bold',
+    fontSize: 22,
+    marginTop:20
   },
   inputContainer: {
     flex: 1,
@@ -254,7 +251,7 @@ const styles = StyleSheet.create({
     borderColor: "#2E603A",
     borderWidth: 1,
     borderRadius: 10,
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 40,
     alignItems: "center",
     justifyContent: "center",

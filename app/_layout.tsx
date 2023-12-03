@@ -113,7 +113,7 @@ function RootLayoutNav() {
                   <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
                   <Stack.Screen name="paper" />
                   <Stack.Screen name="login" options={{headerShown:false}}/>
-                  <Stack.Screen name="Signup" />
+                  <Stack.Screen name="Signup" options={{headerShown:false}} />
                   <Stack.Screen name="Cart" options={{presentation:"modal", headerShown:false}} />
                 </Stack>
               </ThemeProvider>

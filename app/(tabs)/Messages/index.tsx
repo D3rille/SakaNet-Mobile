@@ -127,7 +127,7 @@ const Messages = () => {
                 ):null}
             </View>
 
-            {/* <FAB
+          {/*  <FAB
                 icon="plus"
                 style={styles.fab}
                 color="white"
@@ -147,9 +147,10 @@ const styles = StyleSheet.create({
     cardContainer: {
         position: 'absolute',
         bottom: 0, 
-        height: screenHeight * 0.83,
+        height: screenHeight * 0.77,
         backgroundColor: '#fff',
-        // borderRadius: 24,
+        borderTopLeftRadius: 24,
+        borderTopRightRadius: 24,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: -2 },
         shadowOpacity: 0.3,
@@ -162,7 +163,8 @@ const styles = StyleSheet.create({
         margin: 16,
         right: 0,
         bottom: 0,
-        backgroundColor:COLORS.orange
+        backgroundColor:COLORS.green,
+        borderRadius:50
       },
 });
 

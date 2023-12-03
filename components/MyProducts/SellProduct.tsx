@@ -37,7 +37,7 @@ const Sell = ({product}) => {
             resizeMode="cover"
           />
           <View style={styles.productNameContainer}>
-            <Text style={styles.productName} numberOfLines={2}>
+            <Text style={styles.productName} numberOfLines={1}>
             {product.item.tagalogName ? `${product.item.tagalogName} | `:""}{product.item.englishName} 
             </Text>
             <Text variant="labelSmall" style={{paddingBottom:5}}>
