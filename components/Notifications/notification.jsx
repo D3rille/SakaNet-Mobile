@@ -35,11 +35,11 @@ export default function Notification({ notif, deleteNotif }) {
           <Text style={styles.paragraph}>
             {notif?.message ?? 'no message'}
           </Text>
+          <Text style={styles.notifTimeStamp}>
+            {timePassed(notif?.createdAt)}
+          </Text>
         </View>
 
-        <Text style={styles.notifTimeStamp}>
-          {timePassed(notif?.createdAt)}
-        </Text>
       </View>
     </Swipeable>
   );
@@ -71,8 +71,8 @@ const styles = StyleSheet.create({
   notifTimeStamp: {
     flex: 2,
     fontSize: 11,
-    textAlign: 'right',
-    alignSelf: 'center',
+    // textAlign: 'left',
+    // alignSelf: 'center',
     paddingRight:10
   },
   deleteBox: {

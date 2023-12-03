@@ -45,8 +45,8 @@ const ChatItem: React.FC<ChatItemProps> = ( {avatar, name, message, time, onPres
 const ChatItems = ({data, handleGetMoreConversations}) => {
     const {user} = useAuth();
     const navigation = useNavigation();
-
-    // console.log(data)
+    // const highLightonUnreadConvo = !chat.hasSeenLastMessage.includes(user.id);
+    // console.log(data[0])
     if(data){
         return(
             <View style={styles.chatItemsContainer}>

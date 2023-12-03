@@ -25,7 +25,7 @@ import AddProductBottomSheet from '../../../components/MyProducts/AddProductBott
 
 const ProductCard = ({product, setOpenSheet, getDataForModal}) =>{
   return(
-    <View style={{marginHorizontal:10}}>
+    <View style={{marginHorizontal:0, justifyContent:"space-evenly"}}>
       <TouchableOpacity 
       // key={product?._id} 
       style={styles.card}

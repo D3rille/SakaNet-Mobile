@@ -24,7 +24,7 @@ const Sell = ({product}) => {
 
   if(product){
     return (
-      <View style={{marginHorizontal:10}}>
+      <View style={{marginHorizontal:0, justifyContent:"space-evenly"}}>
         {openDialog == "details" ? (<DetailsDialog product={product} visible={Boolean(openDialog)} setVisibility={setOpenDialog}/>):null}
         <TouchableOpacity 
         key={product?._id} 

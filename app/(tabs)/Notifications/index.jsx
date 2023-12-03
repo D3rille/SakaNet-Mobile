@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from 'react';
 import { View, SafeAreaView, StyleSheet, FlatList, Dimensions } from 'react-native';
 import { useMutation } from '@apollo/client';

@@ -19,7 +19,7 @@ type IconName = string;
 const TabLayout = () => {
   const segment = useSegments();
   const tabOffsetValue = useRef(new Animated.Value(0)).current;
-  const {newNotifCount:notifCount} = useSubs();
+  const {newNotifCount:notifCount, newConvoCount} = useSubs();
   const {user, isLoaded} = useAuth();
   const [newNotifCount, setNewNotifCount] = useState(0);
   const [prodRoute, setProdRoute] = useState("Products");
@@ -142,12 +142,13 @@ const TabLayout = () => {
               navigation.navigate('Notifications');
               readAllNotif();
             }}>
-              {newNotifCount > 0 ? (<Badge style={{position:"absolute", bottom:30, right:9, zIndex:1}}>{newNotifCount}</Badge>):null}
+              {newNotifCount > 0 ? (<Badge style={{position:"absolute", bottom:20, right:9, zIndex:1}}>{newNotifCount}</Badge>):null}
               <Ionicons name={iconName as any} size={size} color={color} />
             </TouchableOpacity>
             </>
           );
         }
+
 
         return <Ionicons name={iconName as any} size={size} color={color} />;
 

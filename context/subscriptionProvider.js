@@ -24,7 +24,6 @@ export const SubscriptionProvider = ({ children }) => {
   const cartItemsCount = cart?.length;
   // console.log(cartItemsCount);
   // console.log(cart.length)
-  
   useEffect(()=>{
     subscribeToMore({
       document:NOTIF_SUB,
@@ -37,7 +36,7 @@ export const SubscriptionProvider = ({ children }) => {
         });
       }
     });
-  }, []);
+  }, [user]);
 
   useEffect(()=>{
     subscribeToNewConvo({

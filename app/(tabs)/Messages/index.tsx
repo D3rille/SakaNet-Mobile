@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { FAB, ActivityIndicator } from 'react-native-paper';
-import { useLazyQuery, useQuery } from '@apollo/client';
+import { useLazyQuery, useQuery, useMutation } from '@apollo/client';
 import Toast from 'react-native-toast-message';
 
 import { COLORS } from '../../../constants/index';
@@ -15,7 +15,7 @@ import {
     FIND_USER_TO_CHAT, 
     GET_CONVERSATIONS, 
     GET_UNREAD_CONVO, 
-    UPDATE_CONVOS
+    UPDATE_CONVOS,
 } from "../../../graphql/operations/chat";
 import { useAuth } from '../../../context/auth';
 import FindUserToChatResult from '../../../components/Messages/FindUserToChatResult';
@@ -27,6 +27,7 @@ const Messages = () => {
   const newMessageModalRef = useRef<BottomSheetMethods>(null);
   const [searchFocus, setSearchFocus] = useState(false);
   const [convos, setConvos] = useState([]);
+
 
   const handleAddPress = () => {
       newMessageModalRef.current?.expand();

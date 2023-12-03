@@ -17,7 +17,7 @@ import {useQuery, useMutation} from "@apollo/client";
 import Toast from 'react-native-toast-message';
 import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev";
 
-import { GET_MESSAGES, SEND_MESSAGE, NEW_MESSAGE, GET_CONVERSATIONS } from '../../../graphql/operations/chat';
+import { GET_MESSAGES, SEND_MESSAGE, NEW_MESSAGE, GET_CONVERSATIONS, READ_CONVO, GET_UNREAD_CONVO } from '../../../graphql/operations/chat';
 import { COLORS } from '../../../constants/index';
 import { useNavigation } from '@react-navigation/native';
 import { useSubs } from '../../../context/subscriptionProvider';
@@ -139,8 +139,8 @@ const ChatConversation = () => {
   }
 
   // useEffect(()=>{
-  //   loadErrorMessages();
-  // },[])
+  //   handleReadConvo();
+  // },[convoId])
   
   useEffect(() => {
     const unsubscribe = subscribeToNewMessage({
@@ -189,12 +189,12 @@ const ChatConversation = () => {
     };
   }, [convoId]);
 
-  // useEffect(() => { 
-  //   if(getMessagesData?.getMessages && !){
-  //     let messages = getMessagesData?.getMessages?.messages;
-  //     setMessages(messages ? processMessages(messages)?.reverse(): []);
-  //   }
-  // }, [getMessagesData, get]);
+  useEffect(() => { 
+    if(getMessagesData?.getMessages && !getMessagesLoading){
+      let messages = getMessagesData?.getMessages?.messages;
+      setMessages(messages ? processMessages(messages)?.reverse(): []);
+    }
+  }, [getMessagesData, getMessagesLoading]);
   
 
   // const onSend = useCallback((messages: IMessage[] = []) => {
@@ -297,7 +297,7 @@ const ChatConversation = () => {
       onBackPress={onBackPress} 
     />
     <View style={styles.chatContainer}>
-    {getMessagesData && !getMessagesLoading ? (<GiftedChat
+    {messages ? (<GiftedChat
         text={messageInput}
         onInputTextChanged={setMessageInput}
         messages={messages ? messages : []}
@@ -315,7 +315,7 @@ const ChatConversation = () => {
         renderInputToolbar={renderInputToolbar}
         showAvatarForEveryMessage={true}
         loadEarlier={!getMessagesLoading && getMessagesData?.getMessages?.hasNextPage}
-        onLoadEarlier={getMoreMessages}
+        onLoadEarlier={()=>getMoreMessages()}
         infiniteScroll={true}
         isLoadingEarlier={getMessagesLoading}
         renderLoadEarlier={()=><ActivityIndicator/>}
