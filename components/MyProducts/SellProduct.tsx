@@ -60,8 +60,9 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: '#FFFFFF',
-    width: 160,
+    width: 160, 
     marginVertical: 8,
+    marginHorizontal: 8, 
     borderRadius: 15,
     shadowColor: '#000',
     shadowOffset: {
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     right: 20,
-    backgroundColor: COLORS.orange,
+    backgroundColor: COLORS.green,
     borderRadius: 30,
     width: 60,
     height: 60,

@@ -105,11 +105,11 @@ const Products = () => {
      
       const getButtonStyle = (buttonStatus) => ({
         ...styles.toggleButton,
-        backgroundColor: activeComponent === buttonStatus ? COLORS.orange : 'transparent',
+        backgroundColor: activeComponent === buttonStatus ? COLORS.green : 'transparent',
       });
     
       const getTextStyle = (buttonStatus) => ({
-        color: activeComponent === buttonStatus ? 'white' : COLORS.orange,
+        color: activeComponent === buttonStatus ? 'white' : COLORS.green,
         fontSize: SIZES.small,
       });
     
@@ -232,9 +232,9 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   sortBtn: {
-    width: 45,
-    height: 45,
-    backgroundColor: COLORS.orange,
+    width: 40,
+    height: 40,
+    backgroundColor: COLORS.green,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: 5,
     borderWidth: 1,
-    borderColor: COLORS.orange,
+    borderColor: COLORS.green,
     borderRadius: 20,
     overflow: 'hidden',
   },

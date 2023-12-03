@@ -76,11 +76,11 @@ const Product = () => {
 
   const getButtonStyle = (buttonStatus: CategoryType) => ({
     ...styles.toggleButton,
-    backgroundColor: category === buttonStatus ? COLORS.orange : 'transparent',
+    backgroundColor: category === buttonStatus ? COLORS.green : 'transparent',
   });
 
   const getTextStyle = (buttonStatus: CategoryType) => ({
-    color: category === buttonStatus ? 'white' : COLORS.orange,
+    color: category === buttonStatus ? 'white' : COLORS.green,
     fontSize: SIZES.small,
   });
 
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: 20,
     borderWidth: 1,
-    borderColor: COLORS.orange,
+    borderColor: COLORS.green,
     borderRadius: 20,
     overflow: 'hidden',
   },
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
     margin: 16,
     right: 0,
     bottom: 0,
-    backgroundColor:COLORS.orange,
+    backgroundColor:COLORS.green,
     borderRadius:50
   },
 });
