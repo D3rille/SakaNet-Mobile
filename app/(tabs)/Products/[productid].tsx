@@ -139,11 +139,11 @@ import ProductCard from '../../../components/MarketProducts/ProductCard';
     
   const getButtonStyle = (buttonStatus: StatusType) => ({
     ...styles.toggleButton,
-    backgroundColor: productsType === buttonStatus ? COLORS.orange : 'transparent',
+    backgroundColor: productsType === buttonStatus ? COLORS.green : 'transparent',
   });
 
   const getTextStyle = (buttonStatus: StatusType) => ({
-    color: productsType === buttonStatus ? 'white' : COLORS.orange,
+    color: productsType === buttonStatus ? 'white' : COLORS.green,
     fontSize: SIZES.small,
   });
 
@@ -309,7 +309,7 @@ import ProductCard from '../../../components/MarketProducts/ProductCard';
     justifyContent: 'center',
     marginBottom:5,
     borderWidth: 1,
-    borderColor: COLORS.orange,
+    borderColor: COLORS.green,
     borderRadius: 20,
     overflow: 'hidden',
   },
@@ -321,7 +321,7 @@ import ProductCard from '../../../components/MarketProducts/ProductCard';
   sortBtn: {
     width: 45,
     height: 45,
-    backgroundColor: COLORS.orange,
+    backgroundColor: COLORS.green,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,

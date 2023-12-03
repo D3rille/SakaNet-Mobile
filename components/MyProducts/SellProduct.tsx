@@ -37,7 +37,7 @@ const Sell = ({product}) => {
             resizeMode="cover"
           />
           <View style={styles.productNameContainer}>
-            <Text style={styles.productName} numberOfLines={2}>
+            <Text style={styles.productName} numberOfLines={1}>
             {product.item.tagalogName ? `${product.item.tagalogName} | `:""}{product.item.englishName} 
             </Text>
             <Text variant="labelSmall" style={{paddingBottom:5}}>
@@ -60,8 +60,9 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: '#FFFFFF',
-    width: 160,
+    width: 160, 
     marginVertical: 8,
+    marginHorizontal: 8, 
     borderRadius: 15,
     shadowColor: '#000',
     shadowOffset: {
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     right: 20,
-    backgroundColor: COLORS.orange,
+    backgroundColor: COLORS.green,
     borderRadius: 30,
     width: 60,
     height: 60,

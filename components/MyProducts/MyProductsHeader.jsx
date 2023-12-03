@@ -53,9 +53,9 @@ const styles = StyleSheet.create({
       padding: 10,
     },
     sortBtn: {
-      width: 45,
-      height: 45,
-      backgroundColor: COLORS.orange,
+      width: 40,
+      height: 40,
+      backgroundColor: COLORS.green,
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius: 10,

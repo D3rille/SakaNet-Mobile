@@ -180,8 +180,9 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#FFFFFF',
     width: 160,
-    marginVertical: 8,
+    marginVertical: 6,
     borderRadius: 15,
+    marginHorizontal: 8,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -214,7 +215,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     right: 20,
-    backgroundColor: COLORS.orange,
+    backgroundColor: COLORS.green,
     borderRadius: 30,
     width: 60,
     height: 60,
