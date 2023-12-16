@@ -92,7 +92,6 @@ export default function Login() {
       keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
     >
       <SafeAreaView style={styles.container}>
-              <View style={styles.flexContainer}>
         <Image
           source={require("../assets/images/wave-bg.png")}
           style={styles.backgroundImage}
@@ -158,6 +157,9 @@ export default function Login() {
                 <Text style={styles.loginButtonText}  >Login</Text>
               </TouchableOpacity>
               <View style={styles.loginContainer}>
+              <TouchableOpacity onPress={() => router.push("ForgotPassword")}>
+                <Text style={styles.loginText}>Forgot Password?</Text>
+              </TouchableOpacity>
                 <Text>Don't have an account yet?</Text>
                 <TouchableOpacity onPress={() => router.push("Signup")}>
                   <Text style={styles.loginText}> Sign Up</Text>
@@ -166,7 +168,6 @@ export default function Login() {
             </View>
           </View>
         </ScrollView>
-        </View>
       </SafeAreaView>
     </KeyboardAvoidingView>
   );
@@ -185,12 +186,8 @@ const styles = StyleSheet.create({
     height: "90%",
     resizeMode: "cover",
   },
-  flexContainer: {
-    flex: 1,
-  },
   contentContainer: {
     flexGrow: 1,
-    paddingBottom: 10,
   },
   header: {
     padding: 10,
@@ -280,7 +277,8 @@ const styles = StyleSheet.create({
   buttonContainer: {
     alignItems: "center",
     width: "100%",
-    marginTop: 200,
+    marginBottom: 10,
+    marginTop: 100,
   },
   loginButton: {
     backgroundColor: "#2E603A",
@@ -313,3 +311,15 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
   },
 });
+
+<View style={styles.loginContainer}>
+  <TouchableOpacity onPress={() => router.push("ForgotPassword")}>
+    <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+  </TouchableOpacity>
+  <View style={styles.signupContainer}>
+    <Text>Don't have an account yet?</Text>
+    <TouchableOpacity onPress={() => router.push("Signup")}>
+      <Text style={styles.signupText}> Sign Up</Text>
+    </TouchableOpacity>
+  </View>
+</View>
