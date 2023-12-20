@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   loginContainer: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     marginTop: 15,
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
   <TouchableOpacity onPress={() => router.push("ForgotPassword")}>
     <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
   </TouchableOpacity>
-  <View style={styles.signupContainer}>
+  <View style={{flexDirection:"row"}}>
     <Text>Don't have an account yet?</Text>
     <TouchableOpacity onPress={() => router.push("Signup")}>
       <Text style={styles.signupText}> Sign Up</Text>

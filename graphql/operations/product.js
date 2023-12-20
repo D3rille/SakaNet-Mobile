@@ -1,11 +1,6 @@
 import { gql } from '@apollo/client';
 
 
-export const CREATE_PRODUCT = gql`
-  mutation CreateProduct($product: ProductInput) {
-    createProduct(product: $product)
-    }
-`;
 export const GET_ALL_MARKET_PRODUCTS = gql`
  query GetAllMarketProducts($type: String, $limit: Int, $page: Int) {
   getAllMarketProducts(type: $type, limit: $limit, page: $page) {
@@ -18,7 +13,7 @@ export const GET_ALL_MARKET_PRODUCTS = gql`
       photo
       type
       units
-      averagePrice
+      farmGatePrice
       priceChange
     }
     totalProduct
@@ -39,7 +34,7 @@ query GetAvailableMarketProducts($type: String, $limit: Int, $page: Int) {
       photo
       type
       units
-      averagePrice
+      farmGatePrice
       priceChange
     }
     totalProduct
@@ -61,6 +56,7 @@ query GetAvailableProducts($category: String, $itemId: String, $filter: productF
         name
         profile_pic
         rating
+        is_verified
         address {
           street
           barangay
@@ -201,7 +197,7 @@ export const SEARCH_ALL_PRODUCT = gql`
     photo
     type
     units
-    averagePrice
+    farmGatePrice
     priceChange
   }
 }
@@ -218,7 +214,7 @@ export const SEARCH_AVAILABLE_PRODUCT = gql`
     photo
     type
     units
-    averagePrice
+    farmGatePrice
     priceChange
   }
 }
@@ -324,7 +320,37 @@ export const GET_MARKET_PRODUCT = gql`
       photo
       type
       units
+      farmGatePrice
     }
   }
 `;
 
+export const CREATE_PRODUCT = gql`
+  mutation CreateProduct($product: ProductInput) {
+    createProduct(product: $product)
+    }
+`;
+
+export const EDIT_PRODUCT = gql`
+mutation EditProductDetails($productId: String, $product: ProductInput) {
+  editProductDetails(productId: $productId, product: $product)
+}
+`;
+
+export const CLOSE_PRODUCT =  gql`
+mutation CloseProduct($productId: String) {
+  closeProduct(productId: $productId)
+}
+`;
+
+export const DELETE_PRODUCT = gql`
+mutation DeleteProduct($productId: String) {
+  deleteProduct(productId: $productId)
+}
+`;
+
+export const REOPEN_PRODUCT = gql`
+mutation ReopenProduct($productId: String, $product: ProductInput) {
+  reopenProduct(productId: $productId, product: $product)
+}
+`;
