@@ -8,8 +8,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { RadioButton, Text } from 'react-native-paper';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
-const AddressInputs = ({handleSubmit, handleInputChange, userData, goBack}) => {
-  const [userType, setUserType] = useState('FARMER');
+const AddressInputs = ({handleSubmit, handleInputChange, userData, goBack, handleAddressInputValidation, handleRoleChange}) => {
+  const [userType, setUserType] = useState('');
   const placeAddresCompoponent = {
     REGION: 'administrative_area_level_1',
     MUNICPALITY: 'locality',
@@ -103,7 +103,7 @@ const AddressInputs = ({handleSubmit, handleInputChange, userData, goBack}) => {
                 <RadioButton
                   value="FARMER"
                   status={userType === 'FARMER' ? 'checked' : 'unchecked'}
-                  onPress={() =>  {handleInputChange("role", "FARMER"); setUserType("FARMER")}
+                  onPress={() =>  {setUserType("FARMER"); handleRoleChange(userType); }
                     
                   }
                   color="#2E603A"
@@ -114,7 +114,7 @@ const AddressInputs = ({handleSubmit, handleInputChange, userData, goBack}) => {
                 <RadioButton
                   value="BUYER"
                   status={userType === 'BUYER' ? 'checked' : 'unchecked'}
-                  onPress={() => {handleInputChange("role", "BUYER") ; setUserType("BUYER")}}
+                  onPress={() => {setUserType("BUYER"); handleRoleChange(userType) ; }}
                   color="#2E603A"
                 />
                 <Text>Buyer</Text>
@@ -122,7 +122,7 @@ const AddressInputs = ({handleSubmit, handleInputChange, userData, goBack}) => {
             </View>
           </View>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.nextButton} onPress={handleSubmit}>
+            <TouchableOpacity style={styles.nextButton} onPress={handleAddressInputValidation}>
               <Text style={styles.nextButtonText}>Sign Up</Text>
             </TouchableOpacity>
             

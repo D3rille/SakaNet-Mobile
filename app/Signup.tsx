@@ -18,8 +18,10 @@ import AddressInput from "../components/Register/AddressInput";
 import { router } from "expo-router";
 import { AuthContext } from "../context/auth";
 import { REGISTER_USER, VALIDATE_REG_PERSONAL_INFO } from "../graphql/operations/auth"; //imported the mutation
-import { useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import Toast from 'react-native-toast-message'; 
+import OTPInputRegister from '../components/Register/OTPInputRegister';
+import { GET_OTP } from "../graphql/operations/email";
 
 
 
@@ -49,6 +51,9 @@ export default function Signup() {
     },
   });
 
+  const [otp, setOtp] = useState("");
+  const [getOtp] = useLazyQuery(GET_OTP);
+
   const [registerUser, { loading }] = useMutation(REGISTER_USER, {
     update(proxy, { data: { register: userData } }) {
       context.login(userData);
@@ -75,36 +80,27 @@ export default function Signup() {
 
   const handleSubmit = async () => {
     try {
-      const { data: validationData } = await  validateUserData({
+      
+      const { data: registrationData } =  registerUser({
         variables: {
           registerInput: userData,
         },
       });
-  
-      if (validationData) {
-        const { errors, valid } = await validationData.validateRegPersonalInfo;
-  
-        if (valid) {
-          const { data: registrationData } =  registerUser({
-            variables: {
-              registerInput: userData,
-            },
-          });
-  
-          if (registrationData) {
-            router.push(router.push("/"))
-          }
-        } else {
-          console.log('Validation failed. Do something with the errors:', errors);
-        }
+
+      if (registrationData) {
+        router.push(router.push("/"))
       }
-    } catch (error) {
-      // Handle error
+      else {
+      console.log('Validation failed. Do something with the errors:');
+    }
+  }
+    catch (error) {
       console.error(error);
     }
   };
 
-  const validateFirstPage = async () => {
+  //Validate user Input page 1
+  const validateInput = async () => {
     try {
       const { data } = await validateUserData({
         variables: {
@@ -132,7 +128,7 @@ export default function Signup() {
       console.error(error);
     }
   };
-
+  //Callback function for changing adress in page 2.
   const handleInputChange = (name, value) => {
     setUserData((prevUserData) => {
       if (name.startsWith("address.")) {
@@ -151,6 +147,74 @@ export default function Signup() {
         };
       }
     });
+  };
+
+  //Page 2 validation
+  const validateAddressInputs = () => {
+    const { street, barangay, cityOrMunicipality, province, region } = userData.address;
+    const userRole = userData.role;
+    if (!street || !barangay || !cityOrMunicipality || !province || !region || !userRole) {
+      const missingFields = [];
+      if (!street) missingFields.push('Street');
+      if (!barangay) missingFields.push('Barangay');
+      if (!cityOrMunicipality) missingFields.push('City/Municipality');
+      if (!province) missingFields.push('Province');
+      if (!region) missingFields.push('Region');
+      if (!userRole) missingFields.push('Account Type');
+      console.log(userRole)
+      const errorMessage = `Please fill in the following fields:\n${missingFields.join(', ')}`;
+      Toast.show({
+        type: 'error',
+        position: 'top',
+        text1: errorMessage,
+      });
+
+      return false; // Validation failed
+    }
+
+    return true; // Validation succeeded
+  };
+
+  //Page 2 validation 
+  const handleAddressInputValidation = () => {
+    const isAddressValid = validateAddressInputs();
+    if (isAddressValid) {
+
+      setPage(page + 1);
+      sendOTP();
+    }
+  };
+
+  //Send OTP email after validation from page 2
+  const sendOTP = () => {
+
+    getOtp({
+      variables: { email: userData.account_email},
+      onCompleted: (data) => handleSuccess(data),
+      onError: (error) => handleError(error),
+    });
+  };
+
+  const handleSuccess = (data) => {
+      const otp = data?.generateOTP;
+
+      if (otp) {
+        setOtp(otp)
+      } else {
+        console.error("Empty OTP received");
+      }
+    };
+
+  const handleError = (error) => {
+    toast.error("Error fetching OTP. Please try again later.");
+  };
+
+  //Change User Rolce
+  const handleRoleChange = (newRole) => {
+    setUserData((prevUserData) => ({
+      ...prevUserData,
+      role: newRole,
+    }));
   };
   
   useEffect(() => {
@@ -324,7 +388,7 @@ export default function Signup() {
                 <TouchableOpacity
                   style={styles.nextButton}
                   onPress={async () => {
-                    await validateFirstPage();
+                    await validateInput();
                   }}                  
                 >
                   <Text style={styles.nextButtonText}>Next</Text>
@@ -342,15 +406,25 @@ export default function Signup() {
       </KeyboardAvoidingView>
     );
   }
-  else {
+  else if (page == 2) {
     return (
       <AddressInput
         handleSubmit={handleSubmit}
         handleInputChange={handleInputChange}
         userData={userData}
         goBack ={goBack}
+        handleAddressInputValidation={handleAddressInputValidation}
+        handleRoleChange={handleRoleChange}
       />
     );
+  }
+
+  else {
+    return <OTPInputRegister
+     otp={otp}
+     handleSubmit={handleSubmit}
+     userData={userData}
+     />
   }
 };
 
