@@ -53,6 +53,12 @@ export const GET_MESSAGES = gql`
         sender
         message
         createdAt
+        payment_channels {
+            _id
+            accountName
+            channel
+            details
+        }
         }
         hasNextPage
         endCursor

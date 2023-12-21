@@ -45,6 +45,7 @@ export const GET_MY_PROFILE = gql`
       managed_group
       payment_channels {
         _id
+        accountName
         channel
         details
       }
